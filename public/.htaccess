@@ -1,0 +1,11 @@
+
+RewriteEngine On
+
+RewriteBase /json/
+
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L,NC]
+
+RewriteRule . index.php [L,NC]

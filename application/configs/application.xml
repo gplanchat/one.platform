@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+  <default>
+    <modules>
+      <One_Core>
+        <codePool>core</codePool>
+        <active>0</active>
+        <route type="core/route" path="" />
+      </One_Core>
+      <One_Admin_Core>
+        <codePool>core</codePool>
+        <active>0</active>
+        <route type="admin/route" />
+        <requires>
+          <One_Core />
+        </requires>
+      </One_Admin_Core>
+      <One_User>
+        <codePool>core</codePool>
+        <active>0</active>
+        <route type="user/route" />
+      </One_User>
+      <One_Admin_User>
+        <codePool>core</codePool>
+        <active>0</active>
+        <route type="admin/route" path="user" />
+        <requires>
+          <One_User />
+          <One_Admin_Core />
+        </requires>
+      </One_Admin_User>
+      <One_Cms>
+        <codePool>core</codePool>
+        <active>0</active>
+        <route type="cms/route" />
+      </One_Cms>
+      <One_OpenId>
+        <codePool>core</codePool>
+        <active>0</active>
+        <route type="openid/route" />
+      </One_OpenId>
+    </modules>
+    <layout>
+      <design>default</design>
+      <template>default</template>
+    </layout>
+  </default>
+  <production extends="default">
+    <modules>
+      <One_Core>
+        <active>1</active>
+      </One_Core>
+      <One_Admin_Core>
+        <active>1</active>
+      </One_Admin_Core>
+      <One_User>
+        <active>1</active>
+      </One_User>
+      <One_Admin_User>
+        <active>1</active>
+      </One_Admin_User>
+    </modules>
+  </production>
+</application>
