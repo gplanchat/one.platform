@@ -15,7 +15,10 @@ defined('APPLICATION_ENV') ||
 set_include_path(realpath(ROOT_PATH . DS . 'externals' . DS . 'libraries'));
 
 One::setEnv(APPLICATION_ENV);
-One::setConfig(ROOT_PATH . DS . 'application' . DS . 'configs' . DS . 'application.xml');
+//var_dump(One::getConfig());
+
+One::setDomain(One::getConfig('system/hostname'));
+One::setBasePath(One::getConfig('system/base-url'));
 
 try {
     One::app()->bootstrap()

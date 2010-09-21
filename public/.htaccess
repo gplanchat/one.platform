@@ -1,7 +1,7 @@
 
 RewriteEngine On
 
-RewriteBase /json/
+RewriteBase /
 
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -s [OR]

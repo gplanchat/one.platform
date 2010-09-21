@@ -17,7 +17,7 @@ final class One
 
     private static $_env = null;
 
-    private static $_config = self::ENV_PRODUCTION;
+    private static $_config = null;
 
     private static $_frontController = null;
 
@@ -39,6 +39,10 @@ final class One
 
     public static function getEnv()
     {
+        if (self::$_env === null) {
+            self::$_env = self::ENV_PRODUCTION;
+        }
+
         return self::$_env;
     }
 
@@ -53,11 +57,30 @@ final class One
 
     public static function getConfig($path = null)
     {
+        if (self::$_config === null) {
+            $configFile = implode(self::DS, array(APPLICATION_PATH,
+                'configs', 'application.xml'));
+
+            require_once 'Zend/Config/Xml.php';
+            self::$_config = new Zend_Config_Xml($configFile, self::getEnv());
+        }
+
         if ($path === null) {
             return self::$_config;
         }
 
-        return $oldConfig;
+        $config = self::$_config;
+        foreach (explode('/', $path) as $pathChunk) {
+            $config = $config->get($pathChunk);
+            if ($config === null) {
+                return null;
+            }
+        }
+
+        if ($config instanceof Zend_Config) {
+            return $config->toArray();
+        }
+        return $config;
     }
 
     public static function app($websiteId = null)
@@ -69,8 +92,7 @@ final class One
         require_once 'Zend/Loader/Autoloader.php';
         Zend_Loader_Autoloader::getInstance();
 
-        self::$_app = new Zend_Application(self::$_env, self::$_config);
-        self::$_config = self::$_app->getOptions();
+        self::$_app = new Zend_Application(self::getEnv(), self::getConfig());
 
         self::$_app->setIncludePaths(array(
             realpath(APPLICATION_PATH . self::DS . 'code' . self::DS . 'core'),
@@ -163,47 +185,58 @@ final class One
 
     private static function _buildRoutes(Zend_Controller_Router_Abstract $router)
     {
-        $langRoute = new Zend_Controller_Router_Route(':lang', array(
-            'lang' => 'fr'
-            ), array(
-            'lang' => '[a-z]{2}'
-            ));
-
-        if (($domain = self::getDomain()) !== null) {
-            $baseRoute = new Zend_Controller_Router_Route_Chain();
-            $baseRoute
-                ->chain(new Zend_Controller_Router_Route_Hostname($domain))
-                ->chain(new Zend_Controller_Router_Route_Static(self::getBasePath()))
-                ->chain($langRoute)
-            ;
-            $langRoute = $baseRoute;
-        }
-
-        $pathPattern = APPLICATION_PATH . self::DS . 'code' . self::DS . '%s'
-                . self::DS . '%s' . self::DS . 'controllers';
+        $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'controllers'));
 
         $frontController = $router->getFrontController();
         $modules = self::$_app->getOption('modules');
         foreach ($modules as $moduleName => $moduleConfig) {
+            if (!in_array(strtolower($moduleConfig['active']), array('1', 'true', 'on'))) {
+                continue;
+            }
             $codePool = isset($moduleConfig['codePool']) ? $moduleConfig['codePool'] : 'local';
 
             $path = sprintf($pathPattern, $codePool, str_replace('_', DS, $moduleName));
 
-            $frontController
-                ->addControllerDirectory($path, $moduleName);
+            $frontController->addControllerDirectory($path, $moduleName);
 
-            $modulePath = new Zend_Controller_Router_Route_Static($moduleName);
-            $chainRoute = $langRoute->chain($modulePath);
-            $chainRoute->chain(new Zend_Controller_Router_Route('/:controller/:action/*', array(
-                'module'     => $moduleName,
-                'controller' => 'index',
-                'action'     => 'index'
-                )));
-            $router->addRoute('module.' . strtolower($moduleName), $chainRoute);
+            $routeClassName = 'core/router.route';
+            if (isset($moduleConfig['route']) && isset($moduleConfig['route']['type'])) {
+                $routeClassName = self::loadClass($moduleConfig['route']['type']);
+            }
+            $moduleRoute = new $routeClassName($moduleConfig['route'], null, $moduleName);
+
+            if (isset($moduleConfig['route']['name'])) {
+                $router->addRoute($moduleConfig['route']['name'], $moduleRoute);
+            } else {
+                $router->addRoute('module.' . strtolower($moduleName), $moduleRoute);
+            }
+        }
+    }
+
+    private static function _inflectClassName($className, $domain)
+    {
+        static $inflector = null;
+
+        if ($inflector === null) {
+            $inflector = new One_Core_Model_Inflector();
         }
 
-        $cmsRoute = new One_Cms_Model_Router_Route();
-        $defaultRoute = $langRoute->chain($cmsRoute);
-        $router->addRoute('default', $defaultRoute);
+        $offset = strpos($className, '/');
+        $module = substr($className, 0, $offset);
+        $class = substr($className, $offset + 1);
+
+        if (($namespace = self::getConfig("{$module}/{$domain}/namespace")) !== null) {
+            return $namespace . '_' . $inflector->filter($class);
+        }
+
+        return $inflector->filter('one.' . $module) . '_' . $inflector->filter($domain)
+                . '_' . $inflector->filter($class);
+    }
+
+    public static function loadClass($classIdentifier, $domain = 'model')
+    {
+        $className = self::_inflectClassName($classIdentifier, $domain);
+        Zend_Loader::loadClass($className);
+        return $className;
     }
 }
