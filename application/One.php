@@ -95,7 +95,6 @@ final class One
 //        $viewBasePath = APPLICATION_PATH . self::DS . 'design' . self::DS . $design . self::DS . $template;
 //        $viewRenderer->setViewBasePathSpec($viewBasePath);
 
-//        var_dump(self::getRouter());
         self::_buildRoutes(self::getRouter());
 
         self::getFrontController()->setDefaultModule('One_Core');
