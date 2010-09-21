@@ -13,22 +13,51 @@ final class One
     const DS = DIRECTORY_SEPARATOR;
     const PS = PATH_SEPARATOR;
 
+    /**
+     * @var Zend_Application
+     */
     private static $_app = null;
 
+    /**
+     * @var string
+     */
     private static $_env = null;
 
+    /**
+     * @var Zend_Config
+     */
     private static $_config = null;
 
+    /**
+     * @var Zend_Controller_Front
+     */
     private static $_frontController = null;
 
+    /**
+     * @var Zend_Controller_Router_Abstract
+     */
     private static $_router = null;
 
+    /**
+     * @var Zend_Controller_Action_Helper_ViewRenderer
+     */
     private static $_viewRenderer = null;
 
+    /**
+     * @var string
+     */
     private static $_basePath = '/';
 
+    /**
+     * @var string
+     */
     private static $_domain = null;
 
+    /**
+     * Set environment name
+     *
+     * @param string $env
+     */
     public static function setEnv($env = self::ENV_PRODUCTION)
     {
         $oldEnv = self::$_env;
@@ -37,6 +66,11 @@ final class One
         return $oldEnv;
     }
 
+    /**
+     * Get the currently set environment name
+     *
+     * @return string
+     */
     public static function getEnv()
     {
         if (self::$_env === null) {
@@ -46,23 +80,51 @@ final class One
         return self::$_env;
     }
 
-    public static function setConfig($config)
+    private static function _loadConfig()
     {
-        $oldConfig = self::$_config;
+        $configFile = implode(self::DS, array(APPLICATION_PATH,
+            'configs', 'application.xml'));
 
-        self::$_config = $config;
+        require_once 'Zend/Config/Xml.php';
+        self::$_config = new Zend_Config_Xml($configFile, self::getEnv(), true);
 
-        return $oldConfig;
+        $pathPattern = implode(self::DS, array(APPLICATION_PATH,
+            'code', '%s', '%s', 'configs', 'module.xml'));
+        $modules = self::$_config->get('modules');
+        foreach ($modules as $moduleName => $moduleConfig) {
+            if (!in_array(strtolower($moduleConfig->get('active')), array(1, true, '1', 'true', 'on'))) {
+                continue;
+            }
+
+            if (($codePool = $moduleConfig->get('codePool')) === null) {
+                $codePool = 'local';
+            }
+
+            $path = sprintf($pathPattern, $codePool, str_replace('_', DS, $moduleName));
+            if (!file_exists($path)) {
+                self::$_config->get('modules')->get($moduleName)->active = false;
+                continue;
+            }
+
+            $moduleConfig = new Zend_Config_Xml($path);
+            if (($config = $moduleConfig->get(self::getEnv())) !== null) {
+                self::$_config->merge($config);
+            } else if (($config = $moduleConfig->get('default')) !== null) {
+                self::$_config->merge($config);
+            } else {
+                self::$_config->merge($moduleConfig);
+            }
+        }
+
+        self::$_config->setReadOnly();
+
+        return self::$_config;
     }
 
     public static function getConfig($path = null)
     {
         if (self::$_config === null) {
-            $configFile = implode(self::DS, array(APPLICATION_PATH,
-                'configs', 'application.xml'));
-
-            require_once 'Zend/Config/Xml.php';
-            self::$_config = new Zend_Config_Xml($configFile, self::getEnv());
+            self::_loadConfig();
         }
 
         if ($path === null) {
@@ -83,7 +145,13 @@ final class One
         return $config;
     }
 
-    public static function app($websiteId = null)
+    /**
+     * Get the current application instance
+     *
+     * @param unknown_type $websiteId
+     * @return Zend_Application
+     */
+    public static function app()
     {
         if (self::$_app instanceof Zend_Application) {
             return self::$_app;

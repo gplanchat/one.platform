@@ -1,7 +1,7 @@
 <?php
 
-class One_Admin_Core_IndexController
-    extends One_Admin_Core_Controller_Abstract
+class One_Admin_Core_Controller_Abstract
+    extends One_Core_Controller_Abstract
 {
     public function indexAction()
     {
