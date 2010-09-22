@@ -1,6 +1,6 @@
 <?php
 
-class One_Core_Controller_Abstract
+class One_Core_ControllerAbstract
     extends Zend_Controller_Action
 {
     /**

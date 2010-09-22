@@ -2,6 +2,7 @@
 
 class One_Cms_Model_Router_Route
     extends Zend_Controller_Router_Route_Abstract
+    implements One_Core_Model_Router_RouteInterface
 {
     protected $_table = null;
 
@@ -10,7 +11,7 @@ class One_Cms_Model_Router_Route
     protected $_regexDelimiter = '#';
     protected $_defaultRegex = null;
 
-    public function __construct()
+    public function __construct($routeConfig, $baseRoute, $moduleName)
     {
         $this->_table = new One_Cms_Model_Dal_Route();
     }
