@@ -42,5 +42,5 @@
  */
 interface One_Core_Model_Router_RouteInterface
 {
-    public function __construct($routeConfig, $baseRoute, $moduleName);
+    public function __construct($routeConfig, $moduleName);
 }

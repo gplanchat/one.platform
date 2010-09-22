@@ -1,24 +1,20 @@
 <?php
 
 class One_Core_Model_Router_Route
-    extends Zend_Controller_Router_Route_Chain
+    extends Zend_Controller_Router_Route
 {
-    public function __construct($routeConfig, $baseRoute, $moduleName)
+    public function __construct($routeConfig, $moduleName)
     {
         if (isset($routeConfig['path'])) {
-            $path = $routeConfig['path'];
+            $path = "/{$routeConfig['path']}/:controller/:action/*";
         } else {
-            $path = '';
+            $path = '/:controller/:action/*';
         }
 
-        if ($baseRoute !== null) {
-            $this->chain($baseRoute);
-        }
-        $this->chain(new Zend_Controller_Router_Route_Static($path))
-            ->chain(new Zend_Controller_Router_Route('/:controller/:action/*', array(
+        parent::__construct($path, array(
                 'module'     => $moduleName,
                 'controller' => 'index',
                 'action'     => 'index'
-                )));
+                ));
     }
 }

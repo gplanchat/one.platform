@@ -39,6 +39,11 @@ final class One
     private static $_router = null;
 
     /**
+     * @var One_Core_Model_Router_Route_Stack
+     */
+    private static $_routeStack = null;
+
+    /**
      * @var Zend_Controller_Action_Helper_ViewRenderer
      */
     private static $_viewRenderer = null;
@@ -52,6 +57,8 @@ final class One
      * @var string
      */
     private static $_domain = null;
+
+    private static $_modelSingletons = array();
 
     /**
      * Set environment name
@@ -98,6 +105,7 @@ final class One
 
             if (($codePool = $moduleConfig->get('codePool')) === null) {
                 $codePool = 'local';
+                $moduleConfig->codePool = $codePool;
             }
 
             $path = sprintf($pathPattern, $codePool, str_replace('_', DS, $moduleName));
@@ -185,7 +193,17 @@ final class One
 //        $viewBasePath = APPLICATION_PATH . self::DS . 'design' . self::DS . $design . self::DS . $template;
 //        $viewRenderer->setViewBasePathSpec($viewBasePath);
 
-        self::_buildRoutes(self::getRouter());
+        $routeStack = new One_Core_Model_Router_Route_Stack();
+        $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'controllers'));
+        foreach ($modules as $moduleName => $moduleConfig) {
+            if (!isset($moduleConfig['active']) || !in_array(strtolower($moduleConfig['active']), array('1', 'true', 'on'))) {
+                continue;
+            }
+
+            $modulePath = sprintf($pathPattern, $moduleConfig['codePool'], str_replace('_', DS, $moduleName));
+            self::_registerModule(self::getFrontController(), self::getRouter(), $moduleName, $moduleConfig, $modulePath);
+        }
+        var_dump(self::getFrontController()->getControllerDirectory());
 
         self::getFrontController()->setDefaultModule('One_Core');
         $dispatcher = self::getFrontController()->getDispatcher();
@@ -251,33 +269,20 @@ final class One
         return self::$_domain;
     }
 
-    private static function _buildRoutes(Zend_Controller_Router_Abstract $router)
+    private static function _registerModule($frontController, $router, $moduleName, $moduleConfig, $modulePath)
     {
-        $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'controllers'));
+        $frontController->addControllerDirectory($modulePath, $moduleName);
 
-        $frontController = $router->getFrontController();
-        $modules = self::$_app->getOption('modules');
-        foreach ($modules as $moduleName => $moduleConfig) {
-            if (!in_array(strtolower($moduleConfig['active']), array('1', 'true', 'on'))) {
-                continue;
-            }
-            $codePool = isset($moduleConfig['codePool']) ? $moduleConfig['codePool'] : 'local';
+        $routeClassName = 'core/router.route';
+        if (isset($moduleConfig['route']) && isset($moduleConfig['route']['type'])) {
+            $routeClassName = self::loadClass($moduleConfig['route']['type']);
+        }
+        $moduleRoute = new $routeClassName($moduleConfig['route'], $moduleName);
 
-            $path = sprintf($pathPattern, $codePool, str_replace('_', DS, $moduleName));
-
-            $frontController->addControllerDirectory($path, $moduleName);
-
-            $routeClassName = 'core/router.route';
-            if (isset($moduleConfig['route']) && isset($moduleConfig['route']['type'])) {
-                $routeClassName = self::loadClass($moduleConfig['route']['type']);
-            }
-            $moduleRoute = new $routeClassName($moduleConfig['route'], null, $moduleName);
-
-            if (isset($moduleConfig['route']['name'])) {
-                $router->addRoute($moduleConfig['route']['name'], $moduleRoute);
-            } else {
-                $router->addRoute('module.' . strtolower($moduleName), $moduleRoute);
-            }
+        if (isset($moduleConfig['route']['name'])) {
+            $router->addRoute($moduleConfig['route']['name'], $moduleRoute);
+        } else {
+            $router->addRoute('module.' . strtolower($moduleName), $moduleRoute);
         }
     }
 
@@ -289,11 +294,15 @@ final class One
             $inflector = new One_Core_Model_Inflector();
         }
 
+        $domain = str_replace('.', '/', $domain);
+
         $offset = strpos($className, '/');
         $module = substr($className, 0, $offset);
         $class = substr($className, $offset + 1);
 
-        if (($namespace = self::getConfig("{$module}/{$domain}/namespace")) !== null) {
+        self::getConfig("{$domain}/{$module}/rewrite")
+
+        if (($namespace = self::getConfig("{$domain}/{$module}/namespace")) !== null) {
             return $namespace . '_' . $inflector->filter($class);
         }
 
@@ -306,5 +315,26 @@ final class One
         $className = self::_inflectClassName($classIdentifier, $domain);
         Zend_Loader::loadClass($className);
         return $className;
+    }
+
+    public function getModel($identifier, $params)
+    {
+        $className = self::loadClass($identifier, 'model');
+
+        $reflectionClass = new ReflectionClass($className);
+        if ($reflectionClass->isSubclassOf('One_Core_Object')) {
+            $object = $reflectionClass->newInstance($moduleName, $params);
+        } else {
+            $object = $reflectionClass->newInstanceArgs($params);
+        }
+        return $object;
+    }
+
+    public function getSingleton($identifier)
+    {
+        if (isset(self::$_modelSingletons[$identifier])) {
+            self::$_modelSingletons[$identifier] = self::getModel($identifier);
+        }
+        return self::$_modelSingletons[$identifier];
     }
 }

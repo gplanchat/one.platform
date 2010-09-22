@@ -1,0 +1,9 @@
+[submodule "test/externals/libraries/php-code-coverage"]
+	path = test/externals/libraries/php-code-coverage
+	url = git://github.com/sebastianbergmann/php-code-coverage.git
+[submodule "test/externals/libraries/phpunit"]
+	path = test/externals/libraries/phpunit
+	url = git://github.com/sebastianbergmann/phpunit.git
+[submodule "test/externals/libraries/php-file-iterator"]
+	path = test/externals/libraries/php-file-iterator
+	url = git://github.com/sebastianbergmann/php-file-iterator.git

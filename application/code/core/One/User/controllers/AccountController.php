@@ -33,17 +33,13 @@
  *
  * @access      public
  * @author      gplanchat
- * @category    Exception
+ * @category    Controller
  * @package     One
- * @subpackage  One_Core
+ * @subpackage  One_User
  */
 class One_User_AccountController
     extends One_User_ControllerAbstract
 {
-    public function init()
-    {
-    }
-
     /**
      *
      *

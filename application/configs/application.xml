@@ -15,7 +15,7 @@
       <One_Core>
         <codePool>core</codePool>
         <active>0</active>
-        <route type="core/router.route" path="" name="core" />
+        <route type="core/router.route" path="core" name="core" />
       </One_Core>
       <One_Admin_Core>
         <codePool>core</codePool>
@@ -28,7 +28,7 @@
       <One_User>
         <codePool>core</codePool>
         <active>0</active>
-        <route type="core/router.route" path="user" />
+        <route type="user/router.route" path="user" name="user" />
       </One_User>
       <One_Admin_User>
         <codePool>core</codePool>
@@ -54,14 +54,24 @@
       <design>default</design>
       <template>default</template>
     </layout>
-    <core>
-      <model namespace="One_Core_Model" />
-      <resource.dal namespace="One_Core_Model_Resource_Dal" />
-    </core>
-    <cms>
-      <model namespace="One_Cms_Model" />
-      <resource.dal namespace="One_Cms_Model_Resource_Dal" />
-    </cms>
+    <model>
+      <core>
+        <namespace>One_Core_Model</namespace>
+      </core>
+      <cms>
+        <namespace>One_Cms_Model</namespace>
+      </cms>
+    </model>
+    <resource>
+      <dal>
+        <core>
+          <namespace>One_Core_Model_Resource_Dal</namespace>
+        </core>
+        <cms>
+          <namespace>One_Cms_Model_Resource_Dal</namespace>
+        </cms>
+      </dal>
+    </resource>
   </default>
   <production extends="default">
     <system>
@@ -72,7 +82,7 @@
         <active>1</active>
       </One_Core>
       <One_User>
-        <active>0</active>
+        <active>1</active>
       </One_User>
       <One_Cms>
         <active>0</active>
