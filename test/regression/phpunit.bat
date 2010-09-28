@@ -40,6 +40,7 @@ GOTO RUN
 :USE_PEAR_PATH
 set PHPBIN=%PHP_PEAR_PHP_BIN%
 :RUN
-"%PHPBIN%" "D:\php-env\workspace\one-platform\test\externals\libraries\phpunit\phpunit.php" %*
+cd D:\php-env\workspace\one-platform\test\regression
+"%PHPBIN%" "D:\php-env\workspace\one-platform\test\externals\libraries\phpunit\phpunit.php" AllTests
 
 pause

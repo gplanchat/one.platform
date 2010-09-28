@@ -70,7 +70,7 @@ class One_Core_Model_Layout
      * @param string $layoutName
      * @return void
      */
-    protected function __construct($filename, $layoutName)
+    public function __construct($filename, $layoutName)
     {
         $config = Nova::getConfig('frontend.design');
         $this->_basePath = ROOT_PATH . "/design/{$config['name']}/{$config['template']}";

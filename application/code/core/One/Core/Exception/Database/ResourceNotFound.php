@@ -28,7 +28,6 @@
  *
  */
 
-require_once 'Nova/Core/Exception.php';
 /**
  * Invalid method call exception, thrown when :
  *  - Desired database resource is not found

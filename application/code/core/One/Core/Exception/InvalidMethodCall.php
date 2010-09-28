@@ -28,7 +28,6 @@
  *
  */
 
-require_once 'Nova/Core/Exception.php';
 /**
  * Invalid method call exception, thrown when :
  *  - an inexistent method is called

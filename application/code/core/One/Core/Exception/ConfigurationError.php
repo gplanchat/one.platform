@@ -28,7 +28,6 @@
  *
  */
 
-require_once 'Nova/Core/Exception.php';
 /**
  * Invalid method call exception, thrown when :
  *  - a configuration parameter is missing

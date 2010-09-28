@@ -203,7 +203,6 @@ final class One
             $modulePath = sprintf($pathPattern, $moduleConfig['codePool'], str_replace('_', DS, $moduleName));
             self::_registerModule(self::getFrontController(), self::getRouter(), $moduleName, $moduleConfig, $modulePath);
         }
-        var_dump(self::getFrontController()->getControllerDirectory());
 
         self::getFrontController()->setDefaultModule('One_Core');
         $dispatcher = self::getFrontController()->getDispatcher();
@@ -294,15 +293,14 @@ final class One
             $inflector = new One_Core_Model_Inflector();
         }
 
-        $domain = str_replace('.', '/', $domain);
-
         $offset = strpos($className, '/');
         $module = substr($className, 0, $offset);
         $class = substr($className, $offset + 1);
 
-        self::getConfig("{$domain}/{$module}/rewrite")
+//        self::getConfig("{$domain}/{$module}/rewrite")
 
-        if (($namespace = self::getConfig("{$domain}/{$module}/namespace")) !== null) {
+        $xmlDomain = str_replace('.', '/', $domain);
+        if (($namespace = self::getConfig("{$xmlDomain}/{$module}/namespace")) !== null) {
             return $namespace . '_' . $inflector->filter($class);
         }
 

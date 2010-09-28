@@ -28,7 +28,6 @@
  *
  */
 
-require_once 'Nova/Core/Exception.php';
 /**
  * Unimplemented method/function/algorithm exception, thrown when :
  *  - desired functionality isn't yet impelmented

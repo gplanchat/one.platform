@@ -28,7 +28,6 @@
  *
  */
 
-require_once 'Nova/Core/Exception.php';
 /**
  * Invalid implementation, thrown when :
  *  - a class instanciated by Nova object forgeries does not implement the

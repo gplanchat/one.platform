@@ -7,3 +7,15 @@
 [submodule "test/externals/libraries/php-file-iterator"]
 	path = test/externals/libraries/php-file-iterator
 	url = git://github.com/sebastianbergmann/php-file-iterator.git
+[submodule "test/externals/libraries/php-token-stream"]
+	path = test/externals/libraries/php-token-stream
+	url = git://github.com/sebastianbergmann/php-token-stream.git
+[submodule "test/externals/libraries/phpunit-mock-objects"]
+	path = test/externals/libraries/phpunit-mock-objects
+	url = git://github.com/sebastianbergmann/phpunit-mock-objects.git
+[submodule "test/externals/libraries/php-text-template"]
+	path = test/externals/libraries/php-text-template
+	url = git://github.com/sebastianbergmann/php-text-template.git
+[submodule "test/externals/libraries/php-timer"]
+	path = test/externals/libraries/php-timer
+	url = git://github.com/sebastianbergmann/php-timer.git

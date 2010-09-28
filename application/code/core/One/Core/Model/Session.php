@@ -27,7 +27,6 @@
  * documentation for further information about customizing XNova.
  *
  */
-require_once 'Nova/Core/Model/SessionAbstract.php';
 
 /**
  * Session management class
