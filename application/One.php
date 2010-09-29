@@ -315,7 +315,7 @@ final class One
         return $className;
     }
 
-    public function getModel($identifier, $params)
+    public static function getModel($identifier, $params)
     {
         $className = self::loadClass($identifier, 'model');
 
@@ -328,11 +328,22 @@ final class One
         return $object;
     }
 
-    public function getSingleton($identifier)
+    public static function getSingleton($identifier)
     {
         if (isset(self::$_modelSingletons[$identifier])) {
             self::$_modelSingletons[$identifier] = self::getModel($identifier);
         }
         return self::$_modelSingletons[$identifier];
+    }
+
+    public static function throwException($identifier, $message, $_ = null)
+    {
+        $className = self::loadClass($identifier, 'exception');
+
+        $args = func_get_args();
+        array_shift($args);
+        array_shift($args);
+
+        throw new $className(vsprintf($message, $args));
     }
 }

@@ -34,11 +34,11 @@
  *
  * @access      public
  * @author      gplanchat
- * @category    Dal
+ * @category    Core
  * @package     One
  * @subpackage  One_Core
  */
-abstract class One_Core_Object
+class One_Core_Object
     implements ArrayAccess, Countable, IteratorAggregate
 {
     /**
@@ -50,6 +50,13 @@ abstract class One_Core_Object
      * @var array
      */
     protected $_data = array();
+
+    /**
+     * Internal inflector
+     *
+     * @var Zend_Filter_Inflector
+     */
+    private static $_inflector = null;
 
     /**
      * Internal original data 'memory'.
@@ -82,14 +89,14 @@ abstract class One_Core_Object
     public function __construct($moduleName = 'core', $data = array())
     {
         if (!is_string($moduleName)) {
-            Nova::throwException('core/invalid-method-call', 'Parameter 1 sould be a string.');
+            One::throwException('core/invalid-method-call', 'Parameter 1 sould be a string.');
         }
         $this->_moduleName = $moduleName;
 
         if ($data instanceof Zend_Config) {
             $data = $data->toArray();
         } else if (!is_array($data)) {
-            Nova::throwException('core/invalid-method-call', 'Parameter 2 should be either an array or a Zend_Config instance.');
+            One::throwException('core/invalid-method-call', 'Parameter 2 should be either an array or a Zend_Config instance.');
         }
 
         $this->_data = $data;
@@ -103,7 +110,7 @@ abstract class One_Core_Object
      *
      * @since 0.1.0
      *
-     * @return One_Core_ObjectAbstract
+     * @return
      */
     protected function _construct()
     {
@@ -117,7 +124,7 @@ abstract class One_Core_Object
      * @param array $variable
      * @return One_Core_Object
      */
-    protected function _attachData(Array &$variable)
+    protected function _attachData(array &$variable)
     {
         $this->_data = &$variable;
         return $this;
@@ -167,7 +174,7 @@ abstract class One_Core_Object
      * @param string $key
      * @return string
      */
-    private function _underscore($key)
+    private static function _underscore($key)
     {
         static $underscoreCache = array();
 
@@ -176,7 +183,11 @@ abstract class One_Core_Object
         }
 
         //Nova::profilerStart(__METHOD__);
-        $underscoreCache[(string) $key] = strtolower(preg_replace('#([A-Z])#', '_$1', lcfirst($key)));
+//        $underscoreCache[(string) $key] = strtolower(preg_replace('#([A-Z])#', '_$1', lcfirst($key)));
+
+        $underscoreCache[(string) $key] = self::getInflector()->filter(array(
+            'index' => $key
+            ));
         //Nova::profilerStop(__METHOD__);
 
         return $underscoreCache[(string) $key];
@@ -211,11 +222,9 @@ abstract class One_Core_Object
             $key = $key->toArray();
         }
 
-        if (is_array($key)) {
-            $this->_data = $key;
-        } else {
-            $this->_data[self::_underscore((string) $key)] = $value;
-        }
+        $this->_isSaved = false;
+        $this->_setData($key, $value);
+
         return $this;
     }
 
@@ -234,13 +243,9 @@ abstract class One_Core_Object
             $key = $key->toArray();
         }
 
-        if (is_array($key)) {
-            foreach ($key as $index => $value) {
-                $this->_data[self::_underscore($index)] = $value;
-            }
-        } else {
-            $this->_data[self::_underscore((string) $key)] = $value;
-        }
+        $this->_isSaved = false;
+        $this->_addData($key, $value);
+
         return $this;
     }
 
@@ -257,7 +262,7 @@ abstract class One_Core_Object
         if (is_null($key)) {
             return $this->_data;
         }
-        return $this->_getData(self::_underscore((string) $key));
+        return $this->_getData((string) $key);
     }
 
     /**
@@ -273,7 +278,7 @@ abstract class One_Core_Object
         if (is_null($key)) {
             return $this->_hasData();
         }
-        return $this->_hasData(self::_underscore((string) $key));
+        return $this->_hasData((string) $key);
     }
 
     /**
@@ -290,7 +295,7 @@ abstract class One_Core_Object
             return $this->_unsetData();
         }
         $this->_isSaved = false;
-        return $this->_unsetData(self::_underscore((string) $key));
+        return $this->_unsetData($key);
     }
 
     /**
@@ -380,8 +385,6 @@ abstract class One_Core_Object
      */
     protected function _unsetData($key = NULL)
     {
-        $this->_isSaved = false;
-
         if (is_null($key)) {
             $this->_data = array();
         } else if ($this->_hasData($key)) {
@@ -400,7 +403,7 @@ abstract class One_Core_Object
      */
     final public function offsetGet($offset)
     {
-        return $this->_getData($offset);
+        return $this->getData($offset);
     }
 
     /**
@@ -413,7 +416,7 @@ abstract class One_Core_Object
      */
     final public function offsetSet($offset, $data)
     {
-        return $this->_setData($offset, $data);
+        return $this->setData($offset, $data);
     }
 
     /**
@@ -426,7 +429,7 @@ abstract class One_Core_Object
      */
     final public function offsetUnset($offset)
     {
-        return $this->_unsetData($offset);
+        return $this->unsetData($offset);
     }
 
     /**
@@ -439,7 +442,7 @@ abstract class One_Core_Object
      */
     final public function offsetExists($offset)
     {
-        return $this->_hasData($offset);
+        return $this->hasData($offset);
     }
 
     /**
@@ -452,7 +455,7 @@ abstract class One_Core_Object
      */
     final public function __set($offset, $data)
     {
-        return $this->setData($offset);
+        return $this->setData(self::_underscore($offset));
     }
 
     /**
@@ -465,7 +468,7 @@ abstract class One_Core_Object
      */
     final public function __get($offset)
     {
-        return $this->getData($offset);
+        return $this->getData(self::_underscore($offset));
     }
 
     /**
@@ -478,7 +481,7 @@ abstract class One_Core_Object
      */
     final public function __isSet($offset)
     {
-        return $this->hasData($offset);
+        return $this->hasData(self::_underscore($offset));
     }
 
     /**
@@ -491,7 +494,7 @@ abstract class One_Core_Object
      */
     final public function __unSet($offset)
     {
-        return $this->unsetData($offset);
+        return $this->unsetData(self::_underscore($offset));
     }
 
     /**
@@ -506,26 +509,27 @@ abstract class One_Core_Object
     final public function __call($method, $params)
     {
         //Nova::profilerStart(__METHOD__);
+        $dataIndex = self::_underscore(substr($method, 3));
         switch (substr($method, 0, 3)) {
         case 'get':
-            return $this->getData(substr($method, 3));
+            return $this->getData($dataIndex);
             break;
 
         case 'set':
-            return $this->setData(substr($method, 3), $params[0]);
+            return $this->setData($dataIndex, $params[0]);
             break;
 
         case 'has':
-            return $this->hasData(substr($method, 3));
+            return $this->hasData($dataIndex);
             break;
 
         case 'uns':
-            return $this->unsetData(substr($method, 5));
+            return $this->unsetData($dataIndex);
             break;
         }
         //Nova::profilerStop(__METHOD__);
 
-        Nova::throwException('core/invalidMethodCall',
+        One::throwException('core/invalidMethodCall',
             'One_Core_ObjectAbstract_Exception_InvalidMethod', $method);
     }
 
@@ -554,5 +558,22 @@ abstract class One_Core_Object
     public function count()
     {
         return count($this->_data);
+    }
+
+    public static function getInflector()
+    {
+        if (self::$_inflector === null) {
+            self::$_inflector = new Zend_Filter_Inflector(':index');
+
+            self::$_inflector->setRules(array(
+                ':index' => array('Word_CamelCaseToUnderscore', 'StringToLower')
+                ));
+        }
+        return self::$_inflector;
+    }
+
+    public static function setInflector(Zend_Filter_Inflector $inflector)
+    {
+        $this->_inflector = $inflector;
     }
 }
