@@ -2,8 +2,6 @@
 
 class One_Core_ObjectTest extends PHPUnit_Framework_TestCase
 {
-    private $_stub = null;
-
     protected $_className = 'One_Core_Object';
 
     protected $_module = 'test';
@@ -150,11 +148,56 @@ class One_Core_ObjectTest extends PHPUnit_Framework_TestCase
 
     public function testHasDataMagicCall()
     {
-        $this->markTestSkipped();
+        $random = mt_rand();
+        $stub = $this->getMock($this->getClassName(), array('hasData'),
+            array($this->getModule(), array('testing_datas_for_test' => $random)));
+
+        $stub->expects($this->once())
+            ->method('hasData')
+            ->with($this->equalTo('testing_datas_for_test'))
+            ->will($this->returnValue(true))
+        ;
+
+        $stub->hasTestingDatasForTest();
     }
 
     public function testHasDataMagicCallDataNotSet()
     {
-        $this->markTestSkipped();
+        $random = mt_rand();
+        $stub = $this->getMock($this->getClassName(), array('hasData'),
+            array($this->getModule(), array()));
+
+        $stub->expects($this->once())
+            ->method('hasData')
+            ->with($this->equalTo('testing_datas_for_test'))
+            ->will($this->returnValue(false))
+        ;
+
+        $stub->hasTestingDatasForTest();
+    }
+
+    public function testCountableInterfaceMethodCountWithEmptyObject()
+    {
+        $class = $this->getClassName();
+        $object = new $class($this->getModule(), array());
+
+        $this->assertEquals(0, $object->count());
+    }
+
+    public function testCountableInterfaceMethodCountWithNotEmptyObject()
+    {
+        $class = $this->getClassName();
+        $object = new $class($this->getModule(), array());
+
+        $object->setData('testing-1', mt_rand());
+        $object->setData('testing-2', mt_rand());
+        $object->setData('testing-3', mt_rand());
+        $object->setData('testing-4', mt_rand());
+        $object->setData('testing-5', mt_rand());
+        $object->setData('testing-6', mt_rand());
+        $object->setData('testing-7', mt_rand());
+        $object->setData('testing-1', mt_rand());
+
+        $this->assertEquals(7, $object->count());
     }
 }

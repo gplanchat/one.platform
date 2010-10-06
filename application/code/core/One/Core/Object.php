@@ -222,7 +222,6 @@ class One_Core_Object
             $key = $key->toArray();
         }
 
-        $this->_isSaved = false;
         $this->_setData($key, $value);
 
         return $this;
@@ -243,7 +242,6 @@ class One_Core_Object
             $key = $key->toArray();
         }
 
-        $this->_isSaved = false;
         $this->_addData($key, $value);
 
         return $this;
@@ -294,7 +292,6 @@ class One_Core_Object
         if (is_null($key)) {
             return $this->_unsetData();
         }
-        $this->_isSaved = false;
         return $this->_unsetData($key);
     }
 

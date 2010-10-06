@@ -73,7 +73,7 @@
       </dal>
     </resource>
   </default>
-  <production extends="default">
+  <production>
     <system>
       <hostname>one</hostname>
     </system>

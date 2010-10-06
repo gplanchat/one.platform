@@ -2,12 +2,14 @@
 
 
 class One_Core_Model_Router_Route_Stack
-//    implements Iterator
+    extends Zend_Controller_Router_Route_Abstract
 {
     protected $_routes = array();
     protected $_index = array();
 
-    public function push(Zend_Controller_Router_Route_Abstract $route, $name)
+    protected $_urlDelimiter = '/';
+
+    public function push($name, Zend_Controller_Router_Route_Abstract $route)
     {
         if (isset($this->_routes[$name])) {
             return $this;
@@ -18,7 +20,7 @@ class One_Core_Model_Router_Route_Stack
         return $this;
     }
 
-    public function pushBefore(Zend_Controller_Router_Route_Abstract $route, $name, $before)
+    public function pushBefore($name, Zend_Controller_Router_Route_Abstract $route, $before)
     {
         if (isset($this->_routes[$name])) {
             return $this;
@@ -34,7 +36,7 @@ class One_Core_Model_Router_Route_Stack
         return $this;
     }
 
-    public function pushAfter(Zend_Controller_Router_Route_Abstract $route, $name, $after)
+    public function pushAfter($name, Zend_Controller_Router_Route_Abstract $route, $after)
     {
         if (isset($this->_routes[$name])) {
             return $this;
@@ -50,10 +52,28 @@ class One_Core_Model_Router_Route_Stack
         return $this;
     }
 
-    public function registerRoutes(Zend_Controller_Router_Abstract $router)
+    public function match($path)
     {
         foreach ($this->_index as $routeName) {
-            $router->addRoute($routeName, $this->_routes[$routeName]);
+            if ($this->_routes[$routeName]->getVersion() === 1) {
+                $match = $this->_routes[$routeName]->match($path->getPathInfo());
+            } else {
+                $match = $this->_routes[$routeName]->match($path);
+            }
+            if ($match !== false) {
+                return $match;
+            }
         }
+        return false;
+    }
+
+    public function assemble($data = array(), $reset = false, $encode = false)
+    {
+        throw new Exception(__METHOD__ . ' not implemented');
+    }
+
+    public static function getInstance(Zend_Config $config)
+    {
+        return new self();
     }
 }

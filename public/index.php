@@ -12,16 +12,20 @@ defined('APPLICATION_ENV') ||
     ($env = getenv('APPLICATION_ENV')) ? define('APPLICATION_ENV', $env) :
         define('APPLICATION_ENV', 'production');
 
-set_include_path(realpath(ROOT_PATH . DS . 'externals' . DS . 'libraries'));
+set_include_path(implode(PS, array(
+    realpath(ROOT_PATH . DS . 'externals' . DS . 'libraries'),
+    realpath(APPLICATION_PATH . DS . 'code' . DS . 'core'),
+    realpath(APPLICATION_PATH . DS . 'code' . DS . 'community'),
+    realpath(APPLICATION_PATH . DS . 'code' . DS . 'local')
+    )));
 
-One::setEnv(APPLICATION_ENV);
-//var_dump(One::getConfig());
-
-One::setDomain(One::getConfig('system/hostname'));
-One::setBasePath(One::getConfig('system/base-url'));
+require_once 'Zend/Loader/Autoloader.php';
+Zend_Loader_Autoloader::getInstance()
+    ->registerNamespace('One_Core')
+;
 
 try {
-    One::app()->bootstrap()
+    One::app(null, APPLICATION_ENV)->bootstrap()
         ->run();
 } catch (Exception $e) {
     echo $e->getMessage();

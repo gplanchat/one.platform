@@ -14,9 +14,9 @@ final class One
     const PS = PATH_SEPARATOR;
 
     /**
-     * @var Zend_Application
+     * @var array
      */
-    private static $_app = null;
+    private static $_app = array();
 
     /**
      * @var string
@@ -60,6 +60,8 @@ final class One
 
     private static $_modelSingletons = array();
 
+    private static $_defaultWebsiteId = 0;
+
     /**
      * Set environment name
      *
@@ -87,13 +89,26 @@ final class One
         return self::$_env;
     }
 
-    private static function _loadConfig()
+    public static function setDefaultWebsiteId($websiteId)
+    {
+        self::$_defaultWebsiteId = $websiteId;
+    }
+
+    public static function getDefaultWebsiteId()
+    {
+        return self::$_defaultWebsiteId;
+    }
+
+    private static function _loadConfig($environent = null)
     {
         $configFile = implode(self::DS, array(APPLICATION_PATH,
             'configs', 'application.xml'));
 
+        if ($environent === null) {
+            $environent = self::getEnv();
+        }
         require_once 'Zend/Config/Xml.php';
-        self::$_config = new Zend_Config_Xml($configFile, self::getEnv(), true);
+        self::$_config = new Zend_Config_Xml($configFile, $environent, true);
 
         $pathPattern = implode(self::DS, array(APPLICATION_PATH,
             'code', '%s', '%s', 'configs', 'module.xml'));
@@ -156,28 +171,31 @@ final class One
     /**
      * Get the current application instance
      *
-     * @param unknown_type $websiteId
+     * @param mixed $websiteId
      * @return Zend_Application
      */
-    public static function app()
+    public static function app($websiteId = null, $environment = null)
     {
-        if (self::$_app instanceof Zend_Application) {
-            return self::$_app;
+        if ($websiteId === null) {
+            $websiteId = self::getDefaultWebsiteId();
+        }
+
+        if (isset(self::$_app[$websiteId]) && self::$_app[$websiteId] instanceof Zend_Application) {
+            return self::$_app[$websiteId];
         }
 
         require_once 'Zend/Loader/Autoloader.php';
         Zend_Loader_Autoloader::getInstance();
 
-        self::$_app = new Zend_Application(self::getEnv(), self::getConfig());
+        if ($environment === null) {
+            $environment = self::getEnv();
+        }
 
-        self::$_app->setIncludePaths(array(
-            realpath(APPLICATION_PATH . self::DS . 'code' . self::DS . 'core'),
-            realpath(APPLICATION_PATH . self::DS . 'code' . self::DS . 'community'),
-            realpath(APPLICATION_PATH . self::DS . 'code' . self::DS . 'local')
-            ));
+        require_once 'One/Core/Model/Application.php';
+        self::$_app[$websiteId] = new One_Core_Model_Application($websiteId, $environment);
 
-        $modules = self::$_app->getOption('modules');
-        self::$_app->setAutoloaderNamespaces(array_keys($modules));
+        $modules = self::$_app[$websiteId]->getOption('modules');
+        self::$_app[$websiteId]->setAutoloaderNamespaces(array_keys($modules));
 
         $viewRenderer = self::getViewRenderer();
 
@@ -187,57 +205,86 @@ final class One
 
         $viewRenderer->setViewScriptPathSpec('/:controller/:action.phtml');
 
-//        $layout = self::$_config['layout'];
-//        $design = $layout['design'];
-//        $template = $layout['template'];
-//        $viewBasePath = APPLICATION_PATH . self::DS . 'design' . self::DS . $design . self::DS . $template;
-//        $viewRenderer->setViewBasePathSpec($viewBasePath);
+        $layoutConfig = self::$_app[$websiteId]->getOption('layout');
+        $design = isset($layoutConfig['design']) ? $layoutConfig['design'] : 'default';
+        $theme = isset($layoutConfig['template']) ? $layoutConfig['template'] : 'default';
+        $viewBasePath = APPLICATION_PATH . self::DS . 'design' . self::DS . $design . self::DS . $theme;
+        $viewRenderer->setViewBasePathSpec($viewBasePath);
 
-        $routeStack = new One_Core_Model_Router_Route_Stack();
+        $routesConfig = self::$_app[$websiteId]->getOption('routes');
+        $routeStack = One_Core_Model_Router_Route_Stack::getInstance(new Zend_Config((array) $routesConfig));
         $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'controllers'));
+
+        $frontController = self::$_app[$websiteId]->getBootstrap()
+            ->getPluginResource('frontController')
+            ->getFrontController()
+        ;
+        $router = $frontController->getRouter();
+        $router->addRoute('default', $routeStack);
+
         foreach ($modules as $moduleName => $moduleConfig) {
-            if (!isset($moduleConfig['active']) || !in_array(strtolower($moduleConfig['active']), array('1', 'true', 'on'))) {
+            if (!in_array(strtolower($moduleConfig['active']), array(1, true, '1', 'true', 'on'))) {
                 continue;
             }
 
             $modulePath = sprintf($pathPattern, $moduleConfig['codePool'], str_replace('_', DS, $moduleName));
-            self::_registerModule(self::getFrontController(), self::getRouter(), $moduleName, $moduleConfig, $modulePath);
+            $frontController->addControllerDirectory($modulePath, $moduleName);
+
+            $routeClassName = 'core/router.route';
+            if (isset($moduleConfig['route']) && isset($moduleConfig['route']['type'])) {
+                $routeClassName = self::loadClass($moduleConfig['route']['type']);
+            }
+            $moduleRoute = new $routeClassName($moduleConfig['route'], $moduleName);
+
+            if (isset($moduleConfig['route']['name'])) {
+                $routeName = $moduleConfig['route']['name'];
+            } else {
+                $routeName = 'module.' . strtolower($moduleName);
+            }
+
+            if (isset($moduleConfig['route']['before'])) {
+                $routeStack->pushBefore($routeName, $moduleRoute, $moduleConfig['route']['before']);
+            } else if (isset($moduleConfig['route']['after'])) {
+                $routeStack->pushAfter($routeName, $moduleRoute, $moduleConfig['route']['after']);
+            } else {
+                $routeStack->push($routeName, $moduleRoute);
+            }
         }
 
-        self::getFrontController()->setDefaultModule('One_Core');
-        $dispatcher = self::getFrontController()->getDispatcher();
+        $frontController->setDefaultModule('One_Core');
+        $dispatcher = $frontController->getDispatcher();
         $dispatcher->setParam('prefixDefaultModule', true);
 
-        return self::$_app;
+        return self::$_app[$websiteId];
     }
 
-    public static function getFrontController($cache = true)
-    {
-        if ($cache = true && self::$_frontController instanceof Zend_Controller_Front) {
-            return self::$_frontController;
-        }
+//    public static function getFrontController($cache = true)
+//    {
+//        if ($cache = true && self::$_frontController instanceof Zend_Controller_Front) {
+//            return self::$_frontController;
+//        }
+//
+//        self::$_frontController = self::$_app->getBootstrap()
+//            ->getPluginResource('frontController')
+//            ->getFrontController()
+//        ;
+//
+//        return self::$_frontController;
+//    }
 
-        self::$_frontController = self::$_app->getBootstrap()
-            ->getPluginResource('frontController')
-            ->getFrontController()
-        ;
-
-        return self::$_frontController;
-    }
-
-    public static function getRouter($cache = true)
-    {
-        if ($cache = true && self::$_router instanceof Zend_Controller_Router_Abstract) {
-            return self::$_router;
-        }
-
-        if (self::$_frontController instanceof Zend_Controller_Front) {
-            self::$_router = self::$_frontController->getRouter();
-        } else if (($frontController = self::getFrontController()) !== null) {
-            self::$_router = $frontController->getRouter();
-        }
-        return self::$_router;
-    }
+//    public static function getRouter($cache = true)
+//    {
+//        if ($cache = true && self::$_router instanceof Zend_Controller_Router_Abstract) {
+//            return self::$_router;
+//        }
+//
+//        if (self::$_frontController instanceof Zend_Controller_Front) {
+//            self::$_router = self::$_frontController->getRouter();
+//        } else if (($frontController = self::getFrontController()) !== null) {
+//            self::$_router = $frontController->getRouter();
+//        }
+//        return self::$_router;
+//    }
 
     public static function getViewRenderer()
     {
@@ -248,42 +295,42 @@ final class One
         return self::$_viewRenderer;
     }
 
-    public static function setBasePath($basePath)
-    {
-        self::$_basePath = $basePath;
-    }
-
-    public static function getBasePath()
-    {
-        return self::$_basePath;
-    }
-
-    public static function setDomain($domain)
-    {
-        self::$_domain = $domain;
-    }
-
-    public static function getDomain()
-    {
-        return self::$_domain;
-    }
-
-    private static function _registerModule($frontController, $router, $moduleName, $moduleConfig, $modulePath)
-    {
-        $frontController->addControllerDirectory($modulePath, $moduleName);
-
-        $routeClassName = 'core/router.route';
-        if (isset($moduleConfig['route']) && isset($moduleConfig['route']['type'])) {
-            $routeClassName = self::loadClass($moduleConfig['route']['type']);
-        }
-        $moduleRoute = new $routeClassName($moduleConfig['route'], $moduleName);
-
-        if (isset($moduleConfig['route']['name'])) {
-            $router->addRoute($moduleConfig['route']['name'], $moduleRoute);
-        } else {
-            $router->addRoute('module.' . strtolower($moduleName), $moduleRoute);
-        }
-    }
+//    public static function setBasePath($basePath)
+//    {
+//        self::$_basePath = $basePath;
+//    }
+//
+//    public static function getBasePath()
+//    {
+//        return self::$_basePath;
+//    }
+//
+//    public static function setDomain($domain)
+//    {
+//        self::$_domain = $domain;
+//    }
+//
+//    public static function getDomain()
+//    {
+//        return self::$_domain;
+//    }
+//
+//    private static function _registerModule($frontController, $router, $moduleName, $moduleConfig, $modulePath)
+//    {
+//        $frontController->addControllerDirectory($modulePath, $moduleName);
+//
+//        $routeClassName = 'core/router.route';
+//        if (isset($moduleConfig['route']) && isset($moduleConfig['route']['type'])) {
+//            $routeClassName = self::loadClass($moduleConfig['route']['type']);
+//        }
+//        $moduleRoute = new $routeClassName($moduleConfig['route'], $moduleName);
+//
+//        if (isset($moduleConfig['route']['name'])) {
+//            $router->addRoute($moduleConfig['route']['name'], $moduleRoute);
+//        } else {
+//            $router->addRoute('module.' . strtolower($moduleName), $moduleRoute);
+//        }
+//    }
 
     private static function _inflectClassName($className, $domain)
     {
