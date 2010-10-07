@@ -30,39 +30,25 @@
  */
 -->
 <config>
+  <default>
     <modules>
-        <One_Core>
-            <version>0.1.0</version>
-        </One_Core>
+      <One_Core>
+        <version>0.1.0</version>
+      </One_Core>
     </modules>
 
-    <global>
-        <models>
-            <core>
-                <class_prefix>One_Core_Model_</class_prefix>
-                <resource>
-                    <master>
-                        <class_prefix>One_Core_Model_Resource_</class_prefix>
-                    </master>
-                    <dao>
-                        <class_prefix>One_Core_Model_Resource_Dao_Database_Mysql_</class_prefix>
-                        <connection>
-                            <read>core_read</read>
-                            <write>core_write</write>
-                            <setup>core_setup</setup>
-                        </connection>
-                    </dao>
-                    <orm>
-                        <class_prefix>One_Core_Resource_Orm_</class_prefix>
-                    </orm>
-                </resource>
-            </core>
-        </models>
+    <model>
+      <core>
+        <rewrite>
+          <testing.rewrite>One_Core_Object</testing.rewrite>
+        </rewrite>
+      </core>
+    </model>
 
-        <exceptions>
-            <core>
-                <class_prefix>One_Core_Exception_</class_prefix>
-            </core>
-        </exceptions>
-    </global>
+    <exception>
+      <core>
+        <class_prefix>One_Core_Exception_</class_prefix>
+      </core>
+    </exception>
+  </default>
 </config>

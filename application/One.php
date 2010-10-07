@@ -184,9 +184,6 @@ final class One
             return self::$_app[$websiteId];
         }
 
-        require_once 'Zend/Loader/Autoloader.php';
-        Zend_Loader_Autoloader::getInstance();
-
         if ($environment === null) {
             $environment = self::getEnv();
         }
@@ -197,94 +194,8 @@ final class One
         $modules = self::$_app[$websiteId]->getOption('modules');
         self::$_app[$websiteId]->setAutoloaderNamespaces(array_keys($modules));
 
-        $viewRenderer = self::getViewRenderer();
-
-        Zend_Layout::startMvc(array(
-            'inflectorTarget' => 'page/:script.:suffix')
-            );
-
-        $viewRenderer->setViewScriptPathSpec('/:controller/:action.phtml');
-
-        $layoutConfig = self::$_app[$websiteId]->getOption('layout');
-        $design = isset($layoutConfig['design']) ? $layoutConfig['design'] : 'default';
-        $theme = isset($layoutConfig['template']) ? $layoutConfig['template'] : 'default';
-        $viewBasePath = APPLICATION_PATH . self::DS . 'design' . self::DS . $design . self::DS . $theme;
-        $viewRenderer->setViewBasePathSpec($viewBasePath);
-
-        $routesConfig = self::$_app[$websiteId]->getOption('routes');
-        $routeStack = One_Core_Model_Router_Route_Stack::getInstance(new Zend_Config((array) $routesConfig));
-        $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'controllers'));
-
-        $frontController = self::$_app[$websiteId]->getBootstrap()
-            ->getPluginResource('frontController')
-            ->getFrontController()
-        ;
-        $router = $frontController->getRouter();
-        $router->addRoute('default', $routeStack);
-
-        foreach ($modules as $moduleName => $moduleConfig) {
-            if (!in_array(strtolower($moduleConfig['active']), array(1, true, '1', 'true', 'on'))) {
-                continue;
-            }
-
-            $modulePath = sprintf($pathPattern, $moduleConfig['codePool'], str_replace('_', DS, $moduleName));
-            $frontController->addControllerDirectory($modulePath, $moduleName);
-
-            $routeClassName = 'core/router.route';
-            if (isset($moduleConfig['route']) && isset($moduleConfig['route']['type'])) {
-                $routeClassName = self::loadClass($moduleConfig['route']['type']);
-            }
-            $moduleRoute = new $routeClassName($moduleConfig['route'], $moduleName);
-
-            if (isset($moduleConfig['route']['name'])) {
-                $routeName = $moduleConfig['route']['name'];
-            } else {
-                $routeName = 'module.' . strtolower($moduleName);
-            }
-
-            if (isset($moduleConfig['route']['before'])) {
-                $routeStack->pushBefore($routeName, $moduleRoute, $moduleConfig['route']['before']);
-            } else if (isset($moduleConfig['route']['after'])) {
-                $routeStack->pushAfter($routeName, $moduleRoute, $moduleConfig['route']['after']);
-            } else {
-                $routeStack->push($routeName, $moduleRoute);
-            }
-        }
-
-        $frontController->setDefaultModule('One_Core');
-        $dispatcher = $frontController->getDispatcher();
-        $dispatcher->setParam('prefixDefaultModule', true);
-
         return self::$_app[$websiteId];
     }
-
-//    public static function getFrontController($cache = true)
-//    {
-//        if ($cache = true && self::$_frontController instanceof Zend_Controller_Front) {
-//            return self::$_frontController;
-//        }
-//
-//        self::$_frontController = self::$_app->getBootstrap()
-//            ->getPluginResource('frontController')
-//            ->getFrontController()
-//        ;
-//
-//        return self::$_frontController;
-//    }
-
-//    public static function getRouter($cache = true)
-//    {
-//        if ($cache = true && self::$_router instanceof Zend_Controller_Router_Abstract) {
-//            return self::$_router;
-//        }
-//
-//        if (self::$_frontController instanceof Zend_Controller_Front) {
-//            self::$_router = self::$_frontController->getRouter();
-//        } else if (($frontController = self::getFrontController()) !== null) {
-//            self::$_router = $frontController->getRouter();
-//        }
-//        return self::$_router;
-//    }
 
     public static function getViewRenderer()
     {
@@ -295,102 +206,54 @@ final class One
         return self::$_viewRenderer;
     }
 
-//    public static function setBasePath($basePath)
-//    {
-//        self::$_basePath = $basePath;
-//    }
-//
-//    public static function getBasePath()
-//    {
-//        return self::$_basePath;
-//    }
-//
-//    public static function setDomain($domain)
-//    {
-//        self::$_domain = $domain;
-//    }
-//
-//    public static function getDomain()
-//    {
-//        return self::$_domain;
-//    }
-//
-//    private static function _registerModule($frontController, $router, $moduleName, $moduleConfig, $modulePath)
-//    {
-//        $frontController->addControllerDirectory($modulePath, $moduleName);
-//
-//        $routeClassName = 'core/router.route';
-//        if (isset($moduleConfig['route']) && isset($moduleConfig['route']['type'])) {
-//            $routeClassName = self::loadClass($moduleConfig['route']['type']);
-//        }
-//        $moduleRoute = new $routeClassName($moduleConfig['route'], $moduleName);
-//
-//        if (isset($moduleConfig['route']['name'])) {
-//            $router->addRoute($moduleConfig['route']['name'], $moduleRoute);
-//        } else {
-//            $router->addRoute('module.' . strtolower($moduleName), $moduleRoute);
-//        }
-//    }
-
-    private static function _inflectClassName($className, $domain)
+    /**
+     * @deprecated
+     *
+     * @param unknown_type $identifier
+     * @param unknown_type $websiteId
+     * @param unknown_type $params
+     */
+    public static function getModel($identifier, $websiteId = null, $params = null)
     {
-        static $inflector = null;
+        $params = array_splice(func_get_args(), 1, 1);
 
-        if ($inflector === null) {
-            $inflector = new One_Core_Model_Inflector();
-        }
-
-        $offset = strpos($className, '/');
-        $module = substr($className, 0, $offset);
-        $class = substr($className, $offset + 1);
-
-//        self::getConfig("{$domain}/{$module}/rewrite")
-
-        $xmlDomain = str_replace('.', '/', $domain);
-        if (($namespace = self::getConfig("{$xmlDomain}/{$module}/namespace")) !== null) {
-            return $namespace . '_' . $inflector->filter($class);
-        }
-
-        return $inflector->filter('one.' . $module) . '_' . $inflector->filter($domain)
-                . '_' . $inflector->filter($class);
+        return call_user_func_array(array(self::app($websiteId), 'getModel'), $params);
     }
 
-    public static function loadClass($classIdentifier, $domain = 'model')
+    /**
+     * @deprecated
+     *
+     * @param unknown_type $identifier
+     * @param unknown_type $websiteId
+     * @param unknown_type $params
+     */
+    public static function getSingleton($identifier, $websiteId = null, $params = null)
     {
-        $className = self::_inflectClassName($classIdentifier, $domain);
-        Zend_Loader::loadClass($className);
-        return $className;
+        return self::app($websiteId)->getSingleton($identifier, $params);
     }
 
-    public static function getModel($identifier, $params)
+    /**
+     * @deprecated
+     *
+     * @param unknown_type $identifier
+     * @param unknown_type $websiteId
+     * @param unknown_type $params
+     */
+    public static function getBlockSingleton($identifier, $websiteId = null, $params = null)
     {
-        $className = self::loadClass($identifier, 'model');
-
-        $reflectionClass = new ReflectionClass($className);
-        if ($reflectionClass->isSubclassOf('One_Core_Object')) {
-            $object = $reflectionClass->newInstance($moduleName, $params);
-        } else {
-            $object = $reflectionClass->newInstanceArgs($params);
-        }
-        return $object;
+        return self::app($websiteId)->getBlockSingleton($identifier, $params);
     }
 
-    public static function getSingleton($identifier)
+    /**
+     * @deprecated
+     *
+     * @param unknown_type $identifier
+     * @param unknown_type $websiteId
+     * @param unknown_type $message
+     * @param unknown_type $_
+     */
+    public static function throwException($identifier, $websiteId, $message, $_ = null)
     {
-        if (isset(self::$_modelSingletons[$identifier])) {
-            self::$_modelSingletons[$identifier] = self::getModel($identifier);
-        }
-        return self::$_modelSingletons[$identifier];
-    }
-
-    public static function throwException($identifier, $message, $_ = null)
-    {
-        $className = self::loadClass($identifier, 'exception');
-
-        $args = func_get_args();
-        array_shift($args);
-        array_shift($args);
-
-        throw new $className(vsprintf($message, $args));
+        return self::app($websiteId)->throwException($identifier, vsprintf($message, array_slice(func_get_args(), 3)));
     }
 }

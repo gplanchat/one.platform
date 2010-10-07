@@ -9,6 +9,15 @@ class One_Core_Model_Application
 
     protected $_dependencies = array();
 
+    protected $_classInflector = null;
+
+    protected $_modelSingletons = array();
+
+    /**
+     * @var Zend_Controller_Front
+     */
+    protected $_frontController = null;
+
     const DS = DIRECTORY_SEPARATOR;
     const PS = PATH_SEPARATOR;
 
@@ -50,14 +59,17 @@ class One_Core_Model_Application
                 $moduleConfig->codePool = $codePool;
             }
 
-            $path = sprintf($pathPattern, $codePool, str_replace('_', DS, $moduleName));
+            $path = sprintf($pathPattern, $codePool, str_replace('_', self::DS, $moduleName));
             if (!file_exists($path)) {
                 $modules->get($moduleName)->active = false;
                 continue;
             }
 
             $moduleConfig = new Zend_Config_Xml($path, null, true);
-            $config->merge($moduleConfig);
+            $config->merge($moduleConfig->default);
+            if (isset($moduleConfig->$environment)) {
+                $config->merge($moduleConfig->$environment);
+            }
 
             $this->_addModule($moduleName, $moduleConfig);
         }
@@ -67,6 +79,52 @@ class One_Core_Model_Application
         $config->setReadOnly();
 
         parent::__construct($environment, $config);
+
+        $routeStack = One_Core_Model_Router_Route_Stack::getInstance(new Zend_Config((array) $config->routes));
+        $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'controllers'));
+
+        $this->_frontController = $this->getBootstrap()
+            ->getPluginResource('frontController')
+            ->getFrontController()
+        ;
+        $router = $this->_frontController->getRouter();
+        $router->addRoute('default', $routeStack);
+
+        foreach ($config->modules as $moduleName => $moduleConfig) {
+            if (!in_array($moduleName, $this->_activeModules)) {
+                continue;
+            }
+
+            $modulePath = sprintf($pathPattern, $moduleConfig->codePool, str_replace('_', self::DS, $moduleName));
+            $this->_frontController->addControllerDirectory($modulePath, $moduleName);
+
+            $routeClassName = 'core/router.route';
+            if (isset($moduleConfig->route)) {
+                $routeClassName = $moduleConfig->route->get('type', $routeClassName);
+            }
+            $moduleRoute = $this->getModel($routeClassName, $moduleConfig->route, $moduleName);
+
+            if (isset($moduleConfig->route->name)) {
+                $routeName = $moduleConfig->route->name;
+            } else {
+                $routeName = 'module.' . strtolower($moduleName);
+            }
+
+            if (isset($moduleConfig->route->before)) {
+                $routeStack->pushBefore($routeName, $moduleRoute, $moduleConfig->route->before);
+            } else if (isset($moduleConfig->route->after)) {
+                $routeStack->pushAfter($routeName, $moduleRoute, $moduleConfig->route->after);
+            } else {
+                $routeStack->push($routeName, $moduleRoute);
+            }
+        }
+
+        $this->_frontController->setDefaultModule('One_Core');
+        $dispatcher = $this->_frontController->getDispatcher();
+        $dispatcher->setParam('prefixDefaultModule', true);
+
+        $dispatcher->setParam('applicationInstance', $this);
+        $dispatcher->setParam('websiteId', $this->getWebsiteId());
     }
 
     protected function _validateModulesActivation($modulesConfig)
@@ -117,5 +175,105 @@ class One_Core_Model_Application
     public function getWebsiteId()
     {
         return $this->_websiteId;
+    }
+
+    public function setClassInflector($inflector)
+    {
+        $this->_classInflector = $inflector;
+    }
+
+    /**
+     *
+     * @param unknown_type $className
+     * @param unknown_type $domain
+     * @return StdClass
+     */
+    protected function _inflectClassName($className, $domain)
+    {
+        if ($this->_classInflector === null) {
+            $this->_classInflector = new One_Core_Model_Inflector();
+        }
+
+        $classData = new StdClass;
+        $offset = strpos($className, '/');
+        $classData->module = substr($className, 0, $offset);
+        $classData->domain = $domain;
+        $classData->alias = substr($className, $offset + 1);
+
+        $domainXmlPath = explode('/', $domain);
+        array_push($domainXmlPath, $classData->module);
+        $domainConfig = $this->getOption(array_shift($domainXmlPath));
+        while (count($domainXmlPath)) {
+            $key = array_shift($domainXmlPath);
+            if (isset($domainConfig[$key])) {
+                $domainConfig = $domainConfig[$key];
+            }
+        }
+        $domainConfig = new Zend_Config($domainConfig);
+
+        if (($rewrite = $domainConfig->rewrite) !== null &&
+                ($rewrite->{$classData->alias}) !== null) {
+            $classData->name = $rewrite->{$classData->alias};
+        } else if (($namespace = $domainConfig->namespace) !== null) {
+            $classData->name = $namespace . '_' . $this->_classInflector->filter($classData->alias);
+        } else {
+            $classData->name = $this->_classInflector->filter('one.' . $classData->module)
+                    . '_' . $this->_classInflector->filter($classData->domain)
+                    . '_' . $this->_classInflector->filter($classData->alias);
+        }
+        var_dump(array(array($className, $domain), $classData));
+
+        return $classData;
+    }
+
+    public function getModel($identifier, $options = null)
+    {
+        $classData = $this->_inflectClassName($identifier, 'model');
+        var_dump($classData);
+
+        Zend_Loader::loadClass($classData->name);
+
+        $reflectionClass = new ReflectionClass($classData->name);
+        if ($reflectionClass->isSubclassOf('One_Core_Object')) {
+            $object = $reflectionClass->newInstance($classData->module, $options);
+        } else {
+            $params = func_get_args();
+            array_shift($params);
+            $object = $reflectionClass->newInstanceArgs($params);
+        }
+        return $object;
+    }
+
+    public function getSingleton($identifier, $options = null)
+    {
+        if (!isset($this->_modelSingletons[$identifier])) {
+            $this->_modelSingletons[$identifier] = $this->getModel($identifier, $options);
+        }
+        return $this->_modelSingletons[$identifier];
+    }
+
+    public function getBlock($identifier, $options = null)
+    {
+        $classData = $this->_inflectClassName($identifier, 'block');
+
+//        Zend_Loader::loadClass($classData->name);
+
+        $reflectionClass = new ReflectionClass($classData->name);
+        if ($reflectionClass->isSubclassOf('One_Core_Object')) {
+            $object = $reflectionClass->newInstance($classData->module, $options);
+        } else {
+            $params = func_get_args();
+            array_shift($params);
+            $object = $reflectionClass->newInstanceArgs($params);
+        }
+        return $object;
+    }
+
+    public function getBlockSingleton($identifier, $options = null)
+    {
+        if (!isset($this->_blockSingletons[$identifier])) {
+            $this->_blockSingletons[$identifier] = $this->getBlock($identifier, $options);
+        }
+        return $this->_blockSingletons[$identifier];
     }
 }

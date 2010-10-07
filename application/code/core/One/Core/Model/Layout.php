@@ -40,9 +40,9 @@
  * @subpackage  One_Core
  */
 class One_Core_Model_Layout
-    extends Zend_Layout
+    extends One_Core_Object
 {
-    const NS_LAYOUT = 'http://xml.xnova-ng.org/layout/1.0/';
+    const NS_LAYOUT = 'http://www.one.org/xml/layout/1.0/';
     const NS_XINCLUDE = 'http://www.w3.org/2001/XInclude';
 
     protected $_layoutName = NULL;
@@ -54,12 +54,15 @@ class One_Core_Model_Layout
      * Création d'une instance de layout.
      *
      * @param $layoutName
-     * @return unknown_type
+     * @return One_Core_Model_Layout
      */
     public static function factory($layoutName)
     {
-        $config = Nova::getConfig('frontend.design');
-        $layoutPath = ROOT_PATH . "/design/{$config['name']}/layout/{$config['layout']}";
+        $config = One::getConfig('frontoffice.design');
+        $pathPattern = implode(self::DS, array(
+            APPLICATION_PATH, 'design', 'frontoffice', '%1$s', '%2$s', 'layout'));
+        $layoutPath = sprintf($pathPattern, $config->get('design', 'default'),
+            $config->get('template', 'default'));
 
         return new self($layoutPath, $layoutName);
     }
@@ -70,10 +73,24 @@ class One_Core_Model_Layout
      * @param string $layoutName
      * @return void
      */
-    public function __construct($filename, $layoutName)
+    public function __construct($moduleName = 'core', $data = array())
     {
-        $config = Nova::getConfig('frontend.design');
-        $this->_basePath = ROOT_PATH . "/design/{$config['name']}/{$config['template']}";
+        if ($data instanceof Zend_Config) {
+            $data = $data->toArray();
+        }
+
+        $data = array_merge(array(
+            'type'     => 'frontoffice',
+            'name'     => 'page',
+            'design'   => 'default',
+            'template' => 'default'
+            ), (array) $data);
+
+        $basePath = implode(One::DS, array(APPLICATION_PATH, 'design', $data['type'],
+            'base', $data['template'], 'layout', '*.xml'));
+
+        var_dump(glob($basePath));
+        return;
 
         $this->_layoutName = $layoutName;
         $layoutDefinitions = simplexml_load_file($filename);

@@ -5,7 +5,9 @@ class One_Core_IndexController
 {
     public function indexAction()
     {
-        $this->view->lang = $this->getRequest()->getParam('lang');
+        One::getModel('tet/test', null, 'test', 'test');
+
+        $this->view->lang = $this->getRequest()->getParam('path');
         $this->view->module = $this->getRequest()->getParam('module');
         $this->view->controller = $this->getRequest()->getParam('controller');
         $this->view->action = $this->getRequest()->getParam('action');

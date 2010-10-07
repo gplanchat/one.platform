@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local>
+  <default>
+    <general>
+      <database>
+        <connection>
+          <core_setup>
+            <engine>mysql</engine>
+            <params>
+              <host>localhost</host>
+              <user>root</user>
+              <password></password>
+              <dbname>db_legacies</dbname>
+            </params>
+          </core_setup>
+        </connection>
+      </database>
+    </general>
+  </default>
+  <production>
+  </production>
+</local>

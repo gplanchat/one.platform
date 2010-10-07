@@ -10,6 +10,25 @@
         <code>fr_FR</code>
         <timezone>Europe/Paris</timezone>
       </locale>
+      <database>
+        <connection>
+          <core_setup>
+            <engine></engine>
+            <params>
+              <host></host>
+              <user></user>
+              <password></password>
+              <dbname></dbname>
+            </params>
+          </core_setup>
+          <core_read>
+            <use>core_setup</use>
+          </core_read>
+          <core_write>
+            <use>core_setup</use>
+          </core_write>
+        </connection>
+      </database>
     </general>
     <modules>
       <One_Core>
@@ -44,16 +63,23 @@
         <active>0</active>
         <route type="cms/router.route" name="default" />
       </One_Cms>
+      <One_Admin_Cms>
+        <codePool>core</codePool>
+        <active>0</active>
+        <route type="admin.cms/router.route" path="cms" />
+      </One_Admin_Cms>
       <One_OpenId>
         <codePool>core</codePool>
         <active>0</active>
         <route type="openid/router.route" />
       </One_OpenId>
     </modules>
-    <layout>
-      <design>default</design>
-      <template>default</template>
-    </layout>
+    <frontoffice>
+      <layout>
+        <design>default</design>
+        <template>default</template>
+      </layout>
+    </frontoffice>
     <model>
       <core>
         <namespace>One_Core_Model</namespace>
