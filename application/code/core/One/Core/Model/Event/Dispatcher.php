@@ -50,7 +50,7 @@ class One_Core_Model_Event_Dispatcher
      * @param unknown_type $eventName
      * @param unknown_type $params
      */
-    public function dispatchEvent($eventName, $params = array())
+    public function dispatch($eventName, $params = array())
     {
         if (!isset($this->_events[$eventName]) || empty($this->_events[$eventName])) {
             return $this;
@@ -64,17 +64,16 @@ class One_Core_Model_Event_Dispatcher
     /**
      * TODO: PHPDoc
      *
-     * @param unknown_type $eventName
-     * @param unknown_type $params
+     * @param string $eventName
+     * @param One_Core_Model_Event_Listener $params
      */
-    public function registerListener($eventName, $listener)
+    public function register($eventName, One_Core_Model_Event_Listener $listener)
     {
         if (!isset($this->_events[$eventName])) {
             $this->_events[$eventName] = array();
         }
 
-        $this->_events[$eventName][] = Nova::getModel('core/event.listener')
-            ->setCallback($listener);
+        $this->_events[$eventName][] = $listener;
 
         return $this;
     }

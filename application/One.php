@@ -24,31 +24,6 @@ final class One
     private static $_env = null;
 
     /**
-     * @var Zend_Config
-     */
-    private static $_config = null;
-
-    /**
-     * @var Zend_Controller_Front
-     */
-    private static $_frontController = null;
-
-    /**
-     * @var Zend_Controller_Router_Abstract
-     */
-    private static $_router = null;
-
-    /**
-     * @var One_Core_Model_Router_Route_Stack
-     */
-    private static $_routeStack = null;
-
-    /**
-     * @var Zend_Controller_Action_Helper_ViewRenderer
-     */
-    private static $_viewRenderer = null;
-
-    /**
      * @var string
      */
     private static $_basePath = '/';
@@ -58,8 +33,9 @@ final class One
      */
     private static $_domain = null;
 
-    private static $_modelSingletons = array();
-
+    /**
+     * @var int
+     */
     private static $_defaultWebsiteId = 0;
 
     /**
@@ -99,75 +75,6 @@ final class One
         return self::$_defaultWebsiteId;
     }
 
-    private static function _loadConfig($environent = null)
-    {
-        $configFile = implode(self::DS, array(APPLICATION_PATH,
-            'configs', 'application.xml'));
-
-        if ($environent === null) {
-            $environent = self::getEnv();
-        }
-        require_once 'Zend/Config/Xml.php';
-        self::$_config = new Zend_Config_Xml($configFile, $environent, true);
-
-        $pathPattern = implode(self::DS, array(APPLICATION_PATH,
-            'code', '%s', '%s', 'configs', 'module.xml'));
-        $modules = self::$_config->get('modules');
-        foreach ($modules as $moduleName => $moduleConfig) {
-            if (!in_array(strtolower($moduleConfig->get('active')), array(1, true, '1', 'true', 'on'))) {
-                continue;
-            }
-
-            if (($codePool = $moduleConfig->get('codePool')) === null) {
-                $codePool = 'local';
-                $moduleConfig->codePool = $codePool;
-            }
-
-            $path = sprintf($pathPattern, $codePool, str_replace('_', DS, $moduleName));
-            if (!file_exists($path)) {
-                self::$_config->get('modules')->get($moduleName)->active = false;
-                continue;
-            }
-
-            $moduleConfig = new Zend_Config_Xml($path);
-            if (($config = $moduleConfig->get(self::getEnv())) !== null) {
-                self::$_config->merge($config);
-            } else if (($config = $moduleConfig->get('default')) !== null) {
-                self::$_config->merge($config);
-            } else {
-                self::$_config->merge($moduleConfig);
-            }
-        }
-
-        self::$_config->setReadOnly();
-
-        return self::$_config;
-    }
-
-    public static function getConfig($path = null)
-    {
-        if (self::$_config === null) {
-            self::_loadConfig();
-        }
-
-        if ($path === null) {
-            return self::$_config;
-        }
-
-        $config = self::$_config;
-        foreach (explode('/', $path) as $pathChunk) {
-            $config = $config->get($pathChunk);
-            if ($config === null) {
-                return null;
-            }
-        }
-
-        if ($config instanceof Zend_Config) {
-            return $config->toArray();
-        }
-        return $config;
-    }
-
     /**
      * Get the current application instance
      *
@@ -195,15 +102,6 @@ final class One
         self::$_app[$websiteId]->setAutoloaderNamespaces(array_keys($modules));
 
         return self::$_app[$websiteId];
-    }
-
-    public static function getViewRenderer()
-    {
-        if (self::$_viewRenderer === null) {
-            self::$_viewRenderer = new Zend_Controller_Action_Helper_ViewRenderer();
-            Zend_Controller_Action_HelperBroker::addHelper(self::$_viewRenderer);
-        }
-        return self::$_viewRenderer;
     }
 
     /**

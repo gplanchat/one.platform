@@ -42,13 +42,9 @@
 class One_Core_Model_Layout
     extends One_Core_Object
 {
-    const NS_LAYOUT = 'http://www.one.org/xml/layout/1.0/';
-    const NS_XINCLUDE = 'http://www.w3.org/2001/XInclude';
+    protected $_layoutConfiguration = null;
 
-    protected $_layoutName = NULL;
-    protected $_childNodes = array();
-    protected $_rootNodes = array();
-    protected $_basePath = NULL;
+    protected $_actionController = null;
 
     /**
      * Création d'une instance de layout.
@@ -87,30 +83,66 @@ class One_Core_Model_Layout
             ), (array) $data);
 
         $basePath = implode(One::DS, array(APPLICATION_PATH, 'design', $data['type'],
-            'base', $data['template'], 'layout', '*.xml'));
+            'default', 'base', 'layout', '*.xml'));
 
-        var_dump(glob($basePath));
-        return;
+        $templatePath = implode(One::DS, array(APPLICATION_PATH, 'design', $data['type'],
+            $data['design'], $data['template'], 'layout', '*.xml'));
 
-        $this->_layoutName = $layoutName;
-        $layoutDefinitions = simplexml_load_file($filename);
-        $layoutDefinitions->registerXPathNamespace('l', self::NS_LAYOUT);
-        $layoutDefinitions->registerXPathNamespace('xi', self::NS_XINCLUDE);
-
-        $layoutHandle = $this->_loadLayoutNode($layoutDefinitions, $layoutName);
-
-        if (!isset($layoutHandle)) {
-            throw new UnexpectedValueException("No such layout `{$layoutName}`");
+        $this->_layoutConfiguration = new Zend_Config(array(), true);
+        foreach (array_merge(glob($basePath), glob($templatePath)) as $filename) {
+            $this->_layoutConfiguration->merge(new Zend_Config_Xml($filename, null, true));
         }
 
-        $layoutHandles = array($layoutHandle);
-        while ($layoutHandle = $this->_loadLayoutNode($layoutDefinitions, $layoutHandle['extends'])) {
-            array_unshift($layoutHandles, $layoutHandle);
+        $this->_layoutConfiguration->setReadOnly();
+    }
+
+    public function buildView($layoutName)
+    {
+        $layoutConfig = new Zend_Config(array(), true);
+
+        if (($defaultConfig = $this->_layoutConfiguration->default) === null) {
+            return null;
+        }
+        $layoutConfig->merge($defaultConfig);
+        if (($namedConfig = $this->_layoutConfiguration->{$layoutName}) === null) {
+            return null;
+        }
+        $layoutConfig->merge($namedConfig);
+
+        $layoutConfig = $layoutConfig->toArray();
+
+        $type = $layoutConfig['block']['type'];
+        unset($layoutConfig['block']['type']);
+
+        $view = One::app()->getBlock($type, $layoutConfig['block']);
+
+        return $view;
+    }
+
+    public function setActionController(Zend_Controller_Action $actionController)
+    {
+        $this->_actionController = $actionController;
+
+        return $this;
+    }
+
+    public function init()
+    {
+        $request = $this->_actionController->getRequest();
+        $layoutName = implode('.', array(
+            $request->getParam('path'),
+            $request->getParam('controller'),
+            $request->getParam('action')
+            ));
+
+        $view = $this->buildView($layoutName);
+        if ($view === null) {
+            One::app()->throwException('core/configuration-error', "Layout '{$layoutName}' not declared.");
         }
 
-        foreach ($layoutHandles as $layoutHandle) {
-            $this->_applyExtends($layoutHandle);
-        }
+        $this->_actionController->view = $view;
+
+        return $this;
     }
 
     /**
@@ -119,182 +151,182 @@ class One_Core_Model_Layout
      * @param $type
      * @return unknown_type
      */
-    public function createBlock($type)
-    {
-        if (Nova::loadClass($className = 'One_Template_' . str_replace('/', '_', $type))) {
-            $instance = new $className($this);
-        } else if (Nova::loadClass($className = strval($type))) {
-            $instance = new $className($this);
-        } else {
-            return NULL;
-        }
-        return $instance;
-    }
+//    public function createBlock($type)
+//    {
+//        if (Nova::loadClass($className = 'One_Template_' . str_replace('/', '_', $type))) {
+//            $instance = new $className($this);
+//        } else if (Nova::loadClass($className = strval($type))) {
+//            $instance = new $className($this);
+//        } else {
+//            return NULL;
+//        }
+//        return $instance;
+//    }
 
     /**
      * Génération du rendu du layout
      *
      * @return unknown_type
      */
-    public function render()
-    {
-        ob_start();
-        foreach ($this->_rootNodes as $node) {
-            echo $node->render();
-        }
-        $page = ob_get_contents();
-        ob_end_clean();
-        return $page;
-    }
+//    public function render()
+//    {
+//        ob_start();
+//        foreach ($this->_rootNodes as $node) {
+//            echo $node->render();
+//        }
+//        $page = ob_get_contents();
+//        ob_end_clean();
+//        return $page;
+//    }
 
     /**
      *
      * @return string
      */
-    public function getLayoutName()
-    {
-        return (string) $this->_layoutName;
-    }
+//    public function getLayoutName()
+//    {
+//        return (string) $this->_layoutName;
+//    }
 
     /**
      *
      * @return string
      */
-    public function getBasePath()
-    {
-        return (string) $this->_basePath;
-    }
+//    public function getBasePath()
+//    {
+//        return (string) $this->_basePath;
+//    }
 
     /**
      *
      * @param string $basePath
      * @return One_Layout
      */
-    public function setBasePath($basePath)
-    {
-        $this->_basePath = $basePath;
-
-        return $this;
-    }
+//    public function setBasePath($basePath)
+//    {
+//        $this->_basePath = $basePath;
+//
+//        return $this;
+//    }
 
     /**
      *
      * @param string $path
      * @return string
      */
-    public function loadTemplatePath($path)
-    {
-        $config = Nova::getConfig('frontend.design');
+//    public function loadTemplatePath($path)
+//    {
+//        $config = Nova::getConfig('frontend.design');
+//
+//        return ROOT_PATH . "/design/{$config->name}/{$config->template}/{$path}";
+//    }
 
-        return ROOT_PATH . "/design/{$config->name}/{$config->template}/{$path}";
-    }
+//    protected function _loadLayoutNode($layoutDefinitions, $layoutName)
+//    {
+//        $nodes = $layoutDefinitions->xpath("/l:layouts/l:layout[@name=\"{$layoutName}\"]");
+//        if (count($nodes)) {
+//            return $nodes[0];
+//        }
+//        return NULL;
+//    }
 
-    protected function _loadLayoutNode($layoutDefinitions, $layoutName)
-    {
-        $nodes = $layoutDefinitions->xpath("/l:layouts/l:layout[@name=\"{$layoutName}\"]");
-        if (count($nodes)) {
-            return $nodes[0];
-        }
-        return NULL;
-    }
+//    protected function _applyExtends(SimpleXMLElement $layoutHandle)
+//    {
+//        foreach ($layoutHandle->children() as $blockHandle) {
+//            $block = $this->_getBlockInstance($blockHandle);
+//            if (is_null($block)) {
+//                continue;
+//            }
+//
+//            $this->_updateBlock($block, $blockHandle);
+//
+//            if (!isset($this->_childNodes[$blockHandle->getName()])) {
+//                $this->_childNodes[$block->getName()] = $block;
+//                $this->_rootNodes[$block->getName()] = $block;
+//            }
+//        }
+//
+//        foreach ($layoutHandle->reference as $blockHandle) {
+//            if (!isset($this->_childNodes[strval($blockHandle['name'])])) {
+//                continue;
+//            }
+//            $this->_updateBlock($this->_childNodes[strval($blockHandle['name'])], $blockHandle);
+//        }
+//    }
 
-    protected function _applyExtends(SimpleXMLElement $layoutHandle)
-    {
-        foreach ($layoutHandle->children() as $blockHandle) {
-            $block = $this->_getBlockInstance($blockHandle);
-            if (is_null($block)) {
-                continue;
-            }
-
-            $this->_updateBlock($block, $blockHandle);
-
-            if (!isset($this->_childNodes[$blockHandle->getName()])) {
-                $this->_childNodes[$block->getName()] = $block;
-                $this->_rootNodes[$block->getName()] = $block;
-            }
-        }
-
-        foreach ($layoutHandle->reference as $blockHandle) {
-            if (!isset($this->_childNodes[strval($blockHandle['name'])])) {
-                continue;
-            }
-            $this->_updateBlock($this->_childNodes[strval($blockHandle['name'])], $blockHandle);
-        }
-    }
-
-    protected function _updateBlock(One_Template_Interface $block, SimpleXMLElement $blockHandle)
-    {
-        foreach ($blockHandle->children() as $childType => $childHandle) {
-            if ($childType == 'action') {
-                $this->_callAction($block, $childHandle);
-            } else if ($childType == 'block') {
-                $childBlock = $this->_getBlockInstance($childHandle);
-                if (is_null($childBlock) || isset($this->_childNodes[strval($childHandle['name'])])) {
-                    continue;
-                }
-                $this->_childNodes[strval($childHandle['name'])] = $childBlock;
-                $block->addChild($childBlock);
-
-                $this->_updateBlock($childBlock, $childHandle);
-            }
-        }
-    }
-
-    protected function _getBlockName(SimpleXMLElement $blockHandle)
-    {
-        if ($name = $blockHandle->attributes()->name) {
-            return strval($name);
-        }
-        return NULL;
-    }
-
-    protected function _getBlockInstance(SimpleXMLElement $blockHandle)
-    {
-        $instance = NULL;
-        if ($type = (string) $blockHandle->attributes()->type) {
-            if (!($instance = $this->createBlock($type))) {
-                return NULL;
-            }
-            $instance
-                ->setName($this->_getBlockName($blockHandle))
-                ->setTemplate($blockHandle->attributes()->template)
-            ;
-        }
-        return $instance;
-    }
-
-    protected function _callAction(One_Template_Interface $block, SimpleXMLElement $blockHandle)
-    {
-        try {
-            $reflectionMethod = new ReflectionMethod($block, $blockHandle['method']);
-            $reflectionParameters = $reflectionMethod->getParameters();
-
-            $parameters = array();
-            foreach ($reflectionParameters as $parameter) {
-                if (isset($blockHandle->{$parameter->name})) {
-                    if ($blockHandle->{$parameter->name}['locale'] &&
-                        ($locale = Nova::loadLocale($blockHandle->{$parameter->name}['locale'])) !== false) {
-                        $parameters[] = $locale->_((string) $blockHandle->{$parameter->name});
-                    } else {
-                        $parameters[] = (string) $blockHandle->{$parameter->name};
-                    }
-                } else {
-                    $parameters[] = $parameter->getDefaultValue();
-                }
-            }
-            $reflectionMethod->invokeArgs($block, $parameters);
-        } catch (ReflectionException $e) {
-            //throw $e;
-        }
-
-        return $this;
-    }
-
-    public function getChild($name)
-    {
-        if (isset($this->_childNodes[(string) $name])) {
-            return $this->_childNodes[(string) $name];
-        }
-        return NULL;
-    }
+//    protected function _updateBlock(One_Template_Interface $block, SimpleXMLElement $blockHandle)
+//    {
+//        foreach ($blockHandle->children() as $childType => $childHandle) {
+//            if ($childType == 'action') {
+//                $this->_callAction($block, $childHandle);
+//            } else if ($childType == 'block') {
+//                $childBlock = $this->_getBlockInstance($childHandle);
+//                if (is_null($childBlock) || isset($this->_childNodes[strval($childHandle['name'])])) {
+//                    continue;
+//                }
+//                $this->_childNodes[strval($childHandle['name'])] = $childBlock;
+//                $block->addChild($childBlock);
+//
+//                $this->_updateBlock($childBlock, $childHandle);
+//            }
+//        }
+//    }
+//
+//    protected function _getBlockName(SimpleXMLElement $blockHandle)
+//    {
+//        if ($name = $blockHandle->attributes()->name) {
+//            return strval($name);
+//        }
+//        return NULL;
+//    }
+//
+//    protected function _getBlockInstance(SimpleXMLElement $blockHandle)
+//    {
+//        $instance = NULL;
+//        if ($type = (string) $blockHandle->attributes()->type) {
+//            if (!($instance = $this->createBlock($type))) {
+//                return NULL;
+//            }
+//            $instance
+//                ->setName($this->_getBlockName($blockHandle))
+//                ->setTemplate($blockHandle->attributes()->template)
+//            ;
+//        }
+//        return $instance;
+//    }
+//
+//    protected function _callAction(One_Template_Interface $block, SimpleXMLElement $blockHandle)
+//    {
+//        try {
+//            $reflectionMethod = new ReflectionMethod($block, $blockHandle['method']);
+//            $reflectionParameters = $reflectionMethod->getParameters();
+//
+//            $parameters = array();
+//            foreach ($reflectionParameters as $parameter) {
+//                if (isset($blockHandle->{$parameter->name})) {
+//                    if ($blockHandle->{$parameter->name}['locale'] &&
+//                        ($locale = Nova::loadLocale($blockHandle->{$parameter->name}['locale'])) !== false) {
+//                        $parameters[] = $locale->_((string) $blockHandle->{$parameter->name});
+//                    } else {
+//                        $parameters[] = (string) $blockHandle->{$parameter->name};
+//                    }
+//                } else {
+//                    $parameters[] = $parameter->getDefaultValue();
+//                }
+//            }
+//            $reflectionMethod->invokeArgs($block, $parameters);
+//        } catch (ReflectionException $e) {
+//            //throw $e;
+//        }
+//
+//        return $this;
+//    }
+//
+//    public function getChild($name)
+//    {
+//        if (isset($this->_childNodes[(string) $name])) {
+//            return $this->_childNodes[(string) $name];
+//        }
+//        return NULL;
+//    }
 }

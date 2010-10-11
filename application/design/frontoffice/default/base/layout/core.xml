@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.0.0">
+  <core.index.index>
+    <reference name="body">
+      <block type="core/text" name="woot">
+        <block type="core/text" name="woot-woot" />
+        <block type="core/text" name="woot-woot2" />
+      </block>
+      <block type="core/text" name="woot2"></block>
+    </reference>
+  </core.index.index>
+</layout>

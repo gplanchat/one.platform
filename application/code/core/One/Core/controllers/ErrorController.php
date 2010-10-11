@@ -28,7 +28,7 @@ class One_Core_ErrorController
                 ));
             $message = $exception->getMessage() . PHP_EOL . $exception->getTraceAsString();
             $logger->debug($message);
-            $this->view->message = $message;
+//            $this->view->message = $message;
             break;
         }
     }

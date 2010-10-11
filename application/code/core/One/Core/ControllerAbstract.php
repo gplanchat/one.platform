@@ -9,8 +9,13 @@ class One_Core_ControllerAbstract
      */
     protected $_layout = null;
 
+    private $_applicationInstance = null;
+
     public function getLayout()
     {
+        if ($this->_layout === null) {
+            $this->_initLayout();
+        }
         return $this->_layout;
     }
 
@@ -22,39 +27,67 @@ class One_Core_ControllerAbstract
      */
     public function init()
     {
-        $this->_initLayout('core/layout');
+        $this->view = null;
+
+        $this->_initLayout();
+
+        return $this;
     }
 
-    protected function _initLayout($class)
+    protected function _initLayout($class = null)
     {
+        if ($this->_layout instanceof One_Core_Model_Layout) {
+            return $this->_layout;
+        }
+
+        if ($class === null) {
+            if (($class = $this->getInvokeArg('layoutClass')) === null) {
+                $class = 'core/layout';
+            }
+        }
+
         $this->_layout = $this->getApplicationInstance()
             ->getSingleton($class)
+            ->setViewRendererHelper($this->_helper->getHelper('viewRenderer'))
+            ->setActionController($this)
+            ->init()
         ;
+
+        return $this->_layout;
     }
 
     public function preDispatch()
     {
+        $request = $this->getRequest();
+        $this->getApplicationInstance()
+            ->dispatchEvent('controller.dispatch.before', array(
+                'module'     => $request->getParam('module'),
+                'controller' => $request->getParam('controller'),
+                'action'     => $request->getParam('action'),
+                'path'       => $request->getParam('path')
+                ));
     }
 
     public function postDispatch()
     {
-//        var_dump(get_class($this->getApplicationInstance()->getModel('core/testing.rewrite')));
-
         $request = $this->getRequest();
-        $layoutName = implode('.', array(
-            $request->getParam('path'),
-            $request->getParam('controller'),
-            $request->getParam('action')
-            ));
+        $this->getApplicationInstance()
+            ->dispatchEvent('controller.dispatch.after', array(
+                'module'     => $request->getParam('module'),
+                'controller' => $request->getParam('controller'),
+                'action'     => $request->getParam('action'),
+                'path'       => $request->getParam('path')
+                ));
 
-        $this->getLayout()
-            ->render($layoutName)
-        ;
+        echo $this->view->render();
     }
 
     public function getApplicationInstance()
     {
-        return $this->getInvokeArg('applicationInstance');
+        if ($this->_applicationInstance === null) {
+            $this->_applicationInstance = $this->getInvokeArg('applicationInstance');
+        }
+        return $this->_applicationInstance;
     }
 
     public function getWebsiteId()
