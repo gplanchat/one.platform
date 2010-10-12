@@ -5,7 +5,7 @@ class One_Core_Block_Html_Page
 {
     protected $_bodyClasses = array();
 
-    public function _construct($options = array())
+    protected function _construct($options)
     {
         return parent::_construct($options);
     }

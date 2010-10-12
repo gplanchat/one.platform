@@ -36,7 +36,25 @@ class One_Core_Model_Application
 
         parent::__construct($environment, $config);
 
-        $routeStack = One_Core_Model_Router_Route_Stack::getInstance(new Zend_Config((array) $config->routes));
+        if ($config->system->routes !== null) {
+            foreach ($config->system->routes as $routeName => $routeConfig) {
+                if (isset($routeConfig->type)) {
+                    $class = $routeConfig->type;
+                    if (!$class instanceof Zend_Controller_Router_Route_Interface) {
+                        continue;
+                    }
+                    $reflectionClass = new ReflectionClass($class);
+                    $reflectionMethod = $reflectionClass->getMethod('getInstance');
+
+                    $route = $reflectionMethod->invoke(null, $routeConfig);
+//                    $route = $class::getInstance($routeConfig);
+                } else {
+                    $class = Zend_Controller_Router_Route::getInstance($routeConfig);
+                }
+            }
+        }
+
+        $routeStack = One_Core_Model_Router_Route_Stack::getInstance(new Zend_Config(array()));
         $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'controllers'));
 
         $this->_frontController = $this->getBootstrap()
@@ -44,7 +62,7 @@ class One_Core_Model_Application
             ->getFrontController()
         ;
         $router = $this->_frontController->getRouter();
-        $router->addRoute('default', $routeStack);
+        $router->addRoute('modules-stack', $routeStack);
 
         foreach ($config->modules as $moduleName => $moduleConfig) {
             if (!in_array($moduleName, $this->_activeModules)) {
@@ -246,13 +264,17 @@ class One_Core_Model_Application
 
         Zend_Loader::loadClass($classData['name']);
 
-        $reflectionClass = new ReflectionClass($classData['name']);
-        if ($reflectionClass->isSubclassOf('One_Core_Object')) {
-            $object = $reflectionClass->newInstance($classData['module'], $options);
-        } else {
-            $params = func_get_args();
-            array_shift($params);
-            $object = $reflectionClass->newInstanceArgs($params);
+        try {
+            $reflectionClass = new ReflectionClass($classData['name']);
+            if ($reflectionClass->isSubclassOf('One_Core_Object')) {
+                $object = $reflectionClass->newInstance($classData['module'], $options);
+            } else {
+                $params = func_get_args();
+                array_shift($params);
+                $object = $reflectionClass->newInstanceArgs($params);
+            }
+        } catch (ReflectionException $e) {
+            $this->throwException('core/implementation-error', $e->getMessage());
         }
         return $object;
     }
@@ -265,27 +287,26 @@ class One_Core_Model_Application
         return $this->_modelSingletons[$identifier];
     }
 
-    public function getBlock($identifier, $options = null)
+    public function getBlock($identifier, $options = null, One_Core_Model_Layout $layout = null)
     {
         $classData = $this->_inflectClassName($identifier, 'block');
 
 //        Zend_Loader::loadClass($classData['name']);
 
-        $reflectionClass = new ReflectionClass($classData['name']);
-        if ($reflectionClass->isSubclassOf('One_Core_Object')) {
-            $object = $reflectionClass->newInstance($classData['module'], $options);
-        } else {
-            $params = func_get_args();
-            array_shift($params);
-            $object = $reflectionClass->newInstanceArgs($params);
+        try {
+            $reflectionClass = new ReflectionClass($classData['name']);
+            $object = $reflectionClass->newInstance($classData['module'], $options, $layout);
+        } catch (ReflectionException $e) {
+            $this->throwException('core/implementation-error', $e->getMessage());
         }
+
         return $object;
     }
 
-    public function getBlockSingleton($identifier, $options = null)
+    public function getBlockSingleton($identifier, $options = null, One_Core_Model_Layout $layout = null)
     {
         if (!isset($this->_blockSingletons[$identifier])) {
-            $this->_blockSingletons[$identifier] = $this->getBlock($identifier, $options);
+            $this->_blockSingletons[$identifier] = $this->getBlock($identifier, $options, $layout);
         }
         return $this->_blockSingletons[$identifier];
     }

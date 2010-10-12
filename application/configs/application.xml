@@ -4,6 +4,17 @@
     <system>
       <hostname>www.example.com</hostname>
       <base-url>/</base-url>
+      <routes>
+        <default>
+          <type value="Zend_Controller_Router_Route_Static" />
+          <route value="" />
+          <defaults>
+            <module value="user" />
+            <controller value="account" />
+            <action value="login" />
+          </defaults>
+        </default>
+      </routes>
     </system>
     <general>
       <locale>
@@ -80,24 +91,6 @@
         <template>default</template>
       </layout>
     </frontoffice>
-    <model>
-      <core>
-        <namespace>One_Core_Model</namespace>
-      </core>
-      <cms>
-        <namespace>One_Cms_Model</namespace>
-      </cms>
-    </model>
-    <resource>
-      <dal>
-        <core>
-          <namespace>One_Core_Model_Resource_Dal</namespace>
-        </core>
-        <cms>
-          <namespace>One_Cms_Model_Resource_Dal</namespace>
-        </cms>
-      </dal>
-    </resource>
   </default>
   <production>
     <system>

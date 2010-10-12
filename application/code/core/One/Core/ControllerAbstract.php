@@ -79,7 +79,7 @@ class One_Core_ControllerAbstract
                 'path'       => $request->getParam('path')
                 ));
 
-        echo $this->view->render();
+        echo $this->view->render(null);
     }
 
     public function getApplicationInstance()

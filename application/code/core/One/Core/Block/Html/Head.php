@@ -15,7 +15,7 @@ class One_Core_Block_Html_Head
 
     protected $_headMeta = null;
 
-    public function _construct($options = array())
+    protected function _construct($options)
     {
         if (isset($options['title'])) {
             $this->setTitle($options['title']);

@@ -5,7 +5,7 @@ class One_Core_Block_Html
 {
     protected $_template = null;
 
-    public function _construct($options)
+    protected function _construct($options)
     {
         if (isset($options['template'])) {
             $this->setTemplate($options['template']);

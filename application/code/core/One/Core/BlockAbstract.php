@@ -15,7 +15,23 @@ abstract class One_Core_BlockAbstract
 
     protected $_scriptPath = '';
 
-    public function _construct($options)
+    protected $_layout = null;
+
+    private $_loaders = array();
+    private $_helper = array();
+    private $_filter = array();
+    private $_path = array();
+
+    protected $_loaderTypes = array('helper', 'filter');
+
+    public function __construct($module, $options, One_Core_Model_Layout $layout = null)
+    {
+        $this->_layout = $layout;
+
+        parent::__construct($module, $options);
+    }
+
+    protected function _construct($options)
     {
         $config = One::app()->getOption('frontoffice');
         $basePath = implode(One::DS, array(APPLICATION_PATH, 'design', 'frontoffice',
@@ -33,23 +49,21 @@ abstract class One_Core_BlockAbstract
         }
 
         if (isset($options['block'])) {
-            if (is_int(key($options['block']))) {
-                foreach ($options['block'] as $block) {
-                    $this->_buildChildNode($block);
-                }
-            } else {
-                $this->_buildChildNode($options['block']);
+            if (!is_array($options['block']) || !is_int(key($options['block']))) {
+                $options['block'] = array($options['block']);
+            }
+            foreach ($options['block'] as $block) {
+                $this->_buildChildNode($block);
             }
             unset($options['block']);
         }
 
         if (isset($options['action'])) {
-            if (is_int(key($options['action']))) {
-                foreach ($options['action'] as $action) {
-                    $this->_executeAction($action);
-                }
-            } else {
-                $this->_executeAction($options['action']);
+            if (!is_array($options['action']) || !is_int(key($options['action']))) {
+                $options['action'] = array($options['action']);
+            }
+            foreach ($options['action'] as $action) {
+                $this->_executeAction($action);
             }
             unset($options['action']);
         }
@@ -59,8 +73,12 @@ abstract class One_Core_BlockAbstract
 
     protected function _buildChildNode($node)
     {
+        if (!isset($node['type'])) {
+            return $this;
+        }
+
         $childBlock = One::app()
-            ->getBlock($node['type'], $node)
+            ->getBlock($node['type'], $node, $this->_layout)
             ->setBasePath($this->getBasePath())
             ->setScriptPath($this->getScriptPath())
         ;
@@ -71,6 +89,8 @@ abstract class One_Core_BlockAbstract
             $name = uniqid('block_');
         }
         $this->appendChild($name, $childBlock);
+
+        $this->_layout->registerBlock($name, $childBlock);
 
         return $this;
     }
@@ -102,7 +122,21 @@ abstract class One_Core_BlockAbstract
             }
 
             $reflectionMethod->invokeArgs($this, $callParams);
+        } else {
+            $this->__call($action['method'], array_values($action['params']));
         }
+
+        return $this;
+    }
+
+    public function getLayout()
+    {
+        return $this->_layout;
+    }
+
+    public function setLayout(One_Core_Model_Layout $layout)
+    {
+        $this->_layout = $layout;
 
         return $this;
     }
@@ -125,17 +159,17 @@ abstract class One_Core_BlockAbstract
         return $this->getChildNode($childName)->render($templateName);
     }
 
-    public function appendChild($childName, $childNode)
+    public function appendChild($childName, One_Core_BlockAbstract $childNode)
     {
-        $this->_childNodes[$childName] = $childNode;
+        $this->_childNodes[(string) $childName] = $childNode;
         $this->_childIndex[] = $childName;
 
         return $this;
     }
 
-    public function prependChild($childName, $childNode)
+    public function prependChild($childName, One_Core_BlockAbstract $childNode)
     {
-        $this->_childNodes[$childName] = $childNode;
+        $this->_childNodes[(string) $childName] = $childNode;
         array_unshift($this->_childIndex, $childName);
 
         return $this;
@@ -153,17 +187,31 @@ abstract class One_Core_BlockAbstract
         return $this->_name;
     }
 
-    public function render($name = null)
+    public function render($name)
     {
         $obLevel = ob_get_level();
 
+        $this->_beforeRender($name);
         $content = $this->_render();
+        $this->_afterRender($name, $content);
 
         while (ob_get_level() < $obLevel) {
             ob_end_clean();
         }
 
         return $content;
+    }
+
+    protected function _beforeRender()
+    {
+        return $this;
+    }
+
+    abstract protected function _render();
+
+    protected function _afterRender()
+    {
+        return $this;
     }
 
     public function getEngine()

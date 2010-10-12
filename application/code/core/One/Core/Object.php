@@ -523,10 +523,17 @@ class One_Core_Object
             return $this->unsetData($dataIndex);
             break;
         }
+
+        $this->_call($method, $params);
+
         //Nova::profilerStop(__METHOD__);
 
         One::throwException('core/invalidMethodCall',
             'One_Core_ObjectAbstract_Exception_InvalidMethod', $method);
+    }
+
+    protected function _call($method, $params)
+    {
     }
 
     /**

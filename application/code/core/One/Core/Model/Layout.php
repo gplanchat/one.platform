@@ -46,22 +46,7 @@ class One_Core_Model_Layout
 
     protected $_actionController = null;
 
-    /**
-     * Création d'une instance de layout.
-     *
-     * @param $layoutName
-     * @return One_Core_Model_Layout
-     */
-    public static function factory($layoutName)
-    {
-        $config = One::getConfig('frontoffice.design');
-        $pathPattern = implode(self::DS, array(
-            APPLICATION_PATH, 'design', 'frontoffice', '%1$s', '%2$s', 'layout'));
-        $layoutPath = sprintf($pathPattern, $config->get('design', 'default'),
-            $config->get('template', 'default'));
-
-        return new self($layoutPath, $layoutName);
-    }
+    protected $_blocks = array();
 
     /**
      *
@@ -114,7 +99,30 @@ class One_Core_Model_Layout
         $type = $layoutConfig['block']['type'];
         unset($layoutConfig['block']['type']);
 
-        $view = One::app()->getBlock($type, $layoutConfig['block']);
+        $view = One::app()->getBlock($type, $layoutConfig['block'], $this);
+
+        if (isset($layoutConfig['reference'])) {
+            if (!is_int(key($layoutConfig['reference']))) {
+                $layoutConfig['reference'] = array($layoutConfig['reference']);
+            }
+            foreach ($layoutConfig['reference'] as $reference) {
+                if (!isset($this->_blocks[$reference['name']])) {
+                    continue;
+                }
+
+                if (!is_int(key($reference['block']))) {
+                    $reference['block'] = array($reference['block']);
+                }
+
+                foreach ($reference['block'] as $childBlock) {
+                    $type = $childBlock['type'];
+                    unset($childBlock['type']);
+                    $block = One::app()->getBlock($type, $childBlock, $this);
+
+                    $this->_blocks[$reference['name']]->appendChild($block->getName(), $block);
+                }
+            }
+        }
 
         return $view;
     }
@@ -129,11 +137,20 @@ class One_Core_Model_Layout
     public function init()
     {
         $request = $this->_actionController->getRequest();
-        $layoutName = implode('.', array(
-            $request->getParam('path'),
-            $request->getParam('controller'),
-            $request->getParam('action')
-            ));
+
+        $path = $request->getParam('path');
+        if (empty($path)) {
+            $layoutName = implode('.', array(
+                $request->getParam('controller', 'default'),
+                $request->getParam('action', 'default')
+                ));
+        } else {
+            $layoutName = implode('.', array(
+                $path,
+                $request->getParam('controller'),
+                $request->getParam('action')
+                ));
+        }
 
         $view = $this->buildView($layoutName);
         if ($view === null) {
@@ -143,6 +160,25 @@ class One_Core_Model_Layout
         $this->_actionController->view = $view;
 
         return $this;
+    }
+
+    public function registerBlock($name, One_Core_BlockAbstract $block)
+    {
+        if (isset($this->_blocks[(string) $name])) {
+            One::app()->throwException('core/invalid-method-call',
+                "Block '$name' is already defined in the layout");
+        }
+        $this->_blocks[(string) $name] = $block;
+
+        return $this;
+    }
+
+    public function getBlock($name)
+    {
+        if (isset($this->_blocks[(string) $name])) {
+            return $this->_blocks[(string) $name];
+        }
+        return null;
     }
 
     /**
