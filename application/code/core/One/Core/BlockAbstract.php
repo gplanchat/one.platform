@@ -24,11 +24,11 @@ abstract class One_Core_BlockAbstract
 
     protected $_loaderTypes = array('helper', 'filter');
 
-    public function __construct($module, $options, One_Core_Model_Layout $layout = null)
+    public function __construct($module, $options, One_Core_Model_Application $application, One_Core_Model_Layout $layout = null)
     {
         $this->_layout = $layout;
 
-        parent::__construct($module, $options);
+        parent::__construct($module, $options, $application);
     }
 
     protected function _construct($options)

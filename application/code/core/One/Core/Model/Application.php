@@ -267,7 +267,8 @@ class One_Core_Model_Application
         try {
             $reflectionClass = new ReflectionClass($classData['name']);
             if ($reflectionClass->isSubclassOf('One_Core_Object')) {
-                $object = $reflectionClass->newInstance($classData['module'], $options);
+                $object = $reflectionClass->newInstance($classData['module'], $options, $this);
+                $object->app($this);
             } else {
                 $params = func_get_args();
                 array_shift($params);
@@ -276,6 +277,7 @@ class One_Core_Model_Application
         } catch (ReflectionException $e) {
             $this->throwException('core/implementation-error', $e->getMessage());
         }
+
         return $object;
     }
 
@@ -287,6 +289,39 @@ class One_Core_Model_Application
         return $this->_modelSingletons[$identifier];
     }
 
+    public function getResource($identifier, $type, $options = null)
+    {
+        $classData = $this->_inflectClassName($identifier, $type);
+        var_dump($classData);
+        die();
+
+        Zend_Loader::loadClass($classData['name']);
+
+        try {
+            $reflectionClass = new ReflectionClass($classData['name']);
+            if ($reflectionClass->isSubclassOf('One_Core_Object')) {
+                $object = $reflectionClass->newInstance($classData['module'], $options, $this);
+                $object->app($this);
+            } else {
+                $params = func_get_args();
+                array_shift($params);
+                $object = $reflectionClass->newInstanceArgs($params);
+            }
+        } catch (ReflectionException $e) {
+            $this->throwException('core/implementation-error', $e->getMessage());
+        }
+
+        return $object;
+    }
+
+    public function getResourceSingleton($identifier, $type, $options = null)
+    {
+        if (!isset($this->_resourceSingletons[$identifier])) {
+            $this->_resourceSingletons[$identifier] = $this->getResource($identifier, $type, $options);
+        }
+        return $this->_resourceSingletons[$identifier];
+    }
+
     public function getBlock($identifier, $options = null, One_Core_Model_Layout $layout = null)
     {
         $classData = $this->_inflectClassName($identifier, 'block');
@@ -295,10 +330,11 @@ class One_Core_Model_Application
 
         try {
             $reflectionClass = new ReflectionClass($classData['name']);
-            $object = $reflectionClass->newInstance($classData['module'], $options, $layout);
+            $object = $reflectionClass->newInstance($classData['module'], $options, $this, $layout);
         } catch (ReflectionException $e) {
             $this->throwException('core/implementation-error', $e->getMessage());
         }
+        $object->app($this);
 
         return $object;
     }
@@ -322,7 +358,7 @@ class One_Core_Model_Application
         $numArgs = func_num_args();
         if ($numArgs <= 2) {
             $previous = null;
-            $code = null;
+            $code = 0;
             $options = null;
         } else if ($numArgs > 2) {
             $offset = 1;
@@ -363,5 +399,10 @@ class One_Core_Model_Application
                 .' variable. See documentation of call_user_func() function.');
         }
         $this->_event->dispatch($eventName, $listener);
+    }
+
+    public function app(One_Core_Model_Application $applicaiton = null)
+    {
+        return $this;
     }
 }

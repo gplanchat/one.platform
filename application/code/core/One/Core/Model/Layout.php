@@ -154,7 +154,7 @@ class One_Core_Model_Layout
 
         $view = $this->buildView($layoutName);
         if ($view === null) {
-            One::app()->throwException('core/configuration-error', "Layout '{$layoutName}' not declared.");
+            $this->app()->throwException('core/configuration-error', "Layout '{$layoutName}' not declared.");
         }
 
         $this->_actionController->view = $view;
@@ -162,10 +162,18 @@ class One_Core_Model_Layout
         return $this;
     }
 
+    public function reset()
+    {
+        $this->_actionController->view = null;
+        $this->_blocks = array();
+
+        return $this;
+    }
+
     public function registerBlock($name, One_Core_BlockAbstract $block)
     {
         if (isset($this->_blocks[(string) $name])) {
-            One::app()->throwException('core/invalid-method-call',
+            $this->app()->throwException('core/invalid-method-call',
                 "Block '$name' is already defined in the layout");
         }
         $this->_blocks[(string) $name] = $block;

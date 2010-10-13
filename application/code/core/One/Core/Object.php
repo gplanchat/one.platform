@@ -70,12 +70,21 @@ class One_Core_Object
 
     /**
      * TODO: PHPUnit
+     * TODO: PHPDoc
      *
      * @since 0.1.0
      *
      * @var string
      */
-    private $_moduleName = NULL;
+    private $_moduleName = null;
+
+    /**
+     * TODO: PHPUnit
+     * TODO: PHPDoc
+     *
+     * @var One_Core_Model_Application
+     */
+    private $_applicationInstance = null;
 
     /**
      * Internal constructor, should not be overloaded.
@@ -86,16 +95,17 @@ class One_Core_Object
      * @param Zend_Config|array $data
      * @return void
      */
-    public function __construct($moduleName = 'core', $data = array())
+    public function __construct($moduleName = 'core', $data = array(), One_Core_Model_application $application = null)
     {
         if (!is_string($moduleName)) {
             One::throwException('core/invalid-method-call', 'Parameter 1 sould be a string.');
         }
         $this->_moduleName = $moduleName;
+        $this->_applicationInstance = $application;
 
         if ($data instanceof Zend_Config) {
             $data = $data->toArray();
-        } else if (!is_array($data)) {
+        } else if (!is_array($data) && $data !== null) {
             One::throwException('core/invalid-method-call', 'Parameter 2 should be either an array or a Zend_Config instance.');
         }
 
@@ -578,5 +588,10 @@ class One_Core_Object
     public static function setInflector(Zend_Filter_Inflector $inflector)
     {
         $this->_inflector = $inflector;
+    }
+
+    public function app()
+    {
+        return $this->_applicationInstance;
     }
 }
