@@ -318,13 +318,31 @@ class One_Core_Model_Application
 //        Zend_Loader::loadClass($classData['name']);
 
         $reflectionClass = new ReflectionClass($classData['name']);
-        if ($reflectionClass->isSubclassOf('One_Core_Exception')) {
-            $args = array_slice(func_get_args(), 1);
-            $object = $reflectionClass->newInstanceArgs($args);
-        } else {
-            $args = array_slice(func_get_args(), 2);
-            $object = $reflectionClass->newInstance(sfprintf($message, $args));
+
+        $numArgs = func_num_args();
+        if ($numArgs <= 2) {
+            $previous = null;
+            $code = null;
+            $options = null;
+        } else if ($numArgs > 2) {
+            $offset = 1;
+            if (is_int($message)) {
+                $code = $message;
+                $message = func_get_arg(++$offset);
+            }
+            if ($message instanceof Exception) {
+                $previous = $message;
+                $message = func_get_arg(++$offset);
+            }
+//            if ($message instanceof One_Core_Object) {
+//                $options = $message;
+//                $message = func_get_arg(++$offset);
+//            }
+            $args = func_get_args();
+            $message = vsprintf($message, array_slice($args, ++$offset));
         }
+        $object = $reflectionClass->newInstance($message, $code, $previous);
+
         throw $object;
     }
 

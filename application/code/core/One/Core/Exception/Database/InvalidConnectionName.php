@@ -42,4 +42,27 @@ class One_Core_Exception_Database_InvalidConnectionName
     extends UnexpectedValueException
     implements One_Database_Exception
 {
+    private $_previous = null;
+
+    public function __construct($message, $code = null, $previous = null)
+    {
+        if (version_compare(phpversion(), '5.3.1', '<=')) {
+            parent::__construct($message, $code);
+            $this->_previous = $previous;
+        } else {
+            parent::__construct($message, $code, $previous);
+        }
+    }
+
+    private function _getPrevious()
+    {
+        return $this->_previous;
+    }
+
+    public function __call($method, $params)
+    {
+        if ($method === 'getPrevious') {
+            return $this->_getPrevious();
+        }
+    }
 }

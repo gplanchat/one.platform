@@ -44,4 +44,5 @@
  */
 interface One_Core_Exception
 {
+//    public function __construct($message, $code = null, $previous = null, One_Core_Object $options = null);
 }

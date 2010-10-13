@@ -40,7 +40,6 @@
  * @subpackage  One_Core
  */
 class One_Core_Exception_ImplementationError
-    extends Exception
-    implements One_Core_Exception
+    extends One_Core_Exception_Exception
 {
 }
