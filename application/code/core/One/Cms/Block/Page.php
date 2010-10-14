@@ -5,13 +5,13 @@ class One_Cms_Block_Page
 {
     protected $_model = null;
 
-    protected $_path = null;
+    protected $_pageId = null;
 
     protected function _construct($options)
     {
         $options = parent::_construct($options);
 
-        $this->_path = $this->getRequest()->getParam('page-id');
+        $this->_pageId = $this->getRequest()->getParam('page-id');
 
         $this->_model = $this->app()
             ->getSingleton('cms/page')
@@ -22,11 +22,16 @@ class One_Cms_Block_Page
 
     protected function _render()
     {
-        $this->_model
-            ->load(array(
-                'path'       => $this->_path,
-                'website_id' => $this->app()->getWebsiteId()
-            ));
+        if (is_int($this->_pageId)) {
+            $this->_model
+                ->load($this->_pageId);
+        } else {
+            $this->_model
+                ->load(array(
+                    'path'       => $this->_pageId,
+                    'website_id' => $this->app()->getWebsiteId()
+                ));
+        }
 
         return $this->_model->getContent();
     }

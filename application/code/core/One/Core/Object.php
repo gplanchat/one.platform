@@ -539,7 +539,7 @@ class One_Core_Object
         //Nova::profilerStop(__METHOD__);
 
         One::throwException('core/invalidMethodCall',
-            'One_Core_ObjectAbstract_Exception_InvalidMethod', $method);
+            'Method "%s" not found.', $method);
     }
 
     protected function _call($method, $params)

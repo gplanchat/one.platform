@@ -69,7 +69,7 @@ class One_Core_Model_Router_Route_Stack
 
     public function assemble($data = array(), $reset = false, $encode = false)
     {
-        throw new Exception(__METHOD__ . ' not implemented');
+        throw $this->app()->throwException('core/unimplemented', __METHOD__ . ' not implemented.');
     }
 
     public static function getInstance(Zend_Config $config)

@@ -368,6 +368,8 @@ class One_Core_Model_Application
             $options = null;
         } else if ($numArgs > 2) {
             $offset = 1;
+            $code = null;
+            $previous = null;
             if (is_int($message)) {
                 $code = $message;
                 $message = func_get_arg(++$offset);

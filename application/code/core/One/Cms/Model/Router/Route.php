@@ -29,27 +29,22 @@ class One_Cms_Model_Router_Route
     {
         $pathInfo = $path->getPathInfo();
         if (!$partial) {
-            $pathInfo = trim($path, $this->_urlDelimiter);
+            $pathInfo = trim($pathInfo, $this->_urlDelimiter);
         }
 
-        if ($pathInfo !== '') {
-            $pathInfo = explode($this->_urlDelimiter, $pathInfo);
-        }
-
-        foreach ($pathInfo as $pathPart) {
-            $rowset = $this->_bo->find($pathPart);
-            if ($rowset->count() !== 0) {
-                $lastRow = $rowset->current();
-            }
+        $this->_bo->load($pathInfo);
+        if (!$this->_bo->getId()) {
             return false;
         }
+
         $this->setMatchedPath($path->getPathInfo());
 
         return array(
             'module'     => 'One_Cms',
             'controller' => 'display',
             'action'     => 'page',
-            'page_id'   => $lastRow->page_entity_id
+            'page-id'    => $this->_bo->getId(),
+            'layout'     => 'cms.page'
             );
     }
 
