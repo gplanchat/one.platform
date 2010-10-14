@@ -146,18 +146,20 @@ class One_Core_Model_Layout
     {
         $request = $this->_actionController->getRequest();
 
-        $path = $request->getParam('path');
-        if (empty($path)) {
-            $layoutName = implode('.', array(
-                $request->getParam('controller', 'default'),
-                $request->getParam('action', 'default')
-                ));
-        } else {
-            $layoutName = implode('.', array(
-                $path,
-                $request->getParam('controller'),
-                $request->getParam('action')
-                ));
+        if (($layoutName = $request->getParam('layout')) === null) {
+            $path = $request->getParam('path');
+            if (empty($path)) {
+                $layoutName = implode('.', array(
+                    $request->getParam('controller', 'default'),
+                    $request->getParam('action', 'default')
+                    ));
+            } else {
+                $layoutName = implode('.', array(
+                    $path,
+                    $request->getParam('controller'),
+                    $request->getParam('action')
+                    ));
+            }
         }
 
         $view = $this->buildView($layoutName);
