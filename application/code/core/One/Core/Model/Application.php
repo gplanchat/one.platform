@@ -45,7 +45,6 @@ class One_Core_Model_Application
         ;
         $router = $this->_frontController->getRouter();
         $router->addRoute('modules-stack', $routeStack);
-//        $router->addRoute('default', $routeStack);
 
         foreach ($config->modules as $moduleName => $moduleConfig) {
             if (!in_array($moduleName, $this->_activeModules)) {
@@ -59,7 +58,7 @@ class One_Core_Model_Application
             if (isset($moduleConfig->route)) {
                 $routeClassName = $moduleConfig->route->get('type', $routeClassName);
             }
-            $moduleRoute = $this->getModel($routeClassName, $moduleConfig->route, $moduleName);
+            $moduleRoute = $this->getModel($routeClassName, $moduleConfig->route, $moduleName, $this);
 
             if (isset($moduleConfig->route->name)) {
                 $routeName = $moduleConfig->route->name;
@@ -76,7 +75,7 @@ class One_Core_Model_Application
             }
         }
 
-        if ($config->system->routes !== null) {
+        if ($config->system->routes instanceof Zend_Config) {
             foreach ($config->system->routes as $routeName => $routeConfig) {
                 if (isset($routeConfig->type)) {
                     $reflectionClass = new ReflectionClass($routeConfig->type);
@@ -86,7 +85,6 @@ class One_Core_Model_Application
                     $reflectionMethod = $reflectionClass->getMethod('getInstance');
 
                     $route = $reflectionMethod->invoke(null, $routeConfig);
-//                    $route = $class::getInstance($routeConfig);
                 } else {
                     $route = Zend_Controller_Router_Route::getInstance($routeConfig);
                 }

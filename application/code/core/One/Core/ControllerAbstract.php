@@ -2,6 +2,7 @@
 
 class One_Core_ControllerAbstract
     extends Zend_Controller_Action
+    implements One_Core_ObjectInterface
 {
     /**
      *
@@ -9,7 +10,11 @@ class One_Core_ControllerAbstract
      */
     protected $_layout = null;
 
-    private $_applicationInstance = null;
+    /**
+     *
+     * @var One_Core_Model_Application
+     */
+    protected $_app = null;
 
     public function getLayout()
     {
@@ -29,7 +34,7 @@ class One_Core_ControllerAbstract
     {
         $this->view = null;
 
-//        $this->_initLayout();
+        $this->_initLayout();
 
         return $this;
     }
@@ -60,36 +65,25 @@ class One_Core_ControllerAbstract
         $request = $this->getRequest();
         $this->app()
             ->dispatchEvent('controller.dispatch.before', array(
-                'module'     => $request->getParam('module'),
-                'controller' => $request->getParam('controller'),
-                'action'     => $request->getParam('action'),
-                'path'       => $request->getParam('path')
+                'request' => $this->getRequest(),
+                'action'  => $this
                 ));
 
-//        $this->_layout
-//            ->reset()
-//            ->init()
-//        ;
+        $this->_layout
+            ->reset()
+            ->init()
+        ;
     }
 
     public function postDispatch()
     {
-        $request = $this->getRequest();
         $this->app()
             ->dispatchEvent('controller.dispatch.after', array(
-                'module'     => $request->getParam('module'),
-                'controller' => $request->getParam('controller'),
-                'action'     => $request->getParam('action'),
-                'path'       => $request->getParam('path')
-                ));
-    }
+                'request' => $this->getRequest(),
+                'action'  => $this
+            ));
 
-    public function getApplicationInstance()
-    {
-        if ($this->_applicationInstance === null) {
-            $this->_applicationInstance = $this->getInvokeArg('applicationInstance');
-        }
-        return $this->_applicationInstance;
+//        echo $this->view->render(null);
     }
 
     public function getWebsiteId()
@@ -97,8 +91,14 @@ class One_Core_ControllerAbstract
         return $this->getInvokeArg('websiteId');
     }
 
+    /**
+     * @return One_Core_Model_Application
+     */
     public function app()
     {
-        return $this->getApplicationInstance();
+        if ($this->_app === null) {
+            $this->_app = $this->getInvokeArg('applicationInstance');
+        }
+        return $this->_app;
     }
 }

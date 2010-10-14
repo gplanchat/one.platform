@@ -6,5 +6,7 @@ class One_Core_Model_Config
     protected function _construct($options)
     {
         $this->_init('core/config');
+
+        return parent::_construct($options);
     }
 }

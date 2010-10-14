@@ -54,7 +54,7 @@ class One_Core_Model_Layout
      * @param string $layoutName
      * @return void
      */
-    public function __construct($moduleName = 'core', $data = array())
+    public function _construct($data)
     {
         if ($data instanceof Zend_Config) {
             $data = $data->toArray();
@@ -85,6 +85,8 @@ class One_Core_Model_Layout
         }
 
         $this->_layoutConfiguration->setReadOnly();
+
+        return parent::_construct(array());
     }
 
     public function buildView($layoutName)

@@ -41,6 +41,7 @@
  * @subpackage  One_Core
  */
 interface One_Core_Model_Router_RouteInterface
+    extends One_Core_ObjectInterface
 {
-    public function __construct($routeConfig, $moduleName);
+    public function __construct($routeConfig, $moduleName, One_Core_Model_Application $app);
 }

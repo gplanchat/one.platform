@@ -39,7 +39,7 @@
  * @subpackage  One_Core
  */
 class One_Core_Object
-    implements ArrayAccess, Countable, IteratorAggregate
+    implements One_Core_ObjectInterface, ArrayAccess, Countable, IteratorAggregate
 {
     /**
      * Internal data handler.
@@ -84,7 +84,7 @@ class One_Core_Object
      *
      * @var One_Core_Model_Application
      */
-    private $_applicationInstance = null;
+    private $_app = null;
 
     /**
      * Internal constructor, should not be overloaded.
@@ -101,7 +101,7 @@ class One_Core_Object
             One::throwException('core/invalid-method-call', 'Parameter 1 sould be a string.');
         }
         $this->_moduleName = $moduleName;
-        $this->_applicationInstance = $application;
+        $this->_app = $application;
 
         if ($data instanceof Zend_Config) {
             $data = $data->toArray();
@@ -592,6 +592,6 @@ class One_Core_Object
 
     public function app()
     {
-        return $this->_applicationInstance;
+        return $this->_app;
     }
 }
