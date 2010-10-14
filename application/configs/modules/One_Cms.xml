@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <default>
+    <modules>
+      <One_Cms>
+        <codePool>core</codePool>
+        <active>0</active>
+        <route type="cms/router.route" name="default" />
+      </One_Cms>
+      <One_Admin_Cms>
+        <codePool>core</codePool>
+        <active>0</active>
+        <route type="admin.cms/router.route" path="cms" />
+      </One_Admin_Cms>
+    </modules>
+  </default>
+  <production>
+    <modules>
+      <One_Cms>
+        <active>0</active>
+      </One_Cms>
+    </modules>
+  </production>
+</config>

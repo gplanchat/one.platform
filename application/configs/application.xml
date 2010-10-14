@@ -55,35 +55,6 @@
           <One_Core />
         </requires>
       </One_Admin_Core>
-      <One_User>
-        <codePool>core</codePool>
-        <active>0</active>
-        <route type="user/router.route" path="user" name="user" />
-      </One_User>
-      <One_Admin_User>
-        <codePool>core</codePool>
-        <active>0</active>
-        <route type="admin.core/router.route" path="user" />
-        <requires>
-          <One_User />
-          <One_Admin_Core />
-        </requires>
-      </One_Admin_User>
-      <One_Cms>
-        <codePool>core</codePool>
-        <active>0</active>
-        <route type="cms/router.route" name="default" />
-      </One_Cms>
-      <One_Admin_Cms>
-        <codePool>core</codePool>
-        <active>0</active>
-        <route type="admin.cms/router.route" path="cms" />
-      </One_Admin_Cms>
-      <One_OpenId>
-        <codePool>core</codePool>
-        <active>0</active>
-        <route type="openid/router.route" />
-      </One_OpenId>
     </modules>
     <frontoffice>
       <layout>
@@ -100,12 +71,6 @@
       <One_Core>
         <active>1</active>
       </One_Core>
-      <One_User>
-        <active>1</active>
-      </One_User>
-      <One_Cms>
-        <active>0</active>
-      </One_Cms>
     </modules>
   </production>
   <preprod extends="production" />

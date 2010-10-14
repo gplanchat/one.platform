@@ -36,24 +36,6 @@ class One_Core_Model_Application
 
         parent::__construct($environment, $config);
 
-        if ($config->system->routes !== null) {
-            foreach ($config->system->routes as $routeName => $routeConfig) {
-                if (isset($routeConfig->type)) {
-                    $class = $routeConfig->type;
-                    if (!$class instanceof Zend_Controller_Router_Route_Interface) {
-                        continue;
-                    }
-                    $reflectionClass = new ReflectionClass($class);
-                    $reflectionMethod = $reflectionClass->getMethod('getInstance');
-
-                    $route = $reflectionMethod->invoke(null, $routeConfig);
-//                    $route = $class::getInstance($routeConfig);
-                } else {
-                    $class = Zend_Controller_Router_Route::getInstance($routeConfig);
-                }
-            }
-        }
-
         $routeStack = One_Core_Model_Router_Route_Stack::getInstance(new Zend_Config(array()));
         $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'controllers'));
 
@@ -63,6 +45,7 @@ class One_Core_Model_Application
         ;
         $router = $this->_frontController->getRouter();
         $router->addRoute('modules-stack', $routeStack);
+//        $router->addRoute('default', $routeStack);
 
         foreach ($config->modules as $moduleName => $moduleConfig) {
             if (!in_array($moduleName, $this->_activeModules)) {
@@ -93,6 +76,24 @@ class One_Core_Model_Application
             }
         }
 
+        if ($config->system->routes !== null) {
+            foreach ($config->system->routes as $routeName => $routeConfig) {
+                if (isset($routeConfig->type)) {
+                    $reflectionClass = new ReflectionClass($routeConfig->type);
+                    if (!$reflectionClass->isSubclassOf('Zend_Controller_Router_Route_Interface')) {
+                        continue;
+                    }
+                    $reflectionMethod = $reflectionClass->getMethod('getInstance');
+
+                    $route = $reflectionMethod->invoke(null, $routeConfig);
+//                    $route = $class::getInstance($routeConfig);
+                } else {
+                    $route = Zend_Controller_Router_Route::getInstance($routeConfig);
+                }
+                $router->addRoute($routeName, $route);
+            }
+        }
+
         $this->_frontController->setDefaultModule('One_Core');
         $dispatcher = $this->_frontController->getDispatcher();
         $dispatcher->setParam('prefixDefaultModule', true);
@@ -114,11 +115,19 @@ class One_Core_Model_Application
         }
 
         $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'local.xml'));
-        require_once 'Zend/Config/Xml.php';
         $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
         try {
             $config->merge(new Zend_Config_Xml($configFile, $environment, true));
         } catch (Zend_Config_Exception $e) {
+        }
+
+        $configFilePattern = implode(self::DS, array(APPLICATION_PATH, 'configs', 'modules', '*.xml'));
+        foreach (glob($configFilePattern) as $configFile) {
+            $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
+            try {
+                $config->merge(new Zend_Config_Xml($configFile, $environment, true));
+            } catch (Zend_Config_Exception $e) {
+            }
         }
 
         $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'configs', 'module.xml'));
