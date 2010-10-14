@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.0.0">
+  <cms.page>
+    <reference name="body">
+      <block type="cms/page" name="cms" />
+    </reference>
+  </cms.page>
+</layout>

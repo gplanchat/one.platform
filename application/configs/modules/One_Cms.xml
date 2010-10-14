@@ -17,7 +17,7 @@
   <production>
     <modules>
       <One_Cms>
-        <active>0</active>
+        <active>1</active>
       </One_Cms>
     </modules>
   </production>
