@@ -1,7 +1,7 @@
 <?php
 
 class One_Core_Block_Html
-    extends One_Core_Block_Text
+    extends One_Core_BlockAbstract
 {
     protected $_template = null;
 

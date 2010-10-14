@@ -6,7 +6,7 @@
         <title>One Platform</title>
       </block>
       <block type="core/text.concat" name="body">
-        <block type="core/html.navigation" name="navigation">
+        <block type="core/html.navigation" name="navigation" template="navigation/menu.phtml">
           <action method="setHeadBlock">
             <params>
               <block>head</block>
