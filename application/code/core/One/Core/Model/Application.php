@@ -265,7 +265,7 @@ class One_Core_Model_Application
         return $classData;
     }
 
-    public function getModel($identifier, $options = null)
+    public function getModel($identifier, $options = array())
     {
         $classData = $this->_inflectClassName($identifier, 'model');
 
@@ -288,7 +288,7 @@ class One_Core_Model_Application
         return $object;
     }
 
-    public function getSingleton($identifier, $options = null)
+    public function getSingleton($identifier, $options = array())
     {
         if (!isset($this->_modelSingletons[$identifier])) {
             $this->_modelSingletons[$identifier] = $this->getModel($identifier, $options);
@@ -296,7 +296,7 @@ class One_Core_Model_Application
         return $this->_modelSingletons[$identifier];
     }
 
-    public function getResource($identifier, $type, $options = null)
+    public function getResource($identifier, $type, $options = array())
     {
         $classData = $this->_inflectClassName($identifier, $type);
 
@@ -320,7 +320,7 @@ class One_Core_Model_Application
         return $object;
     }
 
-    public function getResourceSingleton($identifier, $type, $options = null)
+    public function getResourceSingleton($identifier, $type, $options = array())
     {
         if (!isset($this->_resourceSingletons[$identifier])) {
             $this->_resourceSingletons[$identifier] = $this->getResource($identifier, $type, $options);
@@ -328,7 +328,7 @@ class One_Core_Model_Application
         return $this->_resourceSingletons[$identifier];
     }
 
-    public function getBlock($identifier, $options = null, One_Core_Model_Layout $layout = null)
+    public function getBlock($identifier, $options = array(), One_Core_Model_Layout $layout = null)
     {
         $classData = $this->_inflectClassName($identifier, 'block');
 
@@ -345,7 +345,7 @@ class One_Core_Model_Application
         return $object;
     }
 
-    public function getBlockSingleton($identifier, $options = null, One_Core_Model_Layout $layout = null)
+    public function getBlockSingleton($identifier, $options = array(), One_Core_Model_Layout $layout = null)
     {
         if (!isset($this->_blockSingletons[$identifier])) {
             $this->_blockSingletons[$identifier] = $this->getBlock($identifier, $options, $layout);

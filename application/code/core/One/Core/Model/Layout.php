@@ -107,7 +107,7 @@ class One_Core_Model_Layout
         $type = $layoutConfig['block']['type'];
         unset($layoutConfig['block']['type']);
 
-        $view = One::app()->getBlock($type, $layoutConfig['block'], $this);
+        $view = $this->app()->getBlock($type, $layoutConfig['block'], $this);
 
         if (isset($layoutConfig['reference'])) {
             if (!is_int(key($layoutConfig['reference']))) {
@@ -125,7 +125,7 @@ class One_Core_Model_Layout
                 foreach ($reference['block'] as $childBlock) {
                     $type = $childBlock['type'];
                     unset($childBlock['type']);
-                    $block = One::app()->getBlock($type, $childBlock, $this);
+                    $block = $this->app()->getBlock($type, $childBlock, $this);
 
                     $this->_blocks[$reference['name']]->appendChild($block->getName(), $block);
                 }
@@ -197,6 +197,11 @@ class One_Core_Model_Layout
             return $this->_blocks[(string) $name];
         }
         return null;
+    }
+
+    public function getRequest()
+    {
+        return $this->_actionController->getRequest();
     }
 
     /**

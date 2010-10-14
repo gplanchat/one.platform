@@ -33,7 +33,7 @@ abstract class One_Core_BlockAbstract
 
     protected function _construct($options)
     {
-        $config = One::app()->getOption('frontoffice');
+        $config = $this->app()->getOption('frontoffice');
         $basePath = implode(One::DS, array(APPLICATION_PATH, 'design', 'frontoffice',
             $config['layout']['design'], $config['layout']['template']));
 
@@ -77,7 +77,7 @@ abstract class One_Core_BlockAbstract
             return $this;
         }
 
-        $childBlock = One::app()
+        $childBlock = $this->app()
             ->getBlock($node['type'], $node, $this->_layout)
             ->setBasePath($this->getBasePath())
             ->setScriptPath($this->getScriptPath())
@@ -129,9 +129,20 @@ abstract class One_Core_BlockAbstract
         return $this;
     }
 
+    /**
+     * @return One_Core_Model_Layout
+     */
     public function getLayout()
     {
         return $this->_layout;
+    }
+
+    /**
+     * @return Zend_Controller_Request_Abstract
+     */
+    public function getRequest()
+    {
+        return $this->getLayout()->getRequest();
     }
 
     public function setLayout(One_Core_Model_Layout $layout)
