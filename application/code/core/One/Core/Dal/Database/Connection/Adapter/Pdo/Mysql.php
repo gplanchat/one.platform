@@ -39,8 +39,8 @@
  * @package     One
  * @subpackage  One_Core
  */
-class One_Core_Dal_Database_Connection_Adapter_Mysqli
-    extends Zend_Db_Adapter_Mysqli
+class One_Core_Dal_Database_Connection_Adapter_Pdo_Mysql
+    extends Zend_Db_Adapter_Pdo_Mysql
     implements One_Core_Dal_Database_Connection_AdapterInterface
 {
     /**

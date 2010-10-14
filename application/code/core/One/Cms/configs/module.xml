@@ -93,6 +93,13 @@
             </connection>
           </cms>
         </database>
+        <entities>
+          <cms>
+            <page>
+              <table>cms_page</table>
+            </page>
+          </cms>
+        </entities>
       </dal>
     </resource>
     <general>

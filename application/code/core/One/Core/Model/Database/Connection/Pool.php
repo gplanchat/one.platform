@@ -47,21 +47,21 @@ class One_Core_Model_Database_Connection_Pool
      *
      * @since 0.1.0
      */
-    protected $_config = NULL;
+    protected $_config = null;
 
     /**
      * @var array
      *
      * @since 0.1.0
      */
-    protected $_entitiesConfig = NULL;
+    protected $_entitiesConfig = null;
 
     /**
      * @var string
      *
      * @since 0.1.0
      */
-    private $_moduleName = NULL;
+    private $_moduleName = null;
 
     /**
      * @var array
@@ -83,8 +83,6 @@ class One_Core_Model_Database_Connection_Pool
         if ($this->_config === null) {
             $this->_config = $this->app()->getConfig('general.database.connection');
         }
-        var_dump($this->_config);
-        die();
         if (!isset($this->_config[$connectionName])) {
             return null;
         }
@@ -122,12 +120,18 @@ class One_Core_Model_Database_Connection_Pool
      * @return array
      * FIXME
      */
-    public function getEntitiesConfig()
-    {/*
-        if (is_null($this->_entitiesConfig)) {
-            $this->getConfig();
-        }*/
-        return $this->_entitiesConfig;
+    public function getEntitiesConfig($module = null)
+    {
+        if ($this->_entitiesConfig === null) {
+            $this->_entitiesConfig = $this->app()->getConfig('resource.dal.entities');
+        }
+        if ($module === null) {
+            return $this->_entitiesConfig;
+        }
+        if (!isset($this->_entitiesConfig[$module])) {
+            return null;
+        }
+        return $this->_entitiesConfig[$module];
     }
 
     /**
