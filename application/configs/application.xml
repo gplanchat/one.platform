@@ -27,7 +27,7 @@
             <engine></engine>
             <params>
               <host></host>
-              <user></user>
+              <username></username>
               <password></password>
               <dbname></dbname>
             </params>

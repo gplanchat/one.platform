@@ -29,42 +29,28 @@
  */
 
 /**
- * FIXME PHPDoc
+ * Default Object/Relational Mapping objetct
+ *
+ * @uses        One_Core_Orm_DataMapper
  *
  * @access      public
  * @author      gplanchat
- * @category    Dal
- * @package     One
- * @subpackage  One_Core
+ * @category    Nova
+ * @package     Core
+ * @subpackage  Orm
  */
-interface One_Core_Dao_ResourceInterface
+class One_Core_Resource_Orm_DataMapper_Standard
+    extends One_Core_Orm_DataMapperAbstract
 {
-    /**
-     * FIXME PHPDoc
-     *
-     * @param One_Core_Bo_EntityInterface $model
-     * @param One_Core_Orm_DataMapper $mapper
-     * @param unknown_type $identity
-     * @param unknown_type $attribute
-     * @return One_Core_Dao_ObjectInterface
-     */
-    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, $identity, $attribute);
+    public function save(One_Core_Bo_EntityAbstract $boInstance)
+    {
+        return $boInstance->getData();
+    }
 
-    /**
-     * FIXME PHPDoc
-     *
-     * @param One_Core_Bo_EntityInterface $model
-     * @param One_Core_Orm_DataMapper $mapper
-     * @return One_Core_Dao_ObjectInterface
-     */
-    public function save(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper);
+    public function load(One_Core_Bo_EntityAbstract $boInstance, Array $daoData)
+    {
+        $boInstance->setData($daoData);
 
-    /**
-     * FIXME PHPDoc
-     *
-     * @param One_Core_Bo_EntityInterface $model
-     * @param One_Core_Orm_DataMapper $mapper
-     * @return One_Core_Dao_ObjectInterface
-     */
-    public function delete(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper);
+        return $boInstance;
+    }
 }

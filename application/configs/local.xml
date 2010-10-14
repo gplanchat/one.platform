@@ -5,12 +5,13 @@
       <database>
         <connection>
           <core_setup>
-            <engine>mysql</engine>
+            <engine>core/connection.adapter.mysqli</engine>
             <params>
               <host>localhost</host>
-              <user>root</user>
+              <username>root</username>
               <password></password>
               <dbname>db_legacies</dbname>
+              <table-prefix>legacies_</table-prefix>
             </params>
           </core_setup>
         </connection>

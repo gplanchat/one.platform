@@ -68,4 +68,9 @@ interface One_Core_Dal_Database_Connection_AdapterInterface
      * @since 0.1.0
      */
     public function getDeprecatedTable($table);
+
+    /**
+     * @return One_Core_Model_Application
+     */
+    public function app();
 }

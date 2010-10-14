@@ -62,7 +62,7 @@ abstract class One_Core_Bo_EntityAbstract
      *
      * @var string
      */
-    const DEFAULT_DATAMAPPER = 'core/orm.data-mapper';
+    const DEFAULT_DATAMAPPER = 'core/data-mapper.standard';
 
     /**
      * Loading status flag
@@ -133,8 +133,8 @@ abstract class One_Core_Bo_EntityAbstract
             $ormDataMapperClass = self::DEFAULT_DATAMAPPER;
         }
 
-        $this->setDao(Nova::getResourceSingleton($daoHandlerClass, 'dao'));
-        $this->setDataMapper(Nova::getSingleton($ormDataMapperClass));
+        $this->setDao($this->app()->getResource($daoHandlerClass, 'resource.dao'));
+        $this->setDataMapper($this->app()->getResourceSingleton($ormDataMapperClass, 'resource.orm'));
 
         return $this;
     }
@@ -184,7 +184,7 @@ abstract class One_Core_Bo_EntityAbstract
      * @param One_Core_Orm_DataMapper $mapper
      * @return One_Core_Bo_EntityAbstract
      */
-    public function setDataMapper(One_Core_Orm_DataMapper $mapper)
+    public function setDataMapper(One_Core_Orm_DataMapperAbstract $mapper)
     {
         $this->_orm = $mapper;
 

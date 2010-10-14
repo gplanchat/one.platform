@@ -104,8 +104,8 @@ abstract class One_Core_Dao_Database_Table
     public function getReadConnection()
     {
         if (is_null($this->_readConnection)) {
-            $this->_readConnection = Nova::getSingleton('core/database.connection.pool')
-                ->getConnection($this->getConfig('connection.read'));
+            $this->_readConnection = $this->app()->getSingleton('core/database.connection.pool')
+                ->getConnection($this->getConfig("resource.dal.database.{$this->getModuleName()}.connection.read"));
         }
         return $this->_readConnection;
     }
@@ -116,8 +116,8 @@ abstract class One_Core_Dao_Database_Table
     public function getWriteConnection()
     {
         if (is_null($this->_writeConnection)) {
-            $this->_writeConnection = Nova::getSingleton('core/database.connection.pool')
-                ->getConnection($this->getConfig('connection.write'));
+            $this->_writeConnection = $this->app()->getSingleton('core/database.connection.pool')
+                ->getConnection($this->getConfig("resource.dal.database.{$this->getModuleName()}.connection.write"));
         }
         return $this->_writeConnection;
     }
@@ -128,8 +128,8 @@ abstract class One_Core_Dao_Database_Table
     public function getSetupConnection()
     {
         if (is_null($this->_setupConnection)) {
-            $this->_setupConnection = Nova::getSingleton('core/database.connection.pool')
-                ->getConnection($this->getConfig('connection.setup'));
+            $this->_setupConnection = $this->app()->getSingleton('core/database.connection.pool')
+                ->getConnection($this->getConfig("resource.dal.database.{$this->getModuleName()}.connection.setup"));
         }
         return $this->_setupConnection;
     }
@@ -142,26 +142,7 @@ abstract class One_Core_Dao_Database_Table
      */
     public function getConfig($path = NULL)
     {
-        static $daoConfig = array();
-
-        $module = $this->getModuleName();
-        if (!isset($daoConfig[$module])) {
-            //FIXME: config loader
-            $daoConfig[$module] = new Zend_Config(Nova::getModel('core/application')
-                ->getConfig("global.models.{$module}.resource.dao"));
-        }
-        $config = $daoConfig[$module];
-        foreach (explode('.', $path) as $chunk) {
-            $config = $config->get($chunk);
-            if (is_null($config)) {
-                return NULL;
-            }
-        }
-
-        if ($config instanceof Zend_Config) {
-            return $config->toArray();
-        }
-        return $config;
+        return $this->app()->getConfig($path);
     }
 
     /**
@@ -244,9 +225,16 @@ abstract class One_Core_Dao_Database_Table
         return $this;
     }
 
-    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapper $mapper, $identity, $field)
+    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, $identity, $field)
     {
-        $statement = $this->getSelect()->query(Zend_Db::FETCH_ASSOC);
+        if ($field === null) {
+            $field = self::DEFAULT_ID_FIELD_NAME;
+        }
+
+        $statement = $this->getSelect()
+            ->where("{$this->getReadConnection()->quoteIdentifier($field)} = ?", $identity)
+            ->query(Zend_Db::FETCH_ASSOC)
+        ;
 
         if (($tableData = $statement->fetch()) !== false) {
             $mapper->load($model, $tableData);
@@ -255,7 +243,7 @@ abstract class One_Core_Dao_Database_Table
         return $this;
     }
 
-    public function save(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapper $mapper)
+    public function save(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper)
     {
         $entityData = $mapper->save($model);
 
@@ -278,7 +266,7 @@ abstract class One_Core_Dao_Database_Table
         return $this;
     }
 
-    public function delete(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapper $mapper)
+    public function delete(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper)
     {
         return $this;
     }

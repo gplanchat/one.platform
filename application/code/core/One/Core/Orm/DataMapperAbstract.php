@@ -39,7 +39,7 @@
  * @package     Core
  * @subpackage  Orm
  */
-abstract class One_Core_Orm_DataMapper
+abstract class One_Core_Orm_DataMapperAbstract
     extends One_Core_Object
 {
     /**

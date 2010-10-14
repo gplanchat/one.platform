@@ -40,7 +40,7 @@
  * @subpackage  One_Core
  */
 class One_Core_Dal_Database_Connection_Adapter_Mysqli
-    extends Zend_Db_Adapter_Mysql
+    extends Zend_Db_Adapter_Mysqli
     implements One_Core_Dal_Database_Connection_AdapterInterface
 {
     /**
@@ -50,7 +50,7 @@ class One_Core_Dal_Database_Connection_Adapter_Mysqli
      *
      * @var unknown_type
      */
-    protected $_tablePrefix = NULL;
+    protected $_tablePrefix = '';
 
     /**
      * TODO: PHPDoc
@@ -61,7 +61,55 @@ class One_Core_Dal_Database_Connection_Adapter_Mysqli
      */
     static $_entitiesConfig = array();
 
-    protected $_connectionName = NULL;
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.0
+     *
+     * @var string
+     */
+    protected $_connectionName = null;
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.0
+     *
+     * @var One_Core_Model_Application
+     */
+    protected $_app = null;
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.0
+     *
+     * @param array|Zend_Config $config
+     * @param One_Core_Model_Application $app
+     * @return void
+     */
+    public function __construct($config, One_Core_Model_Application $app)
+    {
+        parent::__construct($config);
+
+        $this->_app = $app;
+
+        if (isset($config['table-prefix'])) {
+            $this->_tablePrefix = $config['table-prefix'];
+        }
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.0
+     *
+     * @return One_Core_Model_Application
+     */
+    public function app()
+    {
+        return $this->_app;
+    }
 
     /**
      * Sets up the connection's name
@@ -99,9 +147,9 @@ class One_Core_Dal_Database_Connection_Adapter_Mysqli
     public function getTablePrefix()
     {
         if (is_null($this->_tablePrefix)) {
-            $config = Nova::getSingleton('core/database.connection.pool')
+            $config = $this->app()->getSingleton('core/database.connection.pool')
                 ->getConfig($this->getConnectionName());
-            $this->_tablePrefix = $config['table_prefix'];
+            $this->_tablePrefix = $this->_config['table-prefix'];
         }
         return $this->_tablePrefix;
     }

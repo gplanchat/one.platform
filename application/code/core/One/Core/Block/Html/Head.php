@@ -113,6 +113,7 @@ class One_Core_Block_Html_Head
     {
         if ($this->_title === null) {
             $this->_title = new Zend_View_Helper_HeadTitle();
+            $this->_title->set(null);
         }
         $this->_title->headTitle($title, $setType);
 

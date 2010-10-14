@@ -292,8 +292,6 @@ class One_Core_Model_Application
     public function getResource($identifier, $type, $options = null)
     {
         $classData = $this->_inflectClassName($identifier, $type);
-        var_dump($classData);
-        die();
 
         Zend_Loader::loadClass($classData['name']);
 
@@ -304,6 +302,7 @@ class One_Core_Model_Application
                 $object->app($this);
             } else {
                 $params = func_get_args();
+                array_shift($params);
                 array_shift($params);
                 $object = $reflectionClass->newInstanceArgs($params);
             }
@@ -404,5 +403,25 @@ class One_Core_Model_Application
     public function app(One_Core_Model_Application $applicaiton = null)
     {
         return $this;
+    }
+
+    public function getConfig($path = null)
+    {
+        $pathExploded = explode('.', $path);
+        $firstChunk = array_shift($pathExploded);
+
+        $config = $this->getOption($firstChunk);
+        if (count($pathExploded) === 0) {
+            return $config;
+        }
+
+        foreach ($pathExploded as $chunk) {
+            if (!is_array($config) || !isset($config[$chunk])) {
+                return null;
+            }
+            $config = $config[$chunk];
+        }
+
+        return $config;
     }
 }

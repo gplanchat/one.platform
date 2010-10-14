@@ -24,16 +24,6 @@ final class One
     private static $_env = null;
 
     /**
-     * @var string
-     */
-    private static $_basePath = '/';
-
-    /**
-     * @var string
-     */
-    private static $_domain = null;
-
-    /**
      * @var int
      */
     private static $_defaultWebsiteId = 0;
@@ -104,54 +94,13 @@ final class One
         return self::$_app[$websiteId];
     }
 
-    /**
-     * @deprecated
-     *
-     * @param unknown_type $identifier
-     * @param unknown_type $websiteId
-     * @param unknown_type $params
-     */
-    public static function getModel($identifier, $websiteId = null, $params = null)
+    public static function throwException($identifier, $message = null, $_ = null)
     {
-        $params = array_splice(func_get_args(), 1, 1);
+        $app = self::app();
+        $reflectionObject = new ReflectionObject($app);
+        $reflectionMethod = $reflectionObject->getMethod('throwException');
 
-        return call_user_func_array(array(self::app($websiteId), 'getModel'), $params);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param unknown_type $identifier
-     * @param unknown_type $websiteId
-     * @param unknown_type $params
-     */
-    public static function getSingleton($identifier, $websiteId = null, $params = null)
-    {
-        return self::app($websiteId)->getSingleton($identifier, $params);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param unknown_type $identifier
-     * @param unknown_type $websiteId
-     * @param unknown_type $params
-     */
-    public static function getBlockSingleton($identifier, $websiteId = null, $params = null)
-    {
-        return self::app($websiteId)->getBlockSingleton($identifier, $params);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param unknown_type $identifier
-     * @param unknown_type $websiteId
-     * @param unknown_type $message
-     * @param unknown_type $_
-     */
-    public static function throwException($identifier, $websiteId, $message, $_ = null)
-    {
-        return self::app($websiteId)->throwException($identifier, vsprintf($message, array_slice(func_get_args(), 3)));
+        $args = func_get_args();
+        $reflectionMethod->invokeArgs($app, $args);
     }
 }

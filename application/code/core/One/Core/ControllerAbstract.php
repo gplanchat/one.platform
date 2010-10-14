@@ -29,7 +29,7 @@ class One_Core_ControllerAbstract
     {
         $this->view = null;
 
-        $this->_initLayout();
+//        $this->_initLayout();
 
         return $this;
     }
@@ -46,11 +46,10 @@ class One_Core_ControllerAbstract
             }
         }
 
-        $this->_layout = $this->getApplicationInstance()
+        $this->_layout = $this->app()
             ->getSingleton($class)
-            ->setViewRendererHelper($this->_helper->getHelper('viewRenderer'))
+//            ->setViewRendererHelper($this->_helper->getHelper('viewRenderer'))
             ->setActionController($this)
-            ->init()
         ;
 
         return $this->_layout;
@@ -59,27 +58,30 @@ class One_Core_ControllerAbstract
     public function preDispatch()
     {
         $request = $this->getRequest();
-        $this->getApplicationInstance()
+        $this->app()
             ->dispatchEvent('controller.dispatch.before', array(
                 'module'     => $request->getParam('module'),
                 'controller' => $request->getParam('controller'),
                 'action'     => $request->getParam('action'),
                 'path'       => $request->getParam('path')
                 ));
+
+//        $this->_layout
+//            ->reset()
+//            ->init()
+//        ;
     }
 
     public function postDispatch()
     {
         $request = $this->getRequest();
-        $this->getApplicationInstance()
+        $this->app()
             ->dispatchEvent('controller.dispatch.after', array(
                 'module'     => $request->getParam('module'),
                 'controller' => $request->getParam('controller'),
                 'action'     => $request->getParam('action'),
                 'path'       => $request->getParam('path')
                 ));
-
-        echo $this->view->render(null);
     }
 
     public function getApplicationInstance()
@@ -93,5 +95,10 @@ class One_Core_ControllerAbstract
     public function getWebsiteId()
     {
         return $this->getInvokeArg('websiteId');
+    }
+
+    public function app()
+    {
+        return $this->getApplicationInstance();
     }
 }
