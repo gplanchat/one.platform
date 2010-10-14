@@ -68,14 +68,20 @@ class One_Core_Model_Layout
             ), (array) $data);
 
         $basePath = implode(One::DS, array(APPLICATION_PATH, 'design', $data['type'],
-            'default', 'base', 'layout', '*.xml'));
+            'default', 'base', 'layout'));
 
         $templatePath = implode(One::DS, array(APPLICATION_PATH, 'design', $data['type'],
-            $data['design'], $data['template'], 'layout', '*.xml'));
+            $data['design'], $data['template'], 'layout'));
 
         $this->_layoutConfiguration = new Zend_Config(array(), true);
-        foreach (array_merge(glob($basePath), glob($templatePath)) as $filename) {
-            $this->_layoutConfiguration->merge(new Zend_Config_Xml($filename, null, true));
+        $files = $this->app()->getConfig('general.layout');
+        foreach ($files as $module => $filename) {
+            if (file_exists($basePath . One::DS . $filename)) {
+                $this->_layoutConfiguration->merge(new Zend_Config_Xml($basePath . One::DS . $filename, null, true));
+            }
+            if (file_exists($templatePath . One::DS . $filename)) {
+                $this->_layoutConfiguration->merge(new Zend_Config_Xml($templatePath . One::DS . $filename, null, true));
+            }
         }
 
         $this->_layoutConfiguration->setReadOnly();

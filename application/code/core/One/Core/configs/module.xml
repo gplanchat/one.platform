@@ -40,9 +40,6 @@
     <model>
       <core>
         <namespace>One_Core_Model</namespace>
-        <rewrite>
-          <testing.rewrite>One_Core_Object</testing.rewrite>
-        </rewrite>
       </core>
     </model>
 
@@ -82,5 +79,11 @@
         </database>
       </dal>
     </resource>
+    
+    <general>
+      <layout>
+        <core>core.xml</core>
+      </layout>
+    </general>
   </default>
 </config>
