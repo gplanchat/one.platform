@@ -83,7 +83,7 @@ class One_Core_ControllerAbstract
                 'action'  => $this
             ));
 
-//        echo $this->view->render(null);
+        echo $this->view->render(null);
     }
 
     public function getWebsiteId()

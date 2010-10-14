@@ -356,16 +356,24 @@ abstract class One_Core_Bo_EntityAbstract
      * @param mixed $identifier
      * @return One_Core_Bo_EntityAbstract
      */
-    public function load($identifier, $field = NULL)
+    public function load($identifier, $field = null)
     {
-        $this->_beforeLoad($identifier, $field);
-        $this->_load($identifier, $field);
+        if (!is_array($identifier)) {
+            if ($field !== null) {
+                $identifier = array($field => $identifier);
+            } else {
+                $identifier = array(self::DEFAULT_ENTITY_ID_FIELD_NAME => $identifier);
+            }
+        }
+
+        $this->_beforeLoad($identifier);
+        $this->_load($identifier);
 
         $this->isLoaded(true);
         $this->isSaved(false);
         $this->isDeleted(false);
 
-        $this->_afterLoad($identifier, $field);
+        $this->_afterLoad($identifier);
 
         return $this;
     }
@@ -375,13 +383,13 @@ abstract class One_Core_Bo_EntityAbstract
      *
      * @since 0.1.0
      *
-     * @param mixed $identifier
-     * @param string $attribute
+     * @param string|array $identifier
+     * @param mixed|null $attribute
      * @return One_Core_Bo_EntityAbstract
      */
-     protected function _load($identifier, $attribute)
+    protected function _load($identifier)
     {
-        $this->getDao()->load($this, $this->getDataMapper(), $identifier, $attribute);
+        $this->getDao()->load($this, $this->getDataMapper(), $identifier);
 
         return $this;
     }
@@ -394,7 +402,7 @@ abstract class One_Core_Bo_EntityAbstract
      * @param $identifier
      * @return One_Core_Bo_EntityAbstract
      */
-    protected function _beforeLoad($identifier, $field)
+    protected function _beforeLoad($identifier)
     {
         return $this;
     }
@@ -405,9 +413,10 @@ abstract class One_Core_Bo_EntityAbstract
      * @since 0.1.0
      *
      * @param $identifier
+     * @param $attribute
      * @return One_Core_Bo_EntityAbstract
      */
-    protected function _afterLoad($identifier, $field)
+    protected function _afterLoad($identifier)
     {
         return $this;
     }

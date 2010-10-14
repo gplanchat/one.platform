@@ -48,7 +48,7 @@ interface One_Core_Dao_ResourceInterface
      * @param unknown_type $attribute
      * @return One_Core_Dao_ObjectInterface
      */
-    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, $identity, $attribute);
+    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes);
 
     /**
      * FIXME PHPDoc

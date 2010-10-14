@@ -82,7 +82,7 @@ abstract class One_Core_Dao_Database_Table
     /**
      * @var string
      */
-    private $_idFieldName = NULL;
+    private $_idFieldName = null;
 
     /**
      * _init method, should be called by the user-defined constructor
@@ -225,16 +225,27 @@ abstract class One_Core_Dao_Database_Table
         return $this;
     }
 
-    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, $identity, $field)
+    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes)
     {
-        if ($field === null) {
-            $field = self::DEFAULT_ID_FIELD_NAME;
+        if (is_int(key($attributes))) {
+            $newAttributes = array();
+            $i = 0;
+            foreach ($this->getIdFieldName() as $fieldNames) {
+                if (!isset($attributes[$i])) {
+                    continue;
+                }
+                $newAttributes[$fieldNames] = $attributes[$i++];
+            }
+            $attributes = $newAttributes;
+            unset($newAttributes);
         }
 
-        $statement = $this->getSelect()
-            ->where("{$this->getReadConnection()->quoteIdentifier($field)} = ?", $identity)
-            ->query(Zend_Db::FETCH_ASSOC)
-        ;
+        foreach ($attributes as $field => $identity){
+            $this->getSelect()
+                ->where("{$this->getReadConnection()->quoteIdentifier($field)} = ?", $identity)
+            ;
+        }
+        $statement = $this->getSelect()->query(Zend_Db::FETCH_ASSOC);
 
         if (($tableData = $statement->fetch()) !== false) {
             $mapper->load($model, $tableData);
