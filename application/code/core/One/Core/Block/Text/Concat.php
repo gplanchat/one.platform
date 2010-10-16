@@ -1,7 +1,7 @@
 <?php
 
 class One_Core_Block_Text_Concat
-    extends One_Core_Block_Text
+    extends One_Core_BlockAbstract
 {
     public function _render()
     {

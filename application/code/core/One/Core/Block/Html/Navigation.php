@@ -27,21 +27,8 @@ class One_Core_block_Html_Navigation
         return $this;
     }
 
-    protected function _call($method, $params)
+    public function _call($method, $params)
     {
-        if ($this->_navigationHelper === null) {
-            $this->_navigationHelper = new Zend_View_Helper_Navigation();
-            $this->_navigationHelper->view = new Zend_View();
-        }
-
-        $reflectionObject = new ReflectionObject($this->_navigationHelper);
-        if ($reflectionObject->hasMethod($method)) {
-            $reflectionMethod = $reflectionObject->getMethod($method);
-            $reflectionMethod->invokeArgs($this->_navigationHelper, $params);
-        } else {
-            $this->_navigationHelper->__call($method, $params);
-        }
-
-        return $this;
+        return call_user_func(array($this->navigation, $method), $params);
     }
 }
