@@ -107,7 +107,7 @@ class One_Core_ControllerAbstract
      */
     protected function _redirectSuccess($defaultRedirect = '/')
     {
-        if (($redirect = $this->getRequest()->getParam('success_url', null)) === null) {
+        if (($redirect = $this->getRequest()->getParam('success')) === null) {
             $redirect = $defaultRedirect;
         }
         $this->_redirect($redirect);
@@ -118,9 +118,9 @@ class One_Core_ControllerAbstract
      *
      * @return void
      */
-    protected function _rediectError($defaultRedirect = '/')
+    protected function _redirectError($defaultRedirect = '/')
     {
-        if (($redirect = $this->getRequest()->getParam('error_url', null)) === null) {
+        if (($redirect = $this->getRequest()->getParam('error')) === null) {
             $redirect = $defaultRedirect;
         }
         $this->_redirect($redirect);
@@ -132,15 +132,36 @@ class One_Core_ControllerAbstract
      * @param string $fieldset
      * @return bool
      */
-    protected function _validateFieldset($fieldset)
+    protected function _validateFieldset($fieldsetName)
     {
         /** @var Zend_Form_SubForm $fieldset */
         $fieldset = $this->app()
             ->getSingleton('core/config')
-            ->getFieldset($fieldset)
+            ->getFieldset($fieldsetName)
         ;
 
         if ($fieldset === null) {
+            return false;
+        }
+
+        return $fieldset->isValid($this->getRequest()->getPost($fieldsetName));
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @param string $fieldset
+     * @return bool
+     */
+    protected function _validateForm($form)
+    {
+        /** @var Zend_Form $form */
+        $form = $this->app()
+            ->getSingleton('core/config')
+            ->getForm($form)
+        ;
+
+        if ($form === null) {
             return false;
         }
 
