@@ -5,5 +5,7 @@ class One_Core_IndexController
 {
     public function indexAction()
     {
+        $this->loadLayout();
+        $this->renderLayout();
     }
 }

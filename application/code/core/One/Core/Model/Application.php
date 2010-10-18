@@ -13,12 +13,13 @@ class One_Core_Model_Application
 
     protected $_modelSingletons = array();
 
-    protected $_event = null;
+    protected $_resourceSingletons = array();
 
-    /**
-     * @var Zend_Controller_Front
-     */
-    protected $_frontController = null;
+    protected $_blockSingletons = array();
+
+    protected $_helperSingletons = array();
+
+    protected $_event = null;
 
     const DS = DIRECTORY_SEPARATOR;
     const PS = PATH_SEPARATOR;
@@ -275,7 +276,6 @@ class One_Core_Model_Application
             $reflectionClass = new ReflectionClass($classData['name']);
             if ($reflectionClass->isSubclassOf('One_Core_Object')) {
                 $object = $reflectionClass->newInstance($classData['module'], $options, $this);
-                $object->app($this);
             } else {
                 $params = func_get_args();
                 array_shift($params);
@@ -306,7 +306,6 @@ class One_Core_Model_Application
             $reflectionClass = new ReflectionClass($classData['name']);
             if ($reflectionClass->isSubclassOf('One_Core_Object')) {
                 $object = $reflectionClass->newInstance($classData['module'], $options, $this);
-                $object->app($this);
             } else {
                 $params = func_get_args();
                 array_shift($params);
@@ -351,6 +350,30 @@ class One_Core_Model_Application
             $this->_blockSingletons[$identifier] = $this->getBlock($identifier, $options, $layout);
         }
         return $this->_blockSingletons[$identifier];
+    }
+
+    public function _getHelper($identifier, $options = array(), One_Core_Model_Layout $layout = null, One_Core_BlockAbstract $block = null)
+    {
+        $classData = $this->_inflectClassName($identifier, 'helper');
+
+        Zend_Loader::loadClass($classData['name']);
+
+        try {
+            $reflectionClass = new ReflectionClass($classData['name']);
+            $object = $reflectionClass->newInstance($classData['module'], $options, $this, $layout, $block);
+        } catch (ReflectionException $e) {
+            $this->throwException('core/implementation-error', $e->getMessage());
+        }
+
+        return $object;
+    }
+
+    public function getHelper($identifier, $options = array(), One_Core_Model_Layout $layout = null, One_Core_BlockAbstract $block = null)
+    {
+        if (!isset($this->_helperSingletons[$identifier])) {
+            $this->_helperSingletons[$identifier] = $this->_getHelper($identifier, $options, $layout, $block);
+        }
+        return $this->_helperSingletons[$identifier];
     }
 
     public function throwException($identifier, $message = null, $_ = null)
@@ -432,5 +455,30 @@ class One_Core_Model_Application
         }
 
         return $config;
+    }
+
+    /**
+     * TODO: PHPDoc
+     * TODO: PHPUnit
+     *
+     * @return Zend_Controller_Front
+     */
+    public function getFrontController()
+    {
+        return $this->getBootstrap()
+            ->getPluginResource('frontController')
+            ->getFrontController();
+    }
+
+    /**
+     * TODO: PHPDoc
+     * TODO: PHPUnit
+     *
+     * @return Zend_Controller_Router_Abstract
+     */
+    public function getRouter()
+    {
+        return $this->getFrontController()
+            ->getRouter();
     }
 }

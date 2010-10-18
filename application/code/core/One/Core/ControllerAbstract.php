@@ -34,30 +34,33 @@ class One_Core_ControllerAbstract
     {
         $this->view = null;
 
-        $this->_initLayout();
-
         return $this;
     }
 
-    protected function _initLayout($class = null)
+    public function loadLayout($layoutName = null)
     {
-        if ($this->_layout instanceof One_Core_Model_Layout) {
-            return $this->_layout;
+        if ($this->_layout === null) {
+            $this->_layout = $this->app()
+                ->getSingleton('core/layout')
+                ->setActionController($this)
+            ;
         }
 
-        if ($class === null) {
-            if (($class = $this->getInvokeArg('layoutClass')) === null) {
-                $class = 'core/layout';
-            }
-        }
-
-        $this->_layout = $this->app()
-            ->getSingleton($class)
-//            ->setViewRendererHelper($this->_helper->getHelper('viewRenderer'))
-            ->setActionController($this)
+        $this->_layout
+            ->reset()
+            ->init($layoutName)
         ;
 
         return $this->_layout;
+    }
+
+    public function renderLayout()
+    {
+        $this->getResponse()
+            ->setBody($this->view->render(null))
+        ;
+
+        return $this;
     }
 
     public function preDispatch()
@@ -68,11 +71,6 @@ class One_Core_ControllerAbstract
                 'request' => $this->getRequest(),
                 'action'  => $this
                 ));
-
-        $this->_layout
-            ->reset()
-            ->init()
-        ;
     }
 
     public function postDispatch()
@@ -82,8 +80,6 @@ class One_Core_ControllerAbstract
                 'request' => $this->getRequest(),
                 'action'  => $this
             ));
-
-        echo $this->view->render(null);
     }
 
     public function getWebsiteId()
@@ -92,6 +88,8 @@ class One_Core_ControllerAbstract
     }
 
     /**
+     * TODO: PHPDoc
+     *
      * @return One_Core_Model_Application
      */
     public function app()
@@ -100,5 +98,53 @@ class One_Core_ControllerAbstract
             $this->_app = $this->getInvokeArg('applicationInstance');
         }
         return $this->_app;
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @return void
+     */
+    protected function _redirectSuccess($defaultRedirect = '/')
+    {
+        if (($redirect = $this->getRequest()->getParam('success_url', null)) === null) {
+            $redirect = $defaultRedirect;
+        }
+        $this->_redirect($redirect);
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @return void
+     */
+    protected function _rediectError($defaultRedirect = '/')
+    {
+        if (($redirect = $this->getRequest()->getParam('error_url', null)) === null) {
+            $redirect = $defaultRedirect;
+        }
+        $this->_redirect($redirect);
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @param string $fieldset
+     * @return bool
+     */
+    protected function _validateFieldset($fieldset)
+    {
+        /** @var Zend_Form_SubForm $fieldset */
+        $fieldset = $this->app()
+            ->getSingleton('core/config')
+            ->getFieldset($fieldset)
+        ;
+
+        if ($fieldset === null) {
+            return false;
+        }
+
+        var_dump($this->getRequest()->getPost());
+        return $fieldset->isValid($this->getRequest()->getPost());
     }
 }

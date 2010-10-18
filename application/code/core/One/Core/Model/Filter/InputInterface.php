@@ -28,55 +28,20 @@
  *
  */
 
-require_once 'Nova/Core/ObjectAbstract.php';
 /**
- * Base object class
+ * Applciation manager
+ *
+ *
+ * @uses        Zend_Config
+ * @uses        One_Core_Object
  *
  * @access      public
  * @author      gplanchat
- * @category    Helper
+ * @category    Config
  * @package     One
- * @subpackage  One_core
+ * @subpackage  One_Core
  */
-class One_Core_Helper_Data
-    extends One_Core_HelperAbstract
+interface One_Core_Model_Filter_InputInterface
+    extends One_Core_Model_FilterInterface
 {
-    /**
-     * FIXME: PHPDoc
-     *
-     * @since 0.1.0
-     *
-     * @param string $data
-     * @return string
-     */
-    public function htmlEscape($data)
-    {
-        return htmlspecialChars($data, ENT_NOQUOTES, self::DEFAULT_CHARSET);
-    }
-
-    /**
-     * FIXME: PHPDoc
-     *
-     * @since 0.1.0
-     *
-     * @param string $data
-     * @return string
-     */
-    public function urlEscape($data)
-    {
-        return urlencode($data);
-    }
-
-    /**
-     * FIXME: PHPDoc
-     *
-     * @since 0.1.0
-     *
-     * @param string $data
-     * @return string
-     */
-    public function jsStringEscape($data, $quote = "'")
-    {
-        return str_replace($quote, '\\'.$quote, $data);
-    }
 }

@@ -48,6 +48,10 @@ class One_Core_Model_Layout
 
     protected $_blocks = array();
 
+    protected $_baseScriptPath = null;
+    protected $_defaultScriptPath = null;
+    protected $_templateScriptPath = null;
+
     /**
      *
      * @param string $filename
@@ -67,20 +71,29 @@ class One_Core_Model_Layout
             'template' => 'default'
             ), (array) $data);
 
-        $basePath = implode(One::DS, array(APPLICATION_PATH, 'design', $data['type'],
-            'default', 'base', 'layout'));
 
-        $templatePath = implode(One::DS, array(APPLICATION_PATH, 'design', $data['type'],
-            $data['design'], $data['template'], 'layout'));
+        $this->_baseScriptPath = realpath(implode(One::DS, array(APPLICATION_PATH, 'design', $data['type'],
+            'default', 'base', 'template')));
+        $this->_defaultScriptPath = realpath(implode(One::DS, array(APPLICATION_PATH, 'design', $data['type'],
+            $data['design'], 'default', 'template')));
+        $this->_templateScriptPath = realpath(implode(One::DS, array(APPLICATION_PATH, 'design', $data['type'],
+            $data['design'], $data['template'], 'template')));
+
+        $baseLayoutPath = realpath(dirname($this->_baseScriptPath) . One::DS . 'layout');
+        $defaultLayoutPath = realpath(dirname($this->_defaultScriptPath) . One::DS . 'layout');
+        $templateLayoutPath = realpath(dirname($this->_templateScriptPath) . One::DS . 'layout');
 
         $this->_layoutConfiguration = new Zend_Config(array(), true);
         $files = $this->app()->getConfig('general.layout');
         foreach ($files as $module => $filename) {
-            if (file_exists($basePath . One::DS . $filename)) {
-                $this->_layoutConfiguration->merge(new Zend_Config_Xml($basePath . One::DS . $filename, null, true));
+            if (file_exists($baseLayoutPath . One::DS . $filename)) {
+                $this->_layoutConfiguration->merge(new Zend_Config_Xml($baseLayoutPath . One::DS . $filename, null, true));
             }
-            if (file_exists($templatePath . One::DS . $filename)) {
-                $this->_layoutConfiguration->merge(new Zend_Config_Xml($templatePath . One::DS . $filename, null, true));
+            if (file_exists($defaultLayoutPath . One::DS . $filename)) {
+                $this->_layoutConfiguration->merge(new Zend_Config_Xml($defaultLayoutPath . One::DS . $filename, null, true));
+            }
+            if (file_exists($templateLayoutPath . One::DS . $filename)) {
+                $this->_layoutConfiguration->merge(new Zend_Config_Xml($templateLayoutPath . One::DS . $filename, null, true));
             }
         }
 
@@ -142,11 +155,11 @@ class One_Core_Model_Layout
         return $this;
     }
 
-    public function init()
+    public function init($layoutName = null)
     {
         $request = $this->_actionController->getRequest();
 
-        if (($layoutName = $request->getParam('layout')) === null) {
+        if ($layoutName === null && ($layoutName = $request->getParam('layout')) === null) {
             $path = $request->getParam('path');
             if (empty($path)) {
                 $layoutName = implode('.', array(
@@ -202,6 +215,21 @@ class One_Core_Model_Layout
     public function getRequest()
     {
         return $this->_actionController->getRequest();
+    }
+
+    public function getBaseScriptPath()
+    {
+        return $this->_baseScriptPath;
+    }
+
+    public function getDefaultScriptPath()
+    {
+        return $this->_defaultScriptPath;
+    }
+
+    public function getTemplateScriptPath()
+    {
+        return $this->_templateScriptPath;
     }
 
     /**

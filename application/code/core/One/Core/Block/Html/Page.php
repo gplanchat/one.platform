@@ -7,6 +7,8 @@ class One_Core_Block_Html_Page
 
     protected function _construct($options)
     {
+        $this->doctype(Zend_View_Helper_Doctype::XHTML5);
+
         return parent::_construct($options);
     }
 

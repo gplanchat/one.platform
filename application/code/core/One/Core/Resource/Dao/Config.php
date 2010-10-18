@@ -8,9 +8,9 @@ class One_Core_Resource_Dao_Config
         $this->_init('core/config', 'core/config');
     }
 
-    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, $identity, $field)
+    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes)
     {
-        parent::load($model, $mapper, $identity, $field);
+        parent::load($model, $mapper, $attributes);
 
         return $this;
     }

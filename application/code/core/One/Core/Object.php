@@ -534,16 +534,15 @@ class One_Core_Object
             break;
         }
 
-        $this->_call($method, $params);
+        return $this->_call($method, $params);
 
         //Nova::profilerStop(__METHOD__);
-
-        One::throwException('core/invalidMethodCall',
-            'Method "%s" not found.', $method);
     }
 
     protected function _call($method, $params)
     {
+        $this->app()->throwException('core/invalidMethodCall',
+            'Method "%s" not found.', $method);
     }
 
     /**
@@ -590,6 +589,12 @@ class One_Core_Object
         $this->_inflector = $inflector;
     }
 
+    /**
+     * TODO: PHPDoc
+     * TODO: PHPUnit
+     *
+     * @return One_Core_Model_Application
+     */
     public function app()
     {
         return $this->_app;

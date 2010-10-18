@@ -5,5 +5,7 @@ class One_Cms_DisplayController
 {
     public function pageAction()
     {
+        $this->loadLayout();
+        $this->renderLayout();
     }
 }

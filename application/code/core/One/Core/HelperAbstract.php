@@ -31,7 +31,7 @@
 /**
  * Base helper class
  *
- * @since 0.1.0
+ * @since 0.1.2
  *
  * @access      public
  * @author      gplanchat
@@ -51,21 +51,58 @@ abstract class One_Core_HelperAbstract
     /**
      * FIXME: PHPDoc
      *
-     * @since 0.1.0
+     * @since 0.1.2
      *
      * @var One_Core_Model_Layout
      */
-    private $_layout = NULL;
+    private $_layout = null;
+
+    /**
+     * FIXME: PHPDoc
+     *
+     * @since 0.1.2
+     *
+     * @var One_Core_BlockAbstract
+     */
+    private $_block = null;
+
+    protected $_app = null;
+
+    protected $_module = null;
+
+    public function __construct($module, Array $options, One_Core_Model_Application $app, One_Core_Model_Layout $layout = null, One_Core_BlockAbstract $block = null)
+    {
+        $this->_app = $app;
+        $this->_module = $module;
+
+        if ($layout !== null) {
+            $this->setLayout($layout);
+        }
+        if ($block !== null) {
+            $this->setBlock($block);
+        }
+
+        $this->_construct($options);
+    }
+
+    protected function _construct($options)
+    {
+    }
+
+    public function app()
+    {
+        return $this->_app;
+    }
 
     /**
      * Declare layout
      *
-     * @since 0.1.0
+     * @since 0.1.2
      *
-     * @param   Mage_Core_Model_Layout $layout
-     * @return  Mage_Core_Helper_Abstract
+     * @param   One_Core_Model_Layout $layout
+     * @return  One_Core_HelperAbstract
      */
-    public function setLayout($layout)
+    public function setLayout(One_Core_Model_Layout $layout)
     {
         $this->_layout = $layout;
 
@@ -75,9 +112,9 @@ abstract class One_Core_HelperAbstract
     /**
      * Retrieve layout model object
      *
-     * @since 0.1.0
+     * @since 0.1.2
      *
-     * @return Mage_Core_Model_Layout
+     * @return One_Core_Model_Layout
      */
     public function getLayout()
     {
@@ -85,15 +122,42 @@ abstract class One_Core_HelperAbstract
     }
 
     /**
+     * Declare layout
+     *
+     * @since 0.1.2
+     *
+     * @param   One_Core_BlockAbstract $block
+     * @return  One_Core_HelperAbstract
+     */
+    public function setBlock(One_Core_BlockAbstract $block)
+    {
+        $this->_block = $block;
+
+        return $this;
+    }
+
+    /**
+     * Retrieve layout model object
+     *
+     * @since 0.1.2
+     *
+     * @return One_Core_Model_Layout
+     */
+    public function getBlock()
+    {
+        return $this->_block;
+    }
+
+    /**
      * FIXME: PHPDoc
      *
-     * @since 0.1.0
+     * @since 0.1.2
      *
      * @param string $format
      * @param mixed $_
      * @return string
      */
-    public function __($format, $_ = NULL)
+    public function __($format, $_ = null)
     {
         $args = func_get_args();
         $format = array_shift($args);

@@ -22,6 +22,9 @@ abstract class One_Core_BlockAbstract
     private $_filter = array();
     private $_path = array();
 
+    protected $_escape = 'htmlspecialchars';
+    protected $_encoding = 'UTF-8';
+
     protected $_loaderTypes = array('helper', 'filter');
 
     public function __construct($module, $options, One_Core_Model_Application $application, One_Core_Model_Layout $layout = null)
@@ -129,6 +132,26 @@ abstract class One_Core_BlockAbstract
         return $this;
     }
 
+    public function _call($method, $params)
+    {
+        try {
+//            var_dump(array($method, $params));
+            return $this->helper('core/standard')
+                ->__call($method, $params)
+            ;
+//        } catch (Zend_Loader_Exception $e) {
+        } catch (Zend $e) {
+            return parent::_call($method, $params);
+        }
+    }
+
+    public function helper($identifier)
+    {
+        return $this->app()
+            ->getHelper($identifier, array(), $this->getLayout(), $this)
+        ;
+    }
+
     /**
      * @return One_Core_Model_Layout
      */
@@ -211,6 +234,15 @@ abstract class One_Core_BlockAbstract
         }
 
         return $content;
+    }
+
+    public function escape($string)
+    {
+        if (in_array($this->_escape, array('htmlspecialchars', 'htmlentities'))) {
+            return call_user_func($this->_escape, $string, ENT_COMPAT, $this->_encoding);
+        }
+
+        return call_user_func($this->_escape, $string);
     }
 
     protected function _beforeRender()
