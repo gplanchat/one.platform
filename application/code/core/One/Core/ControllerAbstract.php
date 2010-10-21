@@ -19,7 +19,7 @@ class One_Core_ControllerAbstract
     public function getLayout()
     {
         if ($this->_layout === null) {
-            $this->_initLayout();
+            $this->loadLayout();
         }
         return $this->_layout;
     }

@@ -4,6 +4,9 @@
     <system>
       <hostname>www.example.com</hostname>
       <base-url>/</base-url>
+      <rendering>
+        <class>frontoffice</class>
+      </rendering>
     </system>
     <general>
       <locale>
@@ -74,6 +77,9 @@
     </modules>
     <system>
       <default-module>One_Admin_Core</default-module>
+      <rendering>
+        <class>backoffice</class>
+      </rendering>
     </system>
   </backoffice>
   <production>

@@ -72,7 +72,7 @@ class One_Core_Model_Layout
             'template' => 'default'
             ), (array) $data);
 
-        $this->_renderingClass = $this->app()->getOption('system.rendering.class');
+        $this->_renderingClass = $this->app()->getConfig('system.rendering.class');
         if ($this->_renderingClass === null) {
             $this->_renderingClass = 'frontoffice';
         }
