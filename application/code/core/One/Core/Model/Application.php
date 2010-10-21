@@ -26,12 +26,12 @@ class One_Core_Model_Application
 
     const DEFAULT_CONFIG_SECTION = 'default';
 
-    public function __construct($websiteId, $environment)
+    public function __construct($websiteId, $environment, Array $moreSections = array())
     {
         $this->_websiteId = $websiteId;
         $this->_event = new One_Core_Model_Event_Dispatcher();
 
-        $config = $this->_initConfig($environment);
+        $config = $this->_initConfig($environment, $moreSections);
 
         $config->setReadOnly();
 
@@ -56,7 +56,7 @@ class One_Core_Model_Application
             $this->_frontController->addControllerDirectory($modulePath, $moduleName);
 
             $routeClassName = 'core/router.route';
-            if (isset($moduleConfig->route)) {
+            if (isset($moduleConfig->route) && !empty($moduleConfig->route)) {
                 $routeClassName = $moduleConfig->route->get('type', $routeClassName);
             }
             $moduleRoute = $this->getModel($routeClassName, $moduleConfig->route, $moduleName, $this);
@@ -92,8 +92,8 @@ class One_Core_Model_Application
                 $router->addRoute($routeName, $route);
             }
         }
-
-        $this->_frontController->setDefaultModule('One_Core');
+        $defaultModule = $config->system->get('default-module', 'One_Core');
+        $this->_frontController->setDefaultModule($defaultModule);
         $dispatcher = $this->_frontController->getDispatcher();
         $dispatcher->setParam('prefixDefaultModule', true);
 
@@ -103,29 +103,37 @@ class One_Core_Model_Application
         $this->_frontController->setParam('noViewRenderer', true);
     }
 
-    protected function _initConfig($environment)
+    protected function _initConfig($environment, Array $moreSections)
     {
+        array_unshift($moreSections, $environment);
+
         $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'application.xml'));
         require_once 'Zend/Config/Xml.php';
         $config = new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true);
-        try {
-            $config->merge(new Zend_Config_Xml($configFile, $environment, true));
-        } catch (Zend_Config_Exception $e) {
+        foreach ($moreSections as $section) {
+            try {
+                $config->merge(new Zend_Config_Xml($configFile, $section, true));
+            } catch (Zend_Config_Exception $e) {
+            }
         }
 
         $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'local.xml'));
         $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
-        try {
-            $config->merge(new Zend_Config_Xml($configFile, $environment, true));
-        } catch (Zend_Config_Exception $e) {
+        foreach ($moreSections as $section) {
+            try {
+                $config->merge(new Zend_Config_Xml($configFile, $section, true));
+            } catch (Zend_Config_Exception $e) {
+            }
         }
 
         $configFilePattern = implode(self::DS, array(APPLICATION_PATH, 'configs', 'modules', '*.xml'));
         foreach (glob($configFilePattern) as $configFile) {
             $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
-            try {
-                $config->merge(new Zend_Config_Xml($configFile, $environment, true));
-            } catch (Zend_Config_Exception $e) {
+            foreach ($moreSections as $section) {
+                try {
+                    $config->merge(new Zend_Config_Xml($configFile, $section, true));
+                } catch (Zend_Config_Exception $e) {
+                }
             }
         }
 

@@ -42,7 +42,7 @@
       <One_Admin_Core>
         <codePool>core</codePool>
         <active>0</active>
-        <route type="admin.core/router.route" />
+        <route type="admin.core/router.route" path="core" name="core" />
         <requires>
           <One_Core />
         </requires>
@@ -50,11 +50,32 @@
     </modules>
     <frontoffice>
       <layout>
-        <design>default</design>
+        <design>legacies</design>
         <template>default</template>
       </layout>
     </frontoffice>
+    <backoffice>
+      <layout>
+        <design>default</design>
+        <template>default</template>
+      </layout>
+    </backoffice>
   </default>
+  <backoffice>
+    <modules>
+      <One_Core>
+        <codePool>core</codePool>
+        <active>1</active>
+        <route />
+      </One_Core>
+      <One_Admin_Core>
+        <active>1</active>
+      </One_Admin_Core>
+    </modules>
+    <system>
+      <default-module>One_Admin_Core</default-module>
+    </system>
+  </backoffice>
   <production>
     <system>
       <hostname>one</hostname>

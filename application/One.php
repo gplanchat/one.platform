@@ -71,7 +71,7 @@ final class One
      * @param mixed $websiteId
      * @return Zend_Application
      */
-    public static function app($websiteId = null, $environment = null)
+    public static function app($websiteId = null, $environment = null, $moreSections = array())
     {
         if ($websiteId === null) {
             $websiteId = self::getDefaultWebsiteId();
@@ -86,7 +86,7 @@ final class One
         }
 
         require_once 'One/Core/Model/Application.php';
-        self::$_app[$websiteId] = new One_Core_Model_Application($websiteId, $environment);
+        self::$_app[$websiteId] = new One_Core_Model_Application($websiteId, $environment, (array) $moreSections);
 
         $modules = self::$_app[$websiteId]->getOption('modules');
         self::$_app[$websiteId]->setAutoloaderNamespaces(array_keys($modules));
