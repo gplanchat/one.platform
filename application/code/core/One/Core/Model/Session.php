@@ -47,7 +47,11 @@ class One_Core_Model_Session
      */
     protected function _construct($options)
     {
-        $this->init('core');
+        parent::_construct($options);
+
+        $this->_init('core');
+
+        return $this;
     }
 }
 

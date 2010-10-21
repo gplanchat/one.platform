@@ -82,15 +82,26 @@ abstract class One_Core_Model_SessionAbstract
      *
      * @since 0.1.0
      */
-    public function init($namespace, $sessionName = NULL)
+    protected function _init($namespace = null)
     {
-        if (!isset($_SESSION)) {
-            $this->start($sessionName);
+        if ($namespace !== null) {
+            $namespace = (string) $namespace;
+        } else {
+            $namespace = (string) $this->getModuleName();
         }
-        if (!isset($_SESSION[(string) $namespace])) {
-            $_SESSION[(string) $namespace] = array();
+
+        $this->_start();
+
+        if (!isset($_SESSION[$namespace])) {
+            $_SESSION[$namespace] = array();
         }
-        $this->_attachData($_SESSION[(string) $namespace]);
+
+        $this->_data = &$_SESSION[$namespace];
+
+        if (!isset($_SESSION[$namespace]['__messages'])) {
+            $_SESSION[$namespace]['__messages'] = array();
+        }
+        $this->_messages = &$_SESSION[$namespace]['__messages'];
 
         $this->validate();
         $this->updateCookie();
@@ -101,14 +112,14 @@ abstract class One_Core_Model_SessionAbstract
      *
      * @since 0.1.0
      */
-    public function start($sessionName)
+    protected function _start()
     {
         if (isset($_SESSION)) {
             return $this;
         }
 
-        session_start($sessionName);
-        session_regenerate_id();
+        session_start();
+        //session_regenerate_id();
     }
 
     /**
@@ -143,16 +154,16 @@ abstract class One_Core_Model_SessionAbstract
             $this->_messages = array();
         }
 
-        $this->_messages[$level] = $message;
+        $this->_messages[$level][] = $message;
 
         return $this;
     }
 
-    public function getMessages($empty = false)
+    public function getMessages($empty = true)
     {
         $messageList = $this->_messages;
 
-        if ($empty === true) {
+        if ($empty !== false) {
             $this->_messages = array();
         }
 
@@ -164,7 +175,7 @@ abstract class One_Core_Model_SessionAbstract
         $parameters = func_get_args();
         array_shift($parameters);
         return $this->_addMessage(Zend_Log::ERR, vsprintf($messagePattern, $parameters));
-            }
+    }
 
     public function addWarning($messagePattern, $_ = NULL)
     {

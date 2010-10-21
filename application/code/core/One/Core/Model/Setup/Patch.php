@@ -118,7 +118,7 @@ class One_Core_Model_Setup_Patch
     /**
      * TODO: PHPDoc
      */
-    protected function _construct()
+    protected function _construct($options)
     {
         return $this;
     }

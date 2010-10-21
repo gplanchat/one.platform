@@ -109,8 +109,7 @@ class One_Core_Object
             One::throwException('core/invalid-method-call', 'Parameter 2 should be either an array or a Zend_Config instance.');
         }
 
-        $this->_data = $this->_construct($data);
-        $this->_originalData = $this->_data;
+        $this->_construct($data);
     }
 
     /**
@@ -118,24 +117,13 @@ class One_Core_Object
      *
      * @since 0.1.0
      *
-     * @return
+     * @return One_Core_Object
      */
     protected function _construct($data)
     {
-        return $data;
-    }
+        $this->_data = $data;
+        $this->_originalData = $this->_data;
 
-    /**
-     * Attach a specified variable to the $_data array
-     *
-     * @since 0.1.0
-     *
-     * @param array $variable
-     * @return One_Core_Object
-     */
-    protected function _attachData(array &$variable)
-    {
-        $this->_data = &$variable;
         return $this;
     }
 

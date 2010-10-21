@@ -144,7 +144,13 @@ class One_Core_ControllerAbstract
             return false;
         }
 
-        return $fieldset->isValid($this->getRequest()->getPost($fieldsetName));
+        $status = $fieldset->isValid($this->getRequest()->getPost($fieldsetName));
+
+        if ($status !== true) {
+            return $fieldset->getMessages();
+        }
+
+        return true;
     }
 
     /**
@@ -165,7 +171,12 @@ class One_Core_ControllerAbstract
             return false;
         }
 
-        var_dump($this->getRequest()->getPost());
-        return $fieldset->isValid($this->getRequest()->getPost());
+        $status = $form->isValid($this->getRequest()->getPost());
+
+        if ($status !== true) {
+            return $form->getMessages();
+        }
+
+        return true;
     }
 }

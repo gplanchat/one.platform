@@ -28,7 +28,6 @@
  *
  */
 
-require_once 'Nova/Core/ObjectAbstract.php';
 /**
  * Base escape helper class
  *

@@ -87,6 +87,7 @@ abstract class One_Core_HelperAbstract
 
     protected function _construct($options)
     {
+        return $this;
     }
 
     public function app()
