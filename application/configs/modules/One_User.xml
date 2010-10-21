@@ -5,7 +5,7 @@
       <One_User>
         <codePool>core</codePool>
         <active>0</active>
-        <route type="user/router.route" path="user" name="user" />
+        <!--<route type="user/router.route" path="user" name="user" />-->
       </One_User>
       <One_Admin_User>
         <codePool>core</codePool>
