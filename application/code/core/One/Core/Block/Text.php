@@ -17,12 +17,8 @@ class One_Core_Block_Text
         return $this->_content;
     }
 
-    public function render($name = null)
+    public function _render($name = null)
     {
-        $this->_beforeRender();
-        $content = $this->getContent();
-        $this->_afterRender();
-
-        return $content;
+        return $this->getContent();
     }
 }
