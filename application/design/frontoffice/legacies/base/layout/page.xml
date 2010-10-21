@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.0.0">
+  <default>
+    <block type="core/html.page" name="root" template="page/2-columns-left.phtml">
+      <block type="core/html.head" name="head" template="page/head.phtml">
+        <title>One Platform</title>
+      </block>
+      <block type="core/text.concat" name="body">
+        <block type="core/html.navigation" name="navigation" template="navigation/menu.phtml">
+          <action method="setHeadBlock">
+            <params>
+              <block>head</block>
+            </params>
+          </action>
+          <action method="addPage">
+            <params>
+              <name>test</name>
+              <title>Testing menu</title>
+              <href>http://one/</href>
+            </params>
+          </action>
+        </block>
+      </block>
+    </block>
+  </default>
+</layout>

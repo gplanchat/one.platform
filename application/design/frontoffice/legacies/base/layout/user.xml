@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.0.0">
+  <user.account.index>
+    <placeholder />
+  </user.account.index>
+  <account.login>
+    <reference name="body">
+      <block type="user/login" name="login"></block>
+    </reference>
+  </account.login>
+</layout>
