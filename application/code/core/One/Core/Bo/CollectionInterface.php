@@ -44,23 +44,13 @@
 interface One_Core_Bo_CollectionInterface
 {
     /**
-     * Set the entity identifier
-     *
-     * @since 0.1.0
-     *
-     * @param string $identifier
-     * @return One_Core_Model_EntityAbstract
-     */
-    public function setIds($identifiers);
-
-    /**
      * Get the entity identifier
      *
      * @since 0.1.0
      *
-     * @return string
+     * @return array
      */
-    public function getIds();
+    public function getAllIds();
 
     /**
      * Set the primary field name
@@ -86,11 +76,10 @@ interface One_Core_Bo_CollectionInterface
      *
      * @since 0.1.0
      *
-     * @final
      * @param mixed $identifier
      * @return One_Core_Model_EntityAbstract
      */
-    public function load($identifiers, $field = null);
+    public function load($identifiers);
 
     /**
      * Save the model into its static representation
@@ -136,4 +125,22 @@ interface One_Core_Bo_CollectionInterface
      * @return bool
      */
     public function isDeleted($flag = NULL);
+
+    /**
+     * Create a new collection item instance and add it to the collection
+     *
+     * @since 0.1.0
+     *
+     * @return bool
+     */
+    public function newItem(Array $data);
+
+    /**
+     * Add an item instance to the collection
+     *
+     * @since 0.1.0
+     *
+     * @return bool
+     */
+    public function addItem($item);
 }

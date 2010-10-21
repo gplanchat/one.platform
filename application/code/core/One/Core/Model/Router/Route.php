@@ -6,7 +6,7 @@ class One_Core_Model_Router_Route
 {
     protected $_app = null;
 
-    public function __construct($routeConfig, $moduleName, One_Core_Model_Application $app)
+    public function __construct($moduleName, Array $routeConfig = array(), One_Core_Model_Application $app = null)
     {
         $this->_app = $app;
 

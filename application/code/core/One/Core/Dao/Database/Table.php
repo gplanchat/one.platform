@@ -219,13 +219,12 @@ abstract class One_Core_Dao_Database_Table
      */
     protected function _prepareSelect($select)
     {
-        $select->from(array('entity' => $this->getTableName($this->getEntityTable())), '*')
-            ->limit(1);
+        $select->from(array('entity' => $this->getTableName($this->getEntityTable())), '*');
 
         return $this;
     }
 
-    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes)
+    public function loadEntity(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes)
     {
         if (is_int(key($attributes))) {
             $newAttributes = array();
@@ -254,7 +253,7 @@ abstract class One_Core_Dao_Database_Table
         return $this;
     }
 
-    public function save(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper)
+    public function saveEntity(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper)
     {
         $entityData = $mapper->save($model);
 
@@ -272,13 +271,77 @@ abstract class One_Core_Dao_Database_Table
                 );
 
             $this->getWriteConnection()
-                ->update($this->getTableName($this->getEntityTable()), $entityData);
+                ->update($this->getTableName($this->getEntityTable()), $entityData, $whereCondition);
         }
         return $this;
     }
 
-    public function delete(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper)
+    public function deleteEntity(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper)
     {
+        if ($model->isLoaded()) {
+            $whereCondition = $this->getWriteConnection()->quoteInto(
+                "{$this->getWriteConnection()->quoteIdentifier($model->getIdFieldName())}=?",
+                $model->getId()
+                );
+
+            $this->getWriteConnection()
+                ->delete($this->getTableName($this->getEntityTable()), $whereCondition);
+        }
+        return $this;
+    }
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param One_Core_Bo_CollectionInterface $collection
+     * @param One_Core_Orm_DataMapper $mapper
+     * @param unknown_type $attributes
+     * @return One_Core_Dao_ResourceInterface
+     */
+    public function loadCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes)
+    {
+        $selectString = "{$this->getReadConnection()->quoteIdentifier($this->getIdFieldName())} IN(?)";
+        $this->getSelect()->where($selectString, array_values($attributes));
+
+        $statement = $this->getSelect()->query(Zend_Db::FETCH_ASSOC);
+
+        foreach ($statement->fetchAll() as $row) {
+            $item = $collection->newItem(array());
+            $mapper->load($item, $row);
+        }
+
+        return $this;
+    }
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param One_Core_Bo_CollectionInterface $collection
+     * @param One_Core_Orm_DataMapper $mapper
+     * @return One_Core_Dao_ResourceInterface
+     */
+    public function saveCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper)
+    {
+        foreach ($collection as $item) {
+            $this->saveEntity($item, $mapper);
+        }
+
+        return $this;
+    }
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param One_Core_Bo_CollectionInterface $collection
+     * @param One_Core_Orm_DataMapper $mapper
+     * @return One_Core_Dao_ResourceInterface
+     */
+    public function deleteCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper)
+    {
+        foreach ($collection as $item) {
+            $this->deleteEntity($item, $mapper);
+        }
+
         return $this;
     }
 }

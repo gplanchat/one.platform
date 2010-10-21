@@ -26,11 +26,14 @@ class One_Core_Block_Html
         return $this->_template;
     }
 
-    protected function _render()
+    protected function _render($script = null)
     {
         ob_start();
 
-        include $this->getScriptPath() . One::DS . $this->getTemplate();
+        if ($script === null) {
+            $script = $this->getTemplate();
+        }
+        include $this->getScriptPath() . One::DS . $script;
 
         return ob_get_clean();
     }

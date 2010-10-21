@@ -40,16 +40,16 @@
  * @package     One
  * @subpackage  One_Core
  *
- * @since 0.1.0
+ * @since 0.1.3
  */
 abstract class One_Core_Bo_CollectionAbstract
-    extends One_Core_Object
+    extends One_Core_Collection
     implements One_Core_Bo_CollectionInterface
 {
     /**
      * Default primary key field name.
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @var string
      */
@@ -58,7 +58,7 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Default datamapper
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @var string
      */
@@ -67,7 +67,7 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Loading status flag
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @var bool
      */
@@ -76,7 +76,7 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Saving status flag
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @var bool
      */
@@ -85,7 +85,7 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Deleting status flag
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @var bool
      */
@@ -94,45 +94,55 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * FIXME: PHPDoc
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @var string
      */
-    private $_moduleName = NULL;
+    private $_moduleName = null;
 
     /**
      * FIXME: PHPDoc
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @var One_Core_Dao_TableAbstract
      */
-    private $_dao = NULL;
+    private $_dao = null;
 
     /**
      * FIXME: PHPDoc
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @var One_Core_Orm_DataMapper
      */
-    private $_orm = NULL;
+    private $_orm = null;
 
     /**
      * FIXME: PHPDoc
      *
-     * @since 0.1.0
+     * @since 0.1.3
+     *
+     * @var string
+     */
+    protected $_boEntityClass = null;
+
+    /**
+     * FIXME: PHPDoc
+     *
+     * @since 0.1.3
      *
      * @param string $daoClass
      * @param string $ormClass
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
-    protected function _init($daoHandlerClass, $ormDataMapperClass = NULL)
+    protected function _init($boEntityClass, $daoHandlerClass, $ormDataMapperClass = null)
     {
         if (is_null($ormDataMapperClass)) {
             $ormDataMapperClass = self::DEFAULT_DATAMAPPER;
         }
 
+        $this->_boEntityClass = $boEntityClass;
         $this->setDao($this->app()->getResource($daoHandlerClass, 'resource.dao'));
         $this->setDataMapper($this->app()->getResourceSingleton($ormDataMapperClass, 'resource.orm'));
 
@@ -140,34 +150,25 @@ abstract class One_Core_Bo_CollectionAbstract
     }
 
     /**
-     * Set the entity identifier
-     *
-     * @since 0.1.0
-     *
-     * @param string $identifier
-     * @return One_Core_Bo_EntityAbstract
-     */
-    public function setId($id)
-    {
-        return $this->setData($this->getIdFieldName(), $id);
-    }
-
-    /**
      * Get the entity identifier
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
-     * @return string
+     * @return array
      */
-    public function getId()
+    public function getAllIds()
     {
-        return $this->getData($this->getIdFieldName());
+        $ids = array();
+        foreach ($this as $item) {
+            $ids[] = $item->getId();
+        }
+        return $ids;
     }
 
     /**
      * FIXME: PHPDoc
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @return One_Core_Orm_DataMapper
      */
@@ -179,10 +180,10 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * FIXME: PHPDoc
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @param One_Core_Orm_DataMapper $mapper
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     public function setDataMapper(One_Core_Orm_DataMapperAbstract $mapper)
     {
@@ -194,7 +195,7 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * FIXME: PHPDoc
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @return One_Core_Dao_ObjectInterface
      */
@@ -206,10 +207,10 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * FIXME: PHPDoc
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @param One_Core_Dao_ResourceInterface $daoHandler
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     public function setDao(One_Core_Dao_ResourceInterface $daoHandler)
     {
@@ -222,10 +223,10 @@ abstract class One_Core_Bo_CollectionAbstract
      * Set the module identifier
      * /!\ Internal use only!!
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @param string $identifier
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     protected function _setModuleName($moduleName)
     {
@@ -238,7 +239,7 @@ abstract class One_Core_Bo_CollectionAbstract
      * Get the module identifier
      * /!\ Internal use only!!
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @return string
      */
@@ -248,37 +249,12 @@ abstract class One_Core_Bo_CollectionAbstract
     }
 
     /**
-     * Set the entity identifier
-     *
-     * @since 0.1.0
-     *
-     * @param string $identifier
-     * @return One_Core_Bo_EntityAbstract
-     */
-    protected function _setId($id)
-    {
-        return $this->_setData($this->getIdFieldName(), $id);
-    }
-
-    /**
-     * Get the entity identifier
-     *
-     * @since 0.1.0
-     *
-     * @return string
-     */
-    protected function _getId()
-    {
-        return $this->_getData($this->getIdFieldName());
-    }
-
-    /**
      * Set the primary field name
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @param string $fieldName
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     public function setIdFieldName($idFieldName)
     {
@@ -290,7 +266,7 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Get the primary field name
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @return string
      */
@@ -300,72 +276,24 @@ abstract class One_Core_Bo_CollectionAbstract
     }
 
     /**
-     * Data set handler
+     * Load entities, based on its identifiers
      *
-     * @since 0.1.0
-     *
-     * @param string|array $key
-     * @param mixed $value
-     * @return One_Core_Bo_EntityAbstract
-     */
-    protected function _setData($key, $value = NULL)
-    {
-        $this->_isSaved = false;
-
-        return parent::_setData($key, $value);
-    }
-
-    /**
-     * Data add handler
-     *
-     * @since 0.1.0
-     *
-     * @param string|array $key
-     * @param mixed $value
-     * @return One_Core_Bo_EntityAbstract
-     */
-    protected function _addData($key, $value = NULL)
-    {
-        $this->_isSaved = false;
-
-        return parent::_addData($key, $value);
-    }
-
-    /**
-     * Data unset handler
-     *
-     * @since 0.1.0
-     *
-     * @param string|array $key
-     * @param mixed $value
-     * @return One_Core_Bo_EntityAbstract
-     */
-    protected function _unsetData($key = NULL)
-    {
-        $this->_isSaved = false;
-
-        return parent::_unsetData($key);
-    }
-
-    /**
-     * Load an entity, based on its identifier
-     *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @final
      * @param mixed $identifier
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
-    public function load($identifier, $field = NULL)
+    public function load($identifiers)
     {
-        $this->_beforeLoad($identifier, $field);
-        $this->_load($identifier, $field);
+        $this->_beforeLoad($identifiers);
+        $this->_load($identifiers);
 
         $this->isLoaded(true);
         $this->isSaved(false);
         $this->isDeleted(false);
 
-        $this->_afterLoad($identifier, $field);
+        $this->_afterLoad($identifiers);
 
         return $this;
     }
@@ -373,15 +301,15 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * User-defined loading function
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @param mixed $identifier
      * @param string $attribute
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
-     protected function _load($identifier, $attribute)
+     protected function _load($identifiers)
     {
-        $this->getDao()->load($this, $this->getDataMapper(), $identifier, $attribute);
+        $this->getDao()->loadCollection($this, $this->getDataMapper(), $identifiers);
 
         return $this;
     }
@@ -389,12 +317,12 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Pre-loading trigger
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @param $identifier
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
-    protected function _beforeLoad($identifier, $field)
+    protected function _beforeLoad($identifiers)
     {
         return $this;
     }
@@ -402,12 +330,12 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Post-loading trigger
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @param $identifier
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
-    protected function _afterLoad($identifier, $field)
+    protected function _afterLoad($identifiers)
     {
         return $this;
     }
@@ -415,9 +343,9 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Save the model into its static representation
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     public function save()
     {
@@ -436,13 +364,13 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * User-defined saving function
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     protected function _save()
     {
-        $this->getDao()->save($this, $this->getDataMapper());
+        $this->getDao()->saveCollection($this, $this->getDataMapper());
 
         return $this;
     }
@@ -450,9 +378,9 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Pre-saving trigger
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     protected function _beforeSave()
     {
@@ -462,9 +390,9 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Post-saving trigger
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     protected function _afterSave()
     {
@@ -474,10 +402,10 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Delete the entity
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @param mixed $identifier
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     public function delete()
     {
@@ -496,13 +424,13 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * User-defined deleting function
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     protected function _delete()
     {
-        $this->getDao()->delete($this, $this->getDataMapper());
+        $this->getDao()->deleteCollection($this, $this->getDataMapper());
 
         return $this;
     }
@@ -510,9 +438,9 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Pre-delteing trigger
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     protected function _beforeDelete()
     {
@@ -522,9 +450,9 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Post-deleting trigger
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
-     * @return One_Core_Bo_EntityAbstract
+     * @return One_Core_Bo_CollectionAbstract
      */
     protected function _afterDelete()
     {
@@ -534,11 +462,11 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Get the loading status flag
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @return bool
      */
-    public function isLoaded($flag = NULL)
+    public function isLoaded($flag = null)
     {
         if (!is_null($flag)) {
             $this->_isLoaded = $flag;
@@ -549,11 +477,11 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Get the saving status flag
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @return bool
      */
-    public function isSaved($flag = NULL)
+    public function isSaved($flag = null)
     {
         if (!is_null($flag)) {
             $this->_isSaved = $flag;
@@ -564,15 +492,70 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Get the deletion status flag
      *
-     * @since 0.1.0
+     * @since 0.1.3
      *
      * @return bool
      */
-    public function isDeleted($flag = NULL)
+    public function isDeleted($flag = null)
     {
         if (!is_null($flag)) {
             $this->_isDeleted = $flag;
         }
         return $this->_isDeleted;
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.3
+     *
+     * @return string
+     */
+    public function getBoEntityClass()
+    {
+        return $this->_boEntityClass;
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.3
+     *
+     * @param array $data
+     * @return One_Core_Bo_EntityInterface
+     */
+    public function newItem(Array $data)
+    {
+        $item = $this->app()->getModel($this->getBoEntityClass(), $data);
+
+        $item->isLoaded(true);
+        $this->addItem($item);
+
+        return $item;
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.3
+     *
+     * @param array $data
+     * @return One_Core_Bo_CollectionInterface
+     */
+    public function addItem($item)
+    {
+        if (!$item instanceof One_Core_Bo_EntityInterface) {
+            $this->app()->throwException('core/invalid-method-call');
+        }
+        return parent::addItem($item);
+    }
+
+    public function toArray()
+    {
+        $returnArray = array();
+        foreach ($this as $item) {
+            $returnArray[] = $item->getData();
+        }
+        return $returnArray;
     }
 }

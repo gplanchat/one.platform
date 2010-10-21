@@ -56,10 +56,12 @@ class One_Core_Model_Application
             $this->_frontController->addControllerDirectory($modulePath, $moduleName);
 
             $routeClassName = 'core/router.route';
+            $routeConfig = array();
             if (isset($moduleConfig->route) && !empty($moduleConfig->route)) {
                 $routeClassName = $moduleConfig->route->get('type', $routeClassName);
+                $routeConfig = $moduleConfig->route->toArray();
             }
-            $moduleRoute = $this->getModel($routeClassName, $moduleConfig->route, $moduleName, $this);
+            $moduleRoute = $this->getModel($routeClassName, $routeConfig);
 
             if (isset($moduleConfig->route->name)) {
                 $routeName = $moduleConfig->route->name;
@@ -282,7 +284,7 @@ class One_Core_Model_Application
 
         try {
             $reflectionClass = new ReflectionClass($classData['name']);
-            if ($reflectionClass->isSubclassOf('One_Core_Object')) {
+            if ($reflectionClass->isSubclassOf('One_Core_ObjectInterface')) {
                 $object = $reflectionClass->newInstance($classData['module'], $options, $this);
             } else {
                 $params = func_get_args();

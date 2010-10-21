@@ -12,7 +12,7 @@ class One_Cms_Model_Router_Route
     protected $_regexDelimiter = '#';
     protected $_defaultRegex = null;
 
-    public function __construct($routeConfig, $moduleName, One_Core_Model_Application $app)
+    public function __construct($moduleName, Array $routeConfig = array(), One_Core_Model_Application $app = null)
     {
         $this->_app = $app;
         $this->_bo = $this->app()->getSingleton('cms/page');
@@ -22,7 +22,7 @@ class One_Cms_Model_Router_Route
     {
         if (isset($data['page-id'])) {
         }
-        throw new Exception('Unimplemented');
+        $this->app()->throwException('core/unimplemented');
     }
 
     public function match($path, $partial = false)

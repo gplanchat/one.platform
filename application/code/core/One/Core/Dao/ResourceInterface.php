@@ -44,27 +44,54 @@ interface One_Core_Dao_ResourceInterface
      *
      * @param One_Core_Bo_EntityInterface $model
      * @param One_Core_Orm_DataMapper $mapper
-     * @param unknown_type $identity
-     * @param unknown_type $attribute
-     * @return One_Core_Dao_ObjectInterface
+     * @param unknown_type $attributes
+     * @return One_Core_Dao_ResourceInterface
      */
-    public function load(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes);
+    public function loadEntity(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes);
 
     /**
      * FIXME PHPDoc
      *
      * @param One_Core_Bo_EntityInterface $model
      * @param One_Core_Orm_DataMapper $mapper
-     * @return One_Core_Dao_ObjectInterface
+     * @return One_Core_Dao_ResourceInterface
      */
-    public function save(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper);
+    public function saveEntity(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper);
 
     /**
      * FIXME PHPDoc
      *
      * @param One_Core_Bo_EntityInterface $model
      * @param One_Core_Orm_DataMapper $mapper
-     * @return One_Core_Dao_ObjectInterface
+     * @return One_Core_Dao_ResourceInterface
      */
-    public function delete(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper);
+    public function deleteEntity(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper);
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param One_Core_Bo_CollectionInterface $collection
+     * @param One_Core_Orm_DataMapper $mapper
+     * @param unknown_type $attributes
+     * @return One_Core_Dao_ResourceInterface
+     */
+    public function loadCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes);
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param One_Core_Bo_CollectionInterface $collection
+     * @param One_Core_Orm_DataMapper $mapper
+     * @return One_Core_Dao_ResourceInterface
+     */
+    public function saveCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper);
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param One_Core_Bo_CollectionInterface $collection
+     * @param One_Core_Orm_DataMapper $mapper
+     * @return One_Core_Dao_ResourceInterface
+     */
+    public function deleteCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper);
 }

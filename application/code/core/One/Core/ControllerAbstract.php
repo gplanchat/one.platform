@@ -2,7 +2,6 @@
 
 class One_Core_ControllerAbstract
     extends Zend_Controller_Action
-    implements One_Core_ObjectInterface
 {
     /**
      *
@@ -16,6 +15,9 @@ class One_Core_ControllerAbstract
      */
     protected $_app = null;
 
+    /**
+     * @return One_Core_Model_Layout
+     */
     public function getLayout()
     {
         if ($this->_layout === null) {

@@ -29,7 +29,7 @@ abstract class One_Core_BlockAbstract
 
     protected $_loaderTypes = array('helper', 'filter');
 
-    public function __construct($module, $options, One_Core_Model_Application $application, One_Core_Model_Layout $layout = null)
+    public function __construct($module, Array $options = array(), One_Core_Model_Application $application = null, One_Core_Model_Layout $layout = null)
     {
         $this->_layout = $layout;
         $this->_renderingClass = $layout->getRenderingClass();
@@ -224,21 +224,6 @@ abstract class One_Core_BlockAbstract
         return $this->_name;
     }
 
-    public function render($name)
-    {
-        $obLevel = ob_get_level();
-
-        $this->_beforeRender($name);
-        $content = $this->_render();
-        $this->_afterRender($name, $content);
-
-        while (ob_get_level() < $obLevel) {
-            ob_end_clean();
-        }
-
-        return $content;
-    }
-
     public function escape($string)
     {
         if (in_array($this->_escape, array('htmlspecialchars', 'htmlentities'))) {
@@ -246,6 +231,21 @@ abstract class One_Core_BlockAbstract
         }
 
         return call_user_func($this->_escape, $string);
+    }
+
+    public function render($name)
+    {
+        $obLevel = ob_get_level();
+
+        $this->_beforeRender($name);
+        $content = $this->_render($name);
+        $this->_afterRender($name, $content);
+
+        while (ob_get_level() < $obLevel) {
+            ob_end_clean();
+        }
+
+        return $content;
     }
 
     protected function _beforeRender()
