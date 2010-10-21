@@ -44,11 +44,11 @@ class One_User_Model_Entity
 {
     public function _construct($options)
     {
-        $options = parent::_construct($options);
+        parent::_construct($options);
 
         $this->_init('user/entity', 'user/entity.data-mapper');
 
-        return $options;
+        return $this;
     }
 
     public function login($loginFieldsetDatas)

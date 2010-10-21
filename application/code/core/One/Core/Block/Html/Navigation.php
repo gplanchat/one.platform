@@ -1,6 +1,6 @@
 <?php
 
-class One_Core_block_Html_Navigation
+class One_Core_Block_Html_Navigation
     extends One_Core_Block_Html
 {
     protected $_headBlock;

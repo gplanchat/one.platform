@@ -172,39 +172,6 @@ class One_User_AccountController
      * TODO: PHPDoc
      *
      */
-    public function loginPostAction()
-    {
-        $this->_redirectIfLoggedIn();
-
-        if (!$this->getRequest()->isPost()) {
-            $this->_redirectError('account/login');
-            return;
-        }
-
-        var_dump($this->_validateFieldset('login'));
-        if (!$this->_validateFieldset('login')) {
-            $this->_redirectError('account/login');
-            return;
-        }
-
-        $user = $this->app()
-            ->getSingleton('user/entity')
-            ->login($this->getRequest()->getPost('login'))
-        ;
-        die();
-
-        $this->app()
-            ->getSingleton('user/session')
-            ->write(array('user_id' => 1))
-        ;
-
-        $this->_redirectSuccess('user');
-    }
-
-    /**
-     * TODO: PHPDoc
-     *
-     */
     public function registerAction()
     {
         $this->_redirectIfLoggedIn();

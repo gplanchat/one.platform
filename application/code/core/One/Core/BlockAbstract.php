@@ -17,6 +17,8 @@ abstract class One_Core_BlockAbstract
 
     protected $_layout = null;
 
+    protected $_renderingClass = null;
+
     private $_loaders = array();
     private $_helper = array();
     private $_filter = array();
@@ -30,14 +32,15 @@ abstract class One_Core_BlockAbstract
     public function __construct($module, $options, One_Core_Model_Application $application, One_Core_Model_Layout $layout = null)
     {
         $this->_layout = $layout;
+        $this->_renderingClass = $layout->getRenderingClass();
 
         parent::__construct($module, $options, $application);
     }
 
     protected function _construct($options)
     {
-        $config = $this->app()->getOption('frontoffice');
-        $basePath = implode(One::DS, array(APPLICATION_PATH, 'design', 'frontoffice',
+        $config = $this->app()->getOption($this->_renderingClass);
+        $basePath = implode(One::DS, array(APPLICATION_PATH, 'design', $this->_renderingClass,
             $config['layout']['design'], $config['layout']['template']));
 
         $this->setBasePath($basePath)
