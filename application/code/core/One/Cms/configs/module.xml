@@ -33,15 +33,14 @@
   <default>
     <modules>
       <One_Cms>
-        <version>0.1.1</version>
+        <version>0.1.2</version>
       </One_Cms>
     </modules>
 
     <system>
       <routes>
         <cms>
-          <type value="Zend_Controller_Router_Route_Static" />
-          <route value="" />
+          <type value="cms/router.route" />
           <defaults>
             <module value="One_Cms" />
             <controller value="display" />

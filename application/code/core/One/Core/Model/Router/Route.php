@@ -10,8 +10,11 @@ class One_Core_Model_Router_Route
     {
         $this->_app = $app;
 
-        if ($routeConfig instanceof Zend_Config) {
-            $routeConfig = $routeConfig->toArray();
+        if (isset($routeConfig['module'])) {
+            $moduleName = $routeConfig['module'];
+        } else {
+            $class = get_class($this);
+            $moduleName = substr($class, 0, strpos($class, '_Model_'));
         }
 
         $modulePath = strtolower($moduleName);

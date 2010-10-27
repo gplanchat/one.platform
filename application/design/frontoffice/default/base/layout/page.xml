@@ -21,6 +21,7 @@
           </action>
         </block>
       </block>
+      <block type="core/debug" name="debug" />
     </block>
   </default>
 </layout>

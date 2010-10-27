@@ -162,4 +162,9 @@ class One_Core_Model_Database_Connection_Pool
         }
         return $this->_connectionList[$connectionName];
     }
+
+    public function getConnectionList()
+    {
+        return $this->_connectionList;
+    }
 }

@@ -9,3 +9,5 @@ RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule . - [L,NC]
 
 RewriteRule . index.php [L,NC]
+
+SetEnv APPLICATION_ENV debug

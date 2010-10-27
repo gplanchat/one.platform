@@ -197,5 +197,37 @@ abstract class One_Core_Model_SessionAbstract
         array_shift($parameters);
         return $this->_addMessage(Zend_Log::INFO, vsprintf($messagePattern, $parameters));
     }
+
+    public function getAllErrors()
+    {
+        if (!isset($this->_messages[Zend_Log::ERR])) {
+            return array();
+        }
+        return $this->_messages[Zend_Log::ERR];
+    }
+
+    public function getAllWarnings()
+    {
+        if (!isset($this->_messages[Zend_Log::WARN])) {
+            return array();
+        }
+        return $this->_messages[Zend_Log::WARN];
+    }
+
+    public function getAllNotices()
+    {
+        if (!isset($this->_messages[Zend_Log::NOTICE])) {
+            return array();
+        }
+        return $this->_messages[Zend_Log::NOTICE];
+    }
+
+    public function getAllInfos()
+    {
+        if (!isset($this->_messages[Zend_Log::INFO])) {
+            return array();
+        }
+        return $this->_messages[Zend_Log::INFO];
+    }
 }
 

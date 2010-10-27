@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applications>
+  <default>
+    <config>websites/default.xml</config>
+    <env>production</env>
+    <id>1</id>
+    <cache>
+      <frontend>
+        <driver>File</driver>
+        <options></options>
+      </frontend>
+      <backend>
+        <driver>File</driver>
+        <options></options>
+      </backend>
+    </cache>
+  </default>
+  <backoffice extends="default">
+    <extra value="backoffice" />
+    <id>0</id>
+  </backoffice>
+</applications>

@@ -25,10 +25,22 @@
             </params>
           </core_setup>
           <core_read>
-            <use>core_setup</use>
+            <engine></engine>
+            <params>
+              <host></host>
+              <username></username>
+              <password></password>
+              <dbname></dbname>
+            </params>
           </core_read>
           <core_write>
-            <use>core_setup</use>
+            <engine></engine>
+            <params>
+              <host></host>
+              <username></username>
+              <password></password>
+              <dbname></dbname>
+            </params>
           </core_write>
         </connection>
       </database>
@@ -94,5 +106,5 @@
   </production>
   <preprod extends="production" />
   <testing extends="production" />
-  <debug extends="production" />
+  <debug extends="production"></debug>
 </application>

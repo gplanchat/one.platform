@@ -5,12 +5,16 @@
       <One_Cms>
         <codePool>core</codePool>
         <active>0</active>
-        <route type="cms/router.route" name="default" />
+        <!--route type="cms/router.route" name="default" /-->
       </One_Cms>
       <One_Admin_Cms>
         <codePool>core</codePool>
         <active>0</active>
-        <route type="admin.cms/router.route" path="cms" />
+        <route type="admin.core/router.route" path="cms" name="cms" />
+        <requires>
+          <One_Cms />
+          <One_Admin_Core />
+        </requires>
       </One_Admin_Cms>
     </modules>
   </default>
@@ -21,4 +25,11 @@
       </One_Cms>
     </modules>
   </production>
+  <backoffice>
+    <modules>
+      <One_Admin_Cms>
+        <active>1</active>
+      </One_Admin_Cms>
+    </modules>
+  </backoffice>
 </config>

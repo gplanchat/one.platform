@@ -136,16 +136,29 @@ class One_Core_Model_Layout
                     continue;
                 }
 
-                if (!is_int(key($reference['block']))) {
-                    $reference['block'] = array($reference['block']);
+                if (isset($reference['block'])) {
+                    if (!is_int(key($reference['block']))) {
+                        $reference['block'] = array($reference['block']);
+                    }
+
+                    foreach ($reference['block'] as $childBlock) {
+                        $type = $childBlock['type'];
+                        unset($childBlock['type']);
+                        $block = $this->app()->getBlock($type, $childBlock, $this);
+
+                        $this->_blocks[$reference['name']]->appendChild($block->getName(), $block);
+                    }
                 }
 
-                foreach ($reference['block'] as $childBlock) {
-                    $type = $childBlock['type'];
-                    unset($childBlock['type']);
-                    $block = $this->app()->getBlock($type, $childBlock, $this);
+                if (isset($reference['action'])) {
+                    if (!is_int(key($reference['action']))) {
+                        $reference['action'] = array($reference['action']);
+                    }
 
-                    $this->_blocks[$reference['name']]->appendChild($block->getName(), $block);
+                    foreach ($reference['action'] as $action) {
+                        // FIXME: Bad implementation
+                        $this->_blocks[$reference['name']]->_executeAction($action);
+                    }
                 }
             }
         }

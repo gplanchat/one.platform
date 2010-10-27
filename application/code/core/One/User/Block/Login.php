@@ -32,16 +32,6 @@ SCRIPT_EOF;
             ->appendScript($script)
         ;
 
-        $passwordElement = $this->_form->getSubForm('login')->getElement('password');
-
-        $class = $passwordElement->getAttrib('class');
-        if (empty($class)) {
-            $passwordElement->setAttrib('class', 'hidden');
-        } else {
-            $passwordElement->setAttrib('class', trim($class) . ' hidden');
-        }
-        $passwordElement->setAttrib('disabled', 'disabled');
-
         $this->_form->addElement('hidden', 'load_identity', array(
             'value' => $this->app()->getRouter()->assemble(array(
                 'controller' => 'account',

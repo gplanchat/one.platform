@@ -9,6 +9,11 @@ class One_Core_Block_Html_Page
     {
         $this->doctype(Zend_View_Helper_Doctype::XHTML5);
 
+        $this->headMeta(array(
+            'http-equiv' => 'Content-Type',
+            'content'    => 'text/html; charset=utf-8'
+            ));
+
         return parent::_construct($options);
     }
 

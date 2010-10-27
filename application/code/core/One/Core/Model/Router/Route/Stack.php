@@ -9,6 +9,8 @@ class One_Core_Model_Router_Route_Stack
 
     protected $_urlDelimiter = '/';
 
+    private $_app = null;
+
     public function push($name, Zend_Controller_Router_Route_Abstract $route)
     {
         if (isset($this->_routes[$name])) {
@@ -69,11 +71,27 @@ class One_Core_Model_Router_Route_Stack
 
     public function assemble($data = array(), $reset = false, $encode = false)
     {
-        throw $this->app()->throwException('core/unimplemented', __METHOD__ . ' not implemented.');
+        $prefix = 'core';
+        if (isset($data['prefix']) && !empty($data['prefix'])) {
+            $prefix = (string) $data['prefix'];
+        }
+
+        if (isset($this->_routes[$prefix])) {
+            return $this->_routes[$prefix]->assemble($data, $reset, $encode);
+        }
+        return false;
     }
 
     public static function getInstance(Zend_Config $config)
     {
         return new self();
+    }
+
+    public function app(One_Core_Model_Application $app = null)
+    {
+        if ($app !== null) {
+            $this->_app = $app;
+        }
+        return $this->_app;
     }
 }

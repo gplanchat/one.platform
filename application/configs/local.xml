@@ -12,8 +12,31 @@
               <password></password>
               <dbname>db_legacies</dbname>
               <table-prefix>legacies_</table-prefix>
+              <profiler>1</profiler>
             </params>
           </core_setup>
+          <core_read>
+            <engine>core/connection.adapter.mysqli</engine>
+            <params>
+              <host>localhost</host>
+              <username>root</username>
+              <password></password>
+              <dbname>db_legacies</dbname>
+              <table-prefix>legacies_</table-prefix>
+              <profiler>1</profiler>
+            </params>
+          </core_read>
+          <core_write>
+            <engine>core/connection.adapter.mysqli</engine>
+            <params>
+              <host>localhost</host>
+              <username>root</username>
+              <password></password>
+              <dbname>db_legacies</dbname>
+              <table-prefix>legacies_</table-prefix>
+              <profiler>1</profiler>
+            </params>
+          </core_write>
         </connection>
       </database>
     </general>

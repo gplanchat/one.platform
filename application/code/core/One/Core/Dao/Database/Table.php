@@ -244,7 +244,10 @@ abstract class One_Core_Dao_Database_Table
                 ->where("{$this->getReadConnection()->quoteIdentifier($field)} = ?", $identity)
             ;
         }
-        $statement = $this->getSelect()->query(Zend_Db::FETCH_ASSOC);
+        $statement = $this->getSelect()
+            ->limit(1)
+            ->query(Zend_Db::FETCH_ASSOC)
+        ;
 
         if (($tableData = $statement->fetch()) !== false) {
             $mapper->load($model, $tableData);

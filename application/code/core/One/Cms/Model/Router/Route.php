@@ -32,7 +32,7 @@ class One_Cms_Model_Router_Route
             $pathInfo = trim($pathInfo, $this->_urlDelimiter);
         }
 
-        $this->_bo->load($pathInfo);
+        $this->_bo->load($pathInfo, 'path');
         if (!$this->_bo->getId()) {
             return false;
         }

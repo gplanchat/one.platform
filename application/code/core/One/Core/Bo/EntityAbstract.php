@@ -389,7 +389,7 @@ abstract class One_Core_Bo_EntityAbstract
      */
     protected function _load($identifier)
     {
-        $this->getDao()->load($this, $this->getDataMapper(), $identifier);
+        $this->getDao()->loadEntity($this, $this->getDataMapper(), $identifier);
 
         return $this;
     }
@@ -451,7 +451,7 @@ abstract class One_Core_Bo_EntityAbstract
      */
     protected function _save()
     {
-        $this->getDao()->save($this, $this->getDataMapper());
+        $this->getDao()->saveEntity($this, $this->getDataMapper());
 
         return $this;
     }
@@ -511,7 +511,7 @@ abstract class One_Core_Bo_EntityAbstract
      */
     protected function _delete()
     {
-        $this->getDao()->delete($this, $this->getDataMapper());
+        $this->getDao()->deleteEntity($this, $this->getDataMapper());
 
         return $this;
     }

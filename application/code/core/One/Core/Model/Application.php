@@ -21,23 +21,68 @@ class One_Core_Model_Application
 
     protected $_event = null;
 
+    /**
+     * @var Zend_Controller_Front
+     */
+    protected $_frontController = null;
+
     const DS = DIRECTORY_SEPARATOR;
     const PS = PATH_SEPARATOR;
 
     const DEFAULT_CONFIG_SECTION = 'default';
 
-    public function __construct($websiteId, $environment, Array $moreSections = array())
+    public function __construct($websiteId, $environment, Array $moreSections = array(), Array $applicationConfig = array())
     {
         $this->_websiteId = $websiteId;
         $this->_event = new One_Core_Model_Event_Dispatcher();
 
-        $config = $this->_initConfig($environment, $moreSections);
+        if (isset($applicationConfig['config']) && !empty($applicationConfig['config'])) {
+            $moreFiles = (array) $applicationConfig['config'];
 
-        $config->setReadOnly();
+            foreach ($moreFiles as &$file) {
+                $file = implode(self::DS, array(APPLICATION_PATH, 'configs', $file));
+            }
+            unset($file);
+        } else {
+            $moreFiles = array();
+        }
+        if (isset($applicationConfig['extra']) && !empty($applicationConfig['extra'])) {
+            $moreSections = array_merge((array) $applicationConfig['extra'], $moreSections);
+        }
+
+        $moreFiles = array_merge(glob(implode(self::DS, array(APPLICATION_PATH, 'configs', 'modules', '*.xml'))), $moreFiles);
+        $frontendOptions = array(
+            'automatic_serialization' => true,
+            'master_files' => array_merge(array(
+                implode(self::DS, array(APPLICATION_PATH, 'configs', 'system.xml')),
+                implode(self::DS, array(APPLICATION_PATH, 'configs', 'system.xml'))
+                ), $moreFiles)
+            );
+
+        $cache = Zend_Cache::factory('File', 'File', $frontendOptions, array(
+            'cache_dir'              => implode(self::DS, array(APPLICATION_PATH, 'var', 'cache')),
+            'hashed_directory_level' => 2
+            ));
+
+        if (!$config = $cache->load("application_config_{$websiteId}")) {
+            $config = $this->_initConfig($environment, $moreSections, $moreFiles);
+            $config->setReadOnly();
+
+            $cache->save($config, "application_config_{$websiteId}");
+        } else {
+            foreach ($config->modules as $moduleName => $moduleConfig) {
+                if (!in_array(strtolower($moduleConfig->get('active')), array(1, true, '1', 'true', 'on'))) {
+                    continue;
+                }
+
+                $this->_activeModules[] = $moduleName;
+            }
+        }
 
         parent::__construct($environment, $config);
 
         $routeStack = One_Core_Model_Router_Route_Stack::getInstance(new Zend_Config(array()));
+        $routeStack->app($this);
         $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'controllers'));
 
         $this->_frontController = $this->getBootstrap()
@@ -47,6 +92,11 @@ class One_Core_Model_Application
         $router = $this->_frontController->getRouter();
         $router->addRoute('modules-stack', $routeStack);
 
+        $response = new Zend_Controller_Response_Http();
+        $response->setHeader('Content-Type', 'text/html; encoding=UTF-8');
+        $this->_frontController->setResponse($response);
+
+
         foreach ($config->modules as $moduleName => $moduleConfig) {
             if (!in_array($moduleName, $this->_activeModules)) {
                 continue;
@@ -55,39 +105,51 @@ class One_Core_Model_Application
             $modulePath = sprintf($pathPattern, $moduleConfig->codePool, str_replace('_', self::DS, $moduleName));
             $this->_frontController->addControllerDirectory($modulePath, $moduleName);
 
-            $routeClassName = 'core/router.route';
-            $routeConfig = array();
-            if (isset($moduleConfig->route) && !empty($moduleConfig->route)) {
-                $routeClassName = $moduleConfig->route->get('type', $routeClassName);
+            if (isset($moduleConfig->route) && !is_string($moduleConfig->route)) {
                 $routeConfig = $moduleConfig->route->toArray();
-            }
-            $moduleRoute = $this->getModel($routeClassName, $routeConfig);
+                $routeClassName = 'core/router.route';
+                if (isset($routeConfig['type']) && !empty($routeConfig['type'])) {
+                    $routeClassName = $routeConfig['type'];
+                }
+                if (!isset($routeConfig['module']) || empty($routeConfig['type'])) {
+                    $routeConfig['module'] = $moduleName;
+                }
+                $moduleRoute = $this->getModel($routeClassName, $routeConfig);
 
-            if (isset($moduleConfig->route->name)) {
-                $routeName = $moduleConfig->route->name;
-            } else {
-                $routeName = 'module.' . strtolower($moduleName);
-            }
+                if (isset($moduleConfig->route->name)) {
+                    $routeName = $moduleConfig->route->name;
+                } else {
+                    $routeName = 'module.' . strtolower($moduleName);
+                }
 
-            if (isset($moduleConfig->route->before)) {
-                $routeStack->pushBefore($routeName, $moduleRoute, $moduleConfig->route->before);
-            } else if (isset($moduleConfig->route->after)) {
-                $routeStack->pushAfter($routeName, $moduleRoute, $moduleConfig->route->after);
-            } else {
-                $routeStack->push($routeName, $moduleRoute);
+                if (isset($moduleConfig->route->before)) {
+                    $routeStack->pushBefore($routeName, $moduleRoute, $moduleConfig->route->before);
+                } else if (isset($moduleConfig->route->after)) {
+                    $routeStack->pushAfter($routeName, $moduleRoute, $moduleConfig->route->after);
+                } else {
+                    $routeStack->push($routeName, $moduleRoute);
+                }
             }
         }
 
         if ($config->system->routes instanceof Zend_Config) {
             foreach ($config->system->routes as $routeName => $routeConfig) {
                 if (isset($routeConfig->type)) {
-                    $reflectionClass = new ReflectionClass($routeConfig->type);
-                    if (!$reflectionClass->isSubclassOf('Zend_Controller_Router_Route_Interface')) {
-                        continue;
-                    }
-                    $reflectionMethod = $reflectionClass->getMethod('getInstance');
+                    if (!strpos($routeConfig->type, '/')) {
+                        $reflectionClass = new ReflectionClass($routeConfig->type);
+                        if (!$reflectionClass->isSubclassOf('Zend_Controller_Router_Route_Interface')) {
+                            continue;
+                        }
+                        $reflectionMethod = $reflectionClass->getMethod('getInstance');
 
-                    $route = $reflectionMethod->invoke(null, $routeConfig);
+                        $route = $reflectionMethod->invoke(null, $routeConfig);
+                    } else {
+                        $route = $this->getModel($routeConfig->type, $routeConfig->toArray());
+
+                        if (!$route instanceof Zend_Controller_Router_Route_Interface) {
+                            continue;
+                        }
+                    }
                 } else {
                     $route = Zend_Controller_Router_Route::getInstance($routeConfig);
                 }
@@ -105,11 +167,11 @@ class One_Core_Model_Application
         $this->_frontController->setParam('noViewRenderer', true);
     }
 
-    protected function _initConfig($environment, Array $moreSections)
+    protected function _initConfig($environment, Array $moreSections, Array $moreFiles)
     {
         array_unshift($moreSections, $environment);
 
-        $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'application.xml'));
+        $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'system.xml'));
         require_once 'Zend/Config/Xml.php';
         $config = new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true);
         foreach ($moreSections as $section) {
@@ -119,17 +181,7 @@ class One_Core_Model_Application
             }
         }
 
-        $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'local.xml'));
-        $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
-        foreach ($moreSections as $section) {
-            try {
-                $config->merge(new Zend_Config_Xml($configFile, $section, true));
-            } catch (Zend_Config_Exception $e) {
-            }
-        }
-
-        $configFilePattern = implode(self::DS, array(APPLICATION_PATH, 'configs', 'modules', '*.xml'));
-        foreach (glob($configFilePattern) as $configFile) {
+        foreach ($moreFiles as $configFile) {
             $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
             foreach ($moreSections as $section) {
                 try {
@@ -145,6 +197,7 @@ class One_Core_Model_Application
             throw new One_Core_Exception_ConfigurationError(
                 "No modules found. A core module should at least be declared.");
         }
+
         foreach ($modules as $moduleName => $moduleConfig) {
             if (!in_array(strtolower($moduleConfig->get('active')), array(1, true, '1', 'true', 'on'))) {
                 continue;
@@ -168,6 +221,15 @@ class One_Core_Model_Application
             }
 
             $this->_addModule($moduleName, $moduleConfig);
+        }
+
+        $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'local.xml'));
+        $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
+        foreach ($moreSections as $section) {
+            try {
+                $config->merge(new Zend_Config_Xml($configFile, $section, true));
+            } catch (Zend_Config_Exception $e) {
+            }
         }
 
         $this->_validateModulesActivation($modules);

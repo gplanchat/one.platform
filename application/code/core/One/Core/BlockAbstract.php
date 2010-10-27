@@ -101,7 +101,7 @@ abstract class One_Core_BlockAbstract
         return $this;
     }
 
-    protected function _executeAction($action)
+    public function _executeAction($action)
     {
         $reflectionObject = new ReflectionObject($this);
         if ($reflectionObject->hasMethod($action['method'])) {
@@ -115,15 +115,17 @@ abstract class One_Core_BlockAbstract
                     $callParams[$reflectionParam->getPosition()] = $reflectionParam->getDefaultValue();
                 }
             }
-            foreach ($action['params'] as $paramName => $paramValue) {
-                if (!isset($parameters[$paramName])) {
-                    continue;
-                }
+            if (isset($action['params'])) {
+                foreach ($action['params'] as $paramName => $paramValue) {
+                    if (!isset($parameters[$paramName])) {
+                        continue;
+                    }
 
-                if (isset($paramValue)) {
-                    $callParams[$parameters[$paramName]->getPosition()] = $paramValue;
-                } else {
-                    $callParams[$parameters[$paramName]->getPosition()] = null;
+                    if (isset($paramValue)) {
+                        $callParams[$parameters[$paramName]->getPosition()] = $paramValue;
+                    } else {
+                        $callParams[$parameters[$paramName]->getPosition()] = null;
+                    }
                 }
             }
 
@@ -302,9 +304,23 @@ abstract class One_Core_BlockAbstract
 
     public function assign($spec, $value = null)
     {
+        return $this->setData($spec, $value);
     }
 
     public function clearVars()
     {
+        return $this->unsetData();
+    }
+
+    public function setEncoding($encoding)
+    {
+        $this->_encoding = $encoding;
+
+        return $this;
+    }
+
+    public function getEncoding()
+    {
+        return $this->_encoding;
     }
 }

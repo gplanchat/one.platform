@@ -19,6 +19,9 @@ class One_Core_ErrorController
                 ));
             $message = $exception->getMessage() . PHP_EOL . $exception->getTraceAsString();
             $logger->debug($message);
+
+            $errors = $this->_getParam('error_handler');
+            $this->getResponse()->setBody($errors->exception->getMessage());
             break;
         }
     }
@@ -26,7 +29,8 @@ class One_Core_ErrorController
     public function notFoundAction()
     {
         $errors = $this->_getParam('error_handler');
-        $this->view->message = $errors->exception->getMessage();
+        $this->getResponse()->setBody($errors->exception->getMessage());
+        $this->getResponse()->setBody(print_r($errors->exception, true));
         $this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found');
     }
 }
