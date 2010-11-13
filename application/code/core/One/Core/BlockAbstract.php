@@ -31,8 +31,10 @@ abstract class One_Core_BlockAbstract
 
     public function __construct($module, Array $options = array(), One_Core_Model_Application $application = null, One_Core_Model_Layout $layout = null)
     {
-        $this->_layout = $layout;
-        $this->_renderingClass = $layout->getRenderingClass();
+        if ($layout !== null) {
+            $this->_layout = $layout;
+            $this->_renderingClass = $layout->getRenderingClass();
+        }
 
         parent::__construct($module, $options, $application);
     }
@@ -195,7 +197,12 @@ abstract class One_Core_BlockAbstract
 
     public function renderChild($childName, $templateName = null)
     {
-        return $this->getChildNode($childName)->render($templateName);
+        $child = $this->getChildNode($childName);
+
+        if ($child !== null) {
+            return $child->render($templateName);
+        }
+        return '';
     }
 
     public function appendChild($childName, One_Core_BlockAbstract $childNode)
@@ -322,5 +329,17 @@ abstract class One_Core_BlockAbstract
     public function getEncoding()
     {
         return $this->_encoding;
+    }
+
+    public function getRenderingClass()
+    {
+        return $this->_renderingClass;
+    }
+
+    public function setRenderingClass($renderingClass)
+    {
+        $this->_renderingClass = $renderingClass;
+
+        return $this;
     }
 }

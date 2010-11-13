@@ -143,4 +143,36 @@ interface One_Core_Bo_CollectionInterface
      * @return bool
      */
     public function addItem($item);
+
+
+    /**
+     * Set the page limits
+     *
+     * @since 0.1.4
+     *
+     * @param int $page
+     * @param int $pageCount
+     * @return One_Core_Bo_CollectionInterface
+     */
+    public function setPage($page, $pageCount);
+
+    /**
+     * Set the page limits
+     *
+     * @since 0.1.4
+     *
+     * @param array $fields
+     * @return One_Core_Bo_CollectionInterface
+     */
+    public function sort($fields);
+
+    /**
+     * Return a key=>value data set
+     *
+     * @since 0.1.4
+     *
+     * @param array $field
+     * @return array
+     */
+    public function toHash($field);
 }

@@ -5,21 +5,29 @@ class One_Core_Block_Html_Form
 {
     protected $_config = null;
 
+    /**
+     *
+     * @var Zend_Form
+     */
     protected $_form = null;
 
     protected $_submitLabel = 'Submit';
 
     protected $_submitName = 'submit';
 
-    public function _construct($options)
+    protected function _construct($options)
     {
         $this->_config = $this->app()->getSingleton('core/config');
 
         if (isset($options['form'])) {
-            $this->_form = $this->_config->getForm($options['form']);
+            $this->loadForm($options['form']);
             unset($options['form']);
-
-            $this->_form->setView($this);
+        } else {
+            $this->_form = new Zend_Form(array(
+                'decorators' => array(
+                    'ViewScript'
+                    )
+                ));
         }
         if (isset($options['submit-label']) && !empty($options['submit-label'])) {
             $this->_submitLabel = $options['submit-label'];
@@ -39,7 +47,12 @@ class One_Core_Block_Html_Form
             'label' => $this->getSubmitLabel()
             ));
 
-        return $this->_form->render($this->getTemplate());
+        $decorator = $this->_form->getDecorator('ViewScript');
+        if ($decorator !== null && $decorator !== false) {
+            $decorator->setViewScript($this->getTemplate());
+        }
+
+        return $this->_form->render($this);
     }
 
     public function setAction($action, $name = null)
@@ -49,6 +62,30 @@ class One_Core_Block_Html_Form
         }
 
         $this->_form->setAction($action);
+    }
+
+    public function loadForm($formName)
+    {
+        $this->_form = $this->_config->getForm($formName);
+
+        $this->_form->setView($this);
+
+        return $this;
+    }
+
+    public function getForm()
+    {
+        return $this->_form;
+    }
+
+    public function getSubForm($name)
+    {
+        return $this->_form->getSubForm($name);
+    }
+
+    public function getSubForms()
+    {
+        return $this->_form->getSubForms();
     }
 
     public function addFieldset($fieldset)

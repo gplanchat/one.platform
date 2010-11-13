@@ -94,4 +94,20 @@ interface One_Core_Dao_ResourceInterface
      * @return One_Core_Dao_ResourceInterface
      */
     public function deleteCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper);
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param int $limit
+     * @return One_Core_Dao_ResourceInterface
+     */
+    public function setLimit($limit);
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param int $limit
+     * @return One_Core_Dao_ResourceInterface
+     */
+    public function setOffset($offset);
 }

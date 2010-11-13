@@ -36,6 +36,23 @@ class One_Core_Model_Config
      * @param string $fieldsetName
      * @return Zend_Form
      */
+    public function getFormDisplayGroup($groupName)
+    {
+        if ($this->_fieldsets === null) {
+            $this->_fieldsets = $this->app()->getConfig('general.groups');
+        }
+        if (!isset($this->_fieldsets[$fieldsetName])) {
+            return null;
+        }
+        return new Zend_Form_SubForm($this->_fieldsets[$fieldsetName]);
+    }
+
+    /**
+     * TODO PHPDoc
+     *
+     * @param string $fieldsetName
+     * @return Zend_Form
+     */
     public function getForm($formName)
     {
         if ($this->_forms === null) {
@@ -48,6 +65,10 @@ class One_Core_Model_Config
             $form = new Zend_Form($this->_forms[$formName]['params']);
         } else {
             $form = new Zend_Form();
+        }
+
+        if (isset($this->_forms[$formName]['elements'])) {
+            $form->addElements($this->_forms[$formName]['elements']);
         }
 
         if (isset($this->_forms[$formName]['actions'])) {
@@ -86,6 +107,20 @@ class One_Core_Model_Config
                     $name = $fieldset;
                 }
                 $form->addSubForm($this->getFieldset($fieldset), $name);
+            }
+        }
+
+        if (isset($this->_forms[$formName]['groups'])) {
+            foreach ($this->_forms[$formName]['groups'] as $name => $groupConfig) {
+                if ($groupConfig === null) {
+                    continue;
+                }
+                if (!is_string($name) || empty($name)) {
+                    $name = isset($groupConfig['name']) ? $groupConfig['name'] : uniqid('group_');
+                }
+
+//                var_dump($groupConfig);
+                $form->addDisplayGroup(array_keys($groupConfig['elements']), $name, isset($groupConfig['options']) ? $groupConfig['options'] : array());
             }
         }
 

@@ -1,5 +1,9 @@
 $.extend({one: {}});
 
+var $$ = function(identifier) {
+  return document.getElementById(identifier);
+};
+
 (function(ns){
     ns.loadFile = function(library) {
         document.write('<script type="text/javascript" src="'+library+'"></script>')
@@ -80,4 +84,85 @@ $.extend({one: {}});
         getCode: function(){return this.code;}
         });
 
+    ns.Url = ns.Class.create({
+        __construct: function(path) {
+            path = path || '';
+
+            this._baseUrl    = '';
+            this._prefix     = '';
+            this._controller = '';
+            this._action     = '';
+            this._params     = [];
+
+            var match = null;
+
+            match = $('script[src$=js/core.js]').attr('src').match('^(.*)js\/core.js$');
+            this._baseUrl = (match[1] !== undefined ? match[1] : '/' ) + path;
+
+            match = document.location.pathname.match('^' + this._baseUrl + '(.*)$');
+            var route = match[1] || ''; 
+
+            match = route.match('([^/]+)(?:/?(.*))');
+            this._prefix = (match !== null && match[1] !== undefined) ? match[1] : 'core';
+
+            match = match[2] !== undefined ? match[2].match('([^/]+)(?:/?(.*))') : null;
+            this._controller = (match !== null && match[1] !== undefined) ? match[1] : '';
+
+            match = match[2] !== undefined ? match[2].match('([^/]+)(?:/?(.*))') : null;
+            this._action = (match !== null && match[1] !== undefined) ? match[1] : '';
+            },
+        toString: function(options) {
+            options = options || [];
+
+            var baseUrl    = this._baseUrl;
+            var prefix     = this._prefix;
+            var controller = this._controller;
+            var action     = this._action;
+            var params     = this._params;
+
+            var query = '';
+            $(options).each(function(index, element){
+                switch (element.name) {
+                case 'base-url':
+                    baseUrl = element.value;
+                    break;
+
+                case 'prefix':
+                    prefix = element.value;
+                    break;
+
+                case 'controller':
+                    controller = element.value;
+                    break;
+
+                case 'action':
+                    action = element.value;
+                    break;
+
+                default:
+                    params[params.length] = (element);
+                    break;
+                }
+                });
+
+            $(params).each(function(index, element){
+                var chr = '&';
+                if (index === 0) {
+                    chr = '?';
+                }
+                query += chr + element.name + '=' + element.value;
+                });
+            var url = baseUrl
+            if (prefix !== '') {
+                url += '/' + prefix;
+            }
+            if (controller !== '') {
+                url += '/' + controller;
+            }
+            if (action !== '') {
+                url += '/' + action;
+            }
+            return url + query;
+            }
+        });
     })($.one);

@@ -72,8 +72,9 @@ class One_Core_Model_Router_Route_Stack
     public function assemble($data = array(), $reset = false, $encode = false)
     {
         $prefix = 'core';
-        if (isset($data['prefix']) && !empty($data['prefix'])) {
-            $prefix = (string) $data['prefix'];
+        if (isset($data['path']) && !empty($data['path'])) {
+            $prefix = (string) $data['path'];
+            unset($data['path']);
         }
 
         if (isset($this->_routes[$prefix])) {

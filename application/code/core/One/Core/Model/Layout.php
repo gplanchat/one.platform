@@ -115,10 +115,20 @@ class One_Core_Model_Layout
             return null;
         }
         $layoutConfig->merge($defaultConfig);
-        if (($namedConfig = $this->_layoutConfiguration->{$layoutName}) === null) {
-            return null;
+
+        if (is_array($layoutName)) {
+            $layoutList = $layoutName;
+        } else {
+            $layoutList = func_get_args();
         }
-        $layoutConfig->merge($namedConfig);
+        foreach ($layoutList as $layoutName) {
+            if (($namedConfig = $this->_layoutConfiguration->{$layoutName}) === null) {
+                return null;
+            }
+            if ($namedConfig instanceof Zend_Config) {
+                $layoutConfig->merge($namedConfig);
+            }
+        }
 
         $layoutConfig = $layoutConfig->toArray();
 

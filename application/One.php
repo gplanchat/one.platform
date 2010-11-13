@@ -26,7 +26,43 @@ final class One
     /**
      * @var int
      */
-    private static $_defaultWebsiteId = 0;
+    private static $_defaultWebsiteId = null;
+
+    /**
+     * @var Zend_Config
+     */
+    private static $_websitesConfig = null;
+
+    /**
+     * @return array
+     */
+    protected static function _loadWebsitesConfig()
+    {
+        if (self::$_websitesConfig === null) {
+            $config = new Zend_Config_Xml(APPLICATION_PATH . self::DS
+                . 'configs' . self::DS . 'websites.xml');
+
+            self::$_websitesConfig = $config->toArray();
+        }
+
+        return self::$_websitesConfig;
+    }
+
+    /**
+     *
+     * @param mixed $websiteId
+     * @return array
+     */
+    public static function getWebstiteConfig($websiteId = null)
+    {
+        $config = self::_loadWebsitesConfig();
+
+        if (isset($config[$websiteId])) {
+            return $config[$websiteId];
+        } else {
+            return current($config);
+        }
+    }
 
     /**
      * Set environment name
@@ -44,10 +80,19 @@ final class One
     /**
      * Get the currently set environment name
      *
+     * @param mixed $websiteId
      * @return string
      */
-    public static function getEnv()
+    public static function getEnv($websiteId = null)
     {
+        if ($websiteId !== null) {
+            $config = self::_loadWebsitesConfig();
+
+            if (isset($config[$websiteId]) && isset($config[$websiteId]['env'])) {
+                return $config[$websiteId]['env'];
+            }
+        }
+
         if (self::$_env === null) {
             self::$_env = self::ENV_PRODUCTION;
         }
@@ -55,13 +100,27 @@ final class One
         return self::$_env;
     }
 
+    /**
+     *
+     * @param mixed $websiteId
+     * @return void
+     */
     public static function setDefaultWebsiteId($websiteId)
     {
         self::$_defaultWebsiteId = $websiteId;
     }
 
+    /**
+     * @return mixed
+     */
     public static function getDefaultWebsiteId()
     {
+        if (self::$_defaultWebsiteId === null) {
+            $config = self::_loadWebsitesConfig();
+
+            self::$_defaultWebsiteId = key($config);
+        }
+
         return self::$_defaultWebsiteId;
     }
 
@@ -82,11 +141,12 @@ final class One
         }
 
         if ($environment === null) {
-            $environment = self::getEnv();
+            $environment = self::getEnv($websiteId);
         }
 
         require_once 'One/Core/Model/Application.php';
-        self::$_app[$websiteId] = new One_Core_Model_Application($websiteId, $environment, (array) $moreSections);
+        self::$_app[$websiteId] = new One_Core_Model_Application($websiteId,
+            $environment, (array) $moreSections, self::getWebstiteConfig($websiteId));
 
         $modules = self::$_app[$websiteId]->getOption('modules');
         self::$_app[$websiteId]->setAutoloaderNamespaces(array_keys($modules));

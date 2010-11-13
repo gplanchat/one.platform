@@ -59,23 +59,28 @@ class One_Core_Model_Application
                 ), $moreFiles)
             );
 
-        $cache = Zend_Cache::factory('File', 'File', $frontendOptions, array(
-            'cache_dir'              => implode(self::DS, array(APPLICATION_PATH, 'var', 'cache')),
-            'hashed_directory_level' => 2
-            ));
-
-        if (!$config = $cache->load("application_config_{$websiteId}")) {
+        if (isset($applicationConfig['no-cache']) && $applicationConfig['no-cache'] == true) {
             $config = $this->_initConfig($environment, $moreSections, $moreFiles);
             $config->setReadOnly();
-
-            $cache->save($config, "application_config_{$websiteId}");
         } else {
-            foreach ($config->modules as $moduleName => $moduleConfig) {
-                if (!in_array(strtolower($moduleConfig->get('active')), array(1, true, '1', 'true', 'on'))) {
-                    continue;
-                }
+            $cache = Zend_Cache::factory('File', 'File', $frontendOptions, array(
+                'cache_dir'              => implode(self::DS, array(APPLICATION_PATH, 'var', 'cache')),
+                'hashed_directory_level' => 2
+                ));
 
-                $this->_activeModules[] = $moduleName;
+            if (!$config = $cache->load("application_config_{$websiteId}")) {
+                $config = $this->_initConfig($environment, $moreSections, $moreFiles);
+                $config->setReadOnly();
+
+                $cache->save($config, "application_config_{$websiteId}");
+            } else {
+                foreach ($config->modules as $moduleName => $moduleConfig) {
+                    if (!in_array(strtolower($moduleConfig->get('active')), array(1, true, '1', 'true', 'on'))) {
+                        continue;
+                    }
+
+                    $this->_activeModules[] = $moduleName;
+                }
             }
         }
 
@@ -90,7 +95,6 @@ class One_Core_Model_Application
             ->getFrontController()
         ;
         $router = $this->_frontController->getRouter();
-        $router->addRoute('modules-stack', $routeStack);
 
         $response = new Zend_Controller_Response_Http();
         $response->setHeader('Content-Type', 'text/html; encoding=UTF-8');
@@ -156,6 +160,9 @@ class One_Core_Model_Application
                 $router->addRoute($routeName, $route);
             }
         }
+
+        $router->addRoute('modules-stack', $routeStack);
+
         $defaultModule = $config->system->get('default-module', 'One_Core');
         $this->_frontController->setDefaultModule($defaultModule);
         $dispatcher = $this->_frontController->getDispatcher();

@@ -85,6 +85,16 @@ abstract class One_Core_Dao_Database_Table
     private $_idFieldName = null;
 
     /**
+     * @var int
+     */
+    protected $_limit = 1;
+
+    /**
+     * @var int
+     */
+    protected $_offset = 0;
+
+    /**
      * _init method, should be called by the user-defined constructor
      *
      * @return One_Core_Dao_Database_Table
@@ -299,14 +309,19 @@ abstract class One_Core_Dao_Database_Table
      * @param One_Core_Bo_CollectionInterface $collection
      * @param One_Core_Orm_DataMapper $mapper
      * @param unknown_type $attributes
-     * @return One_Core_Dao_ResourceInterface
+     * @return One_Core_Dao_Database_Table
      */
     public function loadCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes)
     {
-        $selectString = "{$this->getReadConnection()->quoteIdentifier($this->getIdFieldName())} IN(?)";
-        $this->getSelect()->where($selectString, array_values($attributes));
+        $select = $this->getSelect();
 
-        $statement = $this->getSelect()->query(Zend_Db::FETCH_ASSOC);
+        if (!empty($attributes)) {
+            $selectString = "{$this->getReadConnection()->quoteIdentifier($this->getIdFieldName())} IN(?)";
+            $select->where($selectString, array_values($attributes));
+        }
+
+        $select->limit($this->_limit, $this->_offset);
+        $statement = $select->query(Zend_Db::FETCH_ASSOC);
 
         foreach ($statement->fetchAll() as $row) {
             $item = $collection->newItem(array());
@@ -321,7 +336,33 @@ abstract class One_Core_Dao_Database_Table
      *
      * @param One_Core_Bo_CollectionInterface $collection
      * @param One_Core_Orm_DataMapper $mapper
-     * @return One_Core_Dao_ResourceInterface
+     * @param unknown_type $attributes
+     * @return One_Core_Dao_Database_Table
+     */
+    public function countItems(One_Core_Bo_CollectionInterface $collection)
+    {
+        $select = clone $this->getSelect();
+        $adapter = $select->getAdapter();
+
+        $select->reset(Zend_Db_Select::COLUMNS);
+        $select->reset(Zend_Db_Select::LIMIT_COUNT);
+        $select->reset(Zend_Db_Select::LIMIT_OFFSET);
+        $groupParts = $select->getPart(Zend_Db_Select::GROUP);
+        if (!empty($groupParts)) {
+            //FIXME: avoid grouping by entity_id while it is counted
+        }
+
+        $select->columns(new Zend_Db_Expr($adapter->quoteInto('COUNT(?)', $this->getIdFieldName())));
+
+        return $select->query()->fetchColumn(0);
+    }
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param One_Core_Bo_CollectionInterface $collection
+     * @param One_Core_Orm_DataMapper $mapper
+     * @return One_Core_Dao_Database_Table
      */
     public function saveCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper)
     {
@@ -337,13 +378,39 @@ abstract class One_Core_Dao_Database_Table
      *
      * @param One_Core_Bo_CollectionInterface $collection
      * @param One_Core_Orm_DataMapper $mapper
-     * @return One_Core_Dao_ResourceInterface
+     * @return One_Core_Dao_Database_Table
      */
     public function deleteCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper)
     {
         foreach ($collection as $item) {
             $this->deleteEntity($item, $mapper);
         }
+
+        return $this;
+    }
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param int $limit
+     * @return One_Core_Dao_Database_Table
+     */
+    public function setLimit($limit)
+    {
+        $this->_limit = $limit;
+
+        return $this;
+    }
+
+    /**
+     * FIXME PHPDoc
+     *
+     * @param int $limit
+     * @return One_Core_Dao_Database_Table
+     */
+    public function setOffset($offset)
+    {
+        $this->_offset = $offset;
 
         return $this;
     }

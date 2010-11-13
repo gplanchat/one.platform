@@ -130,6 +130,33 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * FIXME: PHPDoc
      *
+     * @since 0.1.4
+     *
+     * @var int
+     */
+    protected $_page = 1;
+
+    /**
+     * FIXME: PHPDoc
+     *
+     * @since 0.1.4
+     *
+     * @var int
+     */
+    protected $_pageSize = 20;
+
+    /**
+     * FIXME: PHPDoc
+     *
+     * @since 0.1.4
+     *
+     * @var int
+     */
+    protected $_itemsCount = null;
+
+    /**
+     * FIXME: PHPDoc
+     *
      * @since 0.1.3
      *
      * @param string $daoClass
@@ -284,7 +311,7 @@ abstract class One_Core_Bo_CollectionAbstract
      * @param mixed $identifier
      * @return One_Core_Bo_CollectionAbstract
      */
-    public function load($identifiers)
+    public function load($identifiers = array())
     {
         $this->_beforeLoad($identifiers);
         $this->_load($identifiers);
@@ -309,7 +336,10 @@ abstract class One_Core_Bo_CollectionAbstract
      */
      protected function _load($identifiers)
     {
-        $this->getDao()->loadCollection($this, $this->getDataMapper(), $identifiers);
+        $this->getDao()
+            ->setLimit($this->_pageSize)
+            ->setOffset($this->_pageSize * ($this->_page - 1))
+            ->loadCollection($this, $this->getDataMapper(), $identifiers);
 
         return $this;
     }
@@ -337,6 +367,8 @@ abstract class One_Core_Bo_CollectionAbstract
      */
     protected function _afterLoad($identifiers)
     {
+        $this->count();
+
         return $this;
     }
 
@@ -550,6 +582,13 @@ abstract class One_Core_Bo_CollectionAbstract
         return parent::addItem($item);
     }
 
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.3
+     *
+     * @return array
+     */
     public function toArray()
     {
         $returnArray = array();
@@ -557,5 +596,93 @@ abstract class One_Core_Bo_CollectionAbstract
             $returnArray[] = $item->getData();
         }
         return $returnArray;
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.4
+     *
+     * @return One_Core_Bo_CollectionInterface
+     */
+    public function setPage($page, $pageSize = null)
+    {
+        $this->_pageSize = min(max(intval($pageSize), 5), 200);
+        $this->_page = min(max(1, intval($page)), ceil($this->count() / $this->_pageSize));
+
+        return $this;
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.4
+     *
+     * @return int
+     */
+    public function getPage()
+    {
+        return $this->_page;
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.4
+     *
+     * @return int
+     */
+    public function getPageCount()
+    {
+        return ceil($this->count() / $this->_pageSize);
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.4
+     *
+     * @return int
+     */
+    public function getPageSize()
+    {
+        return $this->_pageSize;
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.4
+     *
+     * @return int
+     */
+    public function count()
+    {
+        if ($this->_itemsCount === null) {
+            $this->_itemsCount = $this->getDao()->countItems($this);
+        }
+        return $this->_itemsCount;
+    }
+
+    public function sort($fields)
+    {
+        return $this;
+    }
+
+    public function toHash($field)
+    {
+        if (!current($this->_items)->hasData($field)) {
+            return array();
+        }
+
+        if (!$this->isLoaded()) {
+            $this->load();
+        }
+
+        $hash = array();
+        foreach ($this->_items as $item) {
+            $hash[$this->getIdFieldName()] = $item->getData($field);
+        }
+        return $hash;
     }
 }

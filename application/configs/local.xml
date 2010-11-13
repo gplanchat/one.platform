@@ -13,6 +13,7 @@
               <dbname>db_legacies</dbname>
               <table-prefix>legacies_</table-prefix>
               <profiler>1</profiler>
+              <charset>UTF8</charset>
             </params>
           </core_setup>
           <core_read>
@@ -24,6 +25,7 @@
               <dbname>db_legacies</dbname>
               <table-prefix>legacies_</table-prefix>
               <profiler>1</profiler>
+              <charset>UTF8</charset>
             </params>
           </core_read>
           <core_write>
@@ -35,6 +37,7 @@
               <dbname>db_legacies</dbname>
               <table-prefix>legacies_</table-prefix>
               <profiler>1</profiler>
+              <charset>UTF8</charset>
             </params>
           </core_write>
         </connection>

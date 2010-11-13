@@ -27,11 +27,6 @@
 
                 if (response['exists']) {
                     serverSalt = Bytemap.Filter.Input.base64(response['stealth_salt']);
-                    password.removeClass('hidden');
-                    password.attr('disabled', false);
-                } else {
-                    password.addClass('hidden');
-                    password.attr('disabled', true);
                 }
                 }, 'json');
             });

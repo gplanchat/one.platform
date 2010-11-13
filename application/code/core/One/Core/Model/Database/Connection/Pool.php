@@ -158,6 +158,9 @@ class One_Core_Model_Database_Connection_Pool
             } else {
                 $this->_connectionList[$connectionName] = $this->app()
                     ->getResource($connectionConfig['engine'], 'dal.database', $connectionConfig['params'], $this->app());
+
+                $this->_connectionList[$connectionName]
+                    ->query('SET NAMES "UTF8";');
             }
         }
         return $this->_connectionList[$connectionName];
