@@ -198,7 +198,7 @@ class One_Core_Model_Application
             }
         }
 
-        $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'configs', 'module.xml'));
+        $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'configs', '*.xml'));
         if (($modules = $config->get('modules')) === null) {
             require_once 'One/core/Exception/ConfigurationError.php';
             throw new One_Core_Exception_ConfigurationError(
@@ -215,16 +215,22 @@ class One_Core_Model_Application
                 $moduleConfig->codePool = $codePool;
             }
 
-            $path = sprintf($pathPattern, $codePool, str_replace('_', self::DS, $moduleName));
-            if (!file_exists($path)) {
+            $paths = glob(sprintf($pathPattern, $codePool, str_replace('_', self::DS, $moduleName)));
+            if (!count($paths)) {
                 $modules->get($moduleName)->active = false;
                 continue;
             }
 
-            $moduleConfig = new Zend_Config_Xml($path, null, true);
-            $config->merge($moduleConfig->default);
-            if (isset($moduleConfig->$environment)) {
-                $config->merge($moduleConfig->$environment);
+            foreach ($paths as $path) {
+                $moduleConfig = new Zend_Config_Xml($path, null, true);
+                if ($moduleConfig->default !== null) {
+                    $config->merge($moduleConfig->default);
+                }
+                foreach ($moreSections as $section) {
+                    if ($moduleConfig->$section !== null) {
+                        $config->merge($moduleConfig->$section);
+                    }
+                }
             }
 
             $this->_addModule($moduleName, $moduleConfig);
