@@ -1,0 +1,40 @@
+<div class="content-header">
+  <table cellspacing="0">
+    <tbody>
+      <tr>
+        <td style="width: 50%;"><h3 class="icon-head <?php echo $this->escape($this->getTitleClass()) ?>"><?php echo $this->escape($this->getTitle()) ?></h3></td>
+        <td class="form-buttons">
+          <?php foreach ($this->getButtons() as $button): ?>
+          <?php echo $button->setView($this)->render(); ?>
+          <?php endforeach ?>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<?php echo $this->renderGrid() ?>
+<div class="content-header-floating" id="">
+  <div class="content-header">
+    <h3 class="icon-head <?php echo $this->escape($this->getTitleClass()) ?>"><?php echo $this->escape($this->getTitle()) ?></h3>
+    <p class="content-buttons form-buttons" style="">
+      <?php foreach ($this->getButtons() as $button): ?>
+      <?php echo $button->setView($this)->render(); ?>
+      <?php endforeach ?>
+    </p>
+  </div>
+</div>
+<script type="text/javascript">
+/*<![CDATA[*/
+$(document).ready(function(e){
+    $('.content-header-floating').hide();
+    var position = $('.content-header').position().top;
+    $(window).scroll(function(e){
+        if (window.pageYOffset > position) {
+            $('.content-header-floating').fadeIn();
+        } else {
+            $('.content-header-floating').fadeOut();
+        }
+        });
+    });
+/*]]>*/
+</script>

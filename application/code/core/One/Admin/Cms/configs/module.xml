@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * This file is part of XNova:Legacies
+ *
+ * @license http://www.gnu.org/licenses/agpl-3.0.txt
+ * @see http://www.xnova-ng.org/
+ *
+ * Copyright (c) 2009-2010, Grégory PLANCHAT <g.planchat at gmail.com>
+ * All rights reserved.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * NOTICE:
+ * This file is part of the core development branch, changing its contents will
+ * make you unable to use the automatic updates manager. Please refer to the
+ * documentation for further information about customizing XNova.
+ *
+ */
+-->
+<config>
+  <default>
+    <modules>
+      <One_Admin_Cms>
+        <version>0.1.0</version>
+      </One_Admin_Cms>
+    </modules>
+
+    <model>
+      <admin.cms>
+        <namespace>One_Admin_Cms_Model</namespace>
+      </admin.cms>
+    </model>
+
+    <exception>
+      <admin.cms>
+        <namespace>One_Admin_Cms_Exception</namespace>
+      </admin.cms>
+    </exception>
+
+    <block>
+      <admin.cms>
+        <namespace>One_Admin_Cms_Block</namespace>
+      </admin.cms>
+    </block>
+
+    <resource>
+      <dao>
+        <admin.cms>
+          <namespace>One_Admin_Cms_Resource_Dao</namespace>
+        </admin.cms>
+      </dao>
+      <orm>
+        <admin.cms>
+          <namespace>One_Admin_Cms_Resource_Orm</namespace>
+        </admin.cms>
+      </orm>
+      <dal>
+        <database>
+          <admin.cms>
+            <namespace>One_Admin_Cms_Dal_Database</namespace>
+            <connection>
+              <read>admin_cms_read</read>
+              <write>admin_cms_write</write>
+              <setup>admin_cms_setup</setup>
+            </connection>
+          </admin.cms>
+        </database>
+      </dal>
+    </resource>
+
+    <general>
+      <layout>
+        <admin.cms>cms.xml</admin.cms>
+      </layout>
+      <!-- 
+      <forms>
+        <cms-page>
+          <actions>
+            <submit>
+              <params>
+                <controller>page</controller>
+                <action>edit-post</action>
+              </params>
+            </submit>
+            <success>
+              <params>
+                <controller>page</controller>
+              </params>
+            </success>
+            <error>
+              <params>
+                <controller>page</controller>
+                <action>edit</action>
+              </params>
+            </error>
+          </actions>
+          <subForms>
+            <cms-page-general>
+              <name>general</name>
+              <elements value="url_key" />
+              <elements />
+              <options>
+                <legend>General</legend>
+              </options>
+            </cms-page-general>
+            <cms-page-meta>
+              <name>meta</name>
+              <elements value="meta_description" />
+              <elements value="meta_keywords" />
+              <options>
+                <legend>Meta Data</legend>
+              </options>
+            </cms-page-meta>
+            <cms-page-layout>
+              <name>layout</name>
+              <elements value="layout_extra" />
+              <elements />
+              <options>
+                <legend>Layout updates</legend>
+              </options>
+            </cms-page-layout>
+            <cms-page-wysiwyg>
+              <name>wysiwyg</name>
+              <elements value="content" />
+              <elements />
+              <options>
+                <legend>Page Content</legend>
+              </options>
+            </cms-page-wysiwyg>
+          </subForms>
+          <params>
+            <name>cms-page</name>
+          </params>
+          <elements>
+            <url_key>
+              <type>text</type>
+              <name>url_key</name>
+              <options>
+                <value></value>
+                <label>URL Key</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <description>Enter the URL at which the page should be displayed</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>general:url_key</id>
+                  <class>general input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+                <decorators>
+                  <element>
+                    <decorator>ViewHelper</decorator>
+                    <options>
+                      <helper>FormText</helper>
+                    </options>
+                  </element>
+                  <label>
+                    <decorator>Label</decorator>
+                  </label>
+                </decorators>
+              </options>
+            </url_key>
+            <meta_description>
+              <type>text</type>
+              <name>meta_description</name>
+              <options>
+                <value></value>
+                <label>Meta Description</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <description>Enter the page description</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>meta:description</id>
+                  <class>general input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+                <decorators>
+                  <element>
+                    <decorator>ViewHelper</decorator>
+                    <options>
+                      <helper>FormTextarea</helper>
+                    </options>
+                  </element>
+                  <label>
+                    <decorator>Label</decorator>
+                  </label>
+                </decorators>
+              </options>
+            </meta_description>
+            <meta_keywords>
+              <type>text</type>
+              <name>meta_keywords</name>
+              <options>
+                <value></value>
+                <label>Meta Keywords</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <description>Enter the page keywords meta data.</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>meta:keywords</id>
+                  <class>general input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+                <decorators>
+                  <element>
+                    <decorator>ViewHelper</decorator>
+                    <options>
+                      <helper>FormTextarea</helper>
+                    </options>
+                  </element>
+                  <label>
+                    <decorator>Label</decorator>
+                  </label>
+                </decorators>
+              </options>
+            </meta_keywords>
+            <layout_extra>
+              <type>text</type>
+              <name>layout_extra</name>
+              <options>
+                <value></value>
+                <label>Extended Layout</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <description>Enter extras definitions for the layout handler</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>layout:extra</id>
+                  <class>general input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+                <decorators>
+                  <element>
+                    <decorator>ViewHelper</decorator>
+                    <options>
+                      <helper>FormTextarea</helper>
+                    </options>
+                  </element>
+                  <label>
+                    <decorator>Label</decorator>
+                  </label>
+                </decorators>
+              </options>
+            </layout_extra>
+            <layout_active>
+              <type>select</type>
+              <name>layout_active</name>
+              <options>
+                <value></value>
+                <label>Extend Layout</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <description>Activate the layout extensions</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>layout:active</id>
+                  <class>general input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+                <decorators>
+                  <element>
+                    <decorator>ViewHelper</decorator>
+                    <options>
+                      <helper>FormTextarea</helper>
+                    </options>
+                  </element>
+                  <label>
+                    <decorator>Label</decorator>
+                  </label>
+                </decorators>
+              </options>
+            </layout_active>
+            <content>
+              <type>textarea</type>
+              <name>content</name>
+              <options>
+                <value></value>
+                <label>Content</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <description>Enter the URL at which the page should be displayed</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>layout:active</id>
+                  <class>general input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+                <decorators>
+                  <element>
+                    <decorator>ViewHelper</decorator>
+                    <options>
+                      <helper>FormTextarea</helper>
+                    </options>
+                  </element>
+                  <label>
+                    <decorator>Label</decorator>
+                  </label>
+                </decorators>
+              </options>
+            </content>
+          </elements>
+        </cms-page>
+      </forms>
+       -->
+      <grids>
+        <cms-page>
+          <index>
+            <type>admin.core/grid.column.indexer</type>
+            <params>
+              <width>50</width>
+              <align>center</align>
+            </params>
+          </index>
+          <entity_id>
+            <type>admin.core/grid.column.entity</type>
+            <params>
+              <field>entity_id</field>
+              <label>#</label>
+              <width>100</width>
+              <align>left</align>
+            </params>
+          </entity_id>
+          <path>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>path</field>
+              <label>URL Path</label>
+              <width>250</width>
+              <align>left</align>
+            </params>
+          </path>
+          <content>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>content</field>
+              <label>HTML Content</label>
+              <align>left</align>
+            </params>
+          </content>
+          <action>
+            <type>admin.core/grid.column.action</type>
+            <params>
+              <width>50</width>
+            </params>
+          </action>
+        </cms-page>
+      </grids>
+    </general>
+    
+  </default>
+</config>

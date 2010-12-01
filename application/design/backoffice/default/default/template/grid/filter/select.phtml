@@ -1,0 +1,6 @@
+<select class="no-changes" value="" id="filter-<?php echo $this->escape($this->getField()) ?>" name="<?php echo $this->escape($this->getField()) ?>">
+  <option value="" selected="selected"></option>
+<?php foreach ($this->getOptions() as $optionValue => $optionLabel): ?>
+  <option value="<?php echo $this->escape($optionValue) ?>"><?php echo $this->escape($optionLabel) ?></option>
+<?php endforeach ?>
+</select>

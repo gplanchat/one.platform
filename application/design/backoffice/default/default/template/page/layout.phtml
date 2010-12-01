@@ -1,0 +1,31 @@
+<?php echo $this->doctype() ?>
+<html>
+  <head><?php echo $this->renderChild('head')?></head>
+  <body<?php if (count($this->getBodyClasses()) > 0):?> class="<?php echo $this->renderBodyClasses() ?>"<?php endif?>>
+    <div id="wrapper">
+      <noscript>
+        <div class="noscript">
+          <div class="noscript-inner">
+            <p><strong>We detected that your JavaScript seem to be disabled.</strong></p>
+            <p>You must have JavaScript enabled in your browser to utilize the functionality of this website.</p>
+          </div>
+        </div>
+      </noscript>
+      <div class="header">
+        <?php echo $this->renderChild('header') ?>
+      </div>
+      <?php if (false): ?>
+      <div class="notification-global"></div>
+      <?php endif?>
+      <div class="middle" id="anchor-content">
+        <div id="page:main-container">
+          <?php echo $this->renderChild('content') ?>
+        </div>
+      </div>
+      <div class="footer">
+        <?php echo $this->renderChild('footer') ?>
+      </div>
+    </div>
+    <?php echo $this->renderChild('debug') ?>
+  </body>
+</html>

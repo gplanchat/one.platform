@@ -1,0 +1,5 @@
+<span class="nobr">
+  <a class="<?php if ($this->getSort() === 'desc'):?>sort-arrow-desc<?php elseif ($this->getSort() === 'asc'):?>sort-arrow-asc<?php else:?>not-sort<?php endif?>" title="<?php echo $this->escape($this->getSort()) ?>" name="<?php echo $this->escape($this->getName()) ?>" href="#">
+    <span class="sort-title"><?php echo $this->escape($this->getLabel()) ?></span>
+  </a>
+</span>

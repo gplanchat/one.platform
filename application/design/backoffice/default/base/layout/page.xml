@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.0.0">
+  <default>
+    <block type="core/html.page" name="root" template="page/layout.phtml">
+      <action method="doctype">
+        <params>
+          <doctype>XHTML5</doctype>
+        </params>
+      </action>
+      <block type="core/html.head" name="head" template="page/head.phtml">
+        <title>One Platform - Admin Panel</title>
+        <action method="addStylesheet">
+          <params>
+            <stylesheet>http://magento/skin/adminhtml/default/default/reset.css</stylesheet>
+          </params>
+        </action>
+        <action method="addStylesheet">
+          <params>
+            <stylesheet>http://magento/skin/adminhtml/default/default/boxes.css</stylesheet>
+          </params>
+        </action>
+        <action method="addStylesheet">
+          <params>
+            <stylesheet>http://magento/skin/adminhtml/default/default/print.css</stylesheet>
+            <media>print</media>
+          </params>
+        </action>
+        <action method="addStylesheet">
+          <params>
+            <stylesheet>http://magento/skin/adminhtml/default/default/menu.css</stylesheet>
+            <media>screen,projection</media>
+          </params>
+        </action>
+        <meta>
+          <content>text/html; encoding=UTF-8</content>
+          <key-value>Content-Type</key-value>
+          <key-type>http-equiv</key-type>
+        </meta>
+      </block>
+      <block type="core/html" template="page/header.phtml" name="header">
+        <block type="core/html.navigation" name="navigation" template="navigation/menu.phtml" />
+      </block>
+      <block type="core/text.concat" name="content" />
+      <block type="core/html" name="footer" template="page/footer.phtml" />
+      <block type="core/debug" name="debug" />
+    </block>
+  </default>
+</layout>

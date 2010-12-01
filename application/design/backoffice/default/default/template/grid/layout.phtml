@@ -1,0 +1,46 @@
+
+<script type="text/javascript">
+/*<![CDATA[*/
+
+var grid = null;
+
+$(document).ready(function(){
+    grid = new $.one.Grid($$('grid:<?php echo $this->escape($this->getName()) ?>'));
+});
+/*]]>*/
+</script>
+
+<div id="grid:<?php echo $this->escape($this->getName()) ?>">
+  <?php echo $this->renderChild('pager') ?>
+  <?php echo $this->renderChild('mass-actions') ?>
+  <div class="grid">
+    <div class="hor-scroll">
+      <table cellspacing="0" id="customerGrid_table" class="data">
+      <?php foreach($this->getColumns() as $column): ?>
+        <col<?php if ($column->hasWidth()):?> width="<?php echo $this->escape($column->getWidth()) ?>"<?php endif?><?php if ($column->hasColumnClass()):?> class="<?php echo $this->escape($column->getColumnClass()) ?>"<?php endif?> />
+      <?php endforeach ?>
+        <thead>
+          <tr class="headings">
+          <?php foreach($this->getColumns() as $column): ?>
+            <th><?php echo $column->renderLabel() ?></th>
+          <?php endforeach ?>
+          </tr>
+          <tr class="filter">
+          <?php foreach($this->getColumns() as $column): ?>
+            <th><?php echo $column->renderFilter() ?></th>
+          <?php endforeach ?>
+          </tr>
+        </thead>
+        <tbody id="">
+        <?php foreach ($this->getCollection() as $id => $_): ?>
+          <tr class="<?php if ($id % 2):?>even<?php else:?>odd<?php endif?> pointer line" title="">
+          <?php foreach ($this->getColumns() as $column): ?>
+            <td class="<?php echo $this->escape($column->getName())?><?php if ($column->hasData('align')):?> a-<?php echo $this->escape($column->getData('align'))?><?php endif ?>"><?php echo $column->render(null) ?></td>
+          <?php endforeach ?>
+          </tr>
+        <?php endforeach ?>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

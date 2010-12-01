@@ -1,0 +1,4 @@
+<?php $element = $this->getElement() ?>
+<button name="<?php echo $this->escape($element->getName())?>" id="<?php echo $this->escape($element->getId())?>" type="button" class="<?php echo $this->escape($element->getAttrib('class')) ?>" onclick="<?php echo $this->escape($element->getAttrib('onclick')) ?>">
+  <span><?php echo $this->escape($element->getLabel())?></span>
+</button>

@@ -1,0 +1,32 @@
+<?php $uniquid = uniqid($this->escape($this->getField())) ?>
+<div class="range">
+  <div class="range-line date">
+    <span class="label">From:</span>
+    <input type="text" class="input-text no-changes" value="" id="<?php echo $uniquid?>-from" name="<?php echo $this->escape($this->getField())?>[from]">
+    <img title="Date selector" id="<?php echo $uniquid?>-from-trig" class="v-middle" alt="" src="http://magento/skin/adminhtml/default/default/images/grid-cal.gif">
+  </div>
+  <div class="range-line date">
+    <span class="label">To :</span>
+    <input type="text" class="input-text no-changes" value="" id="<?php echo $uniquid?>-to" name="<?php echo $this->escape($this->getField())?>[to]">
+    <img title="Date selector" id="<?php echo $uniquid?>-to-trig" class="v-middle" alt="" src="http://magento/skin/adminhtml/default/default/images/grid-cal.gif">
+  </div>
+</div>
+<input type="hidden" value="en_US" name="customer_since[locale]">
+<script type="text/javascript">
+Calendar.setup({
+    inputField : "<?php echo $uniquid?>-from",
+    ifFormat : "%m/%e/%y",
+    button : "<?php echo $uniquid?>-from-trig",
+    showsTime: false,
+    align : "Bl",
+    singleClick : true
+});
+Calendar.setup({
+    inputField : "<?php echo $uniquid?>-to",
+    ifFormat : "%m/%e/%y",
+    button : "<?php echo $uniquid?>-to-trig",
+    showsTime: false,
+    align : "Bl",
+    singleClick : true
+});
+</script>

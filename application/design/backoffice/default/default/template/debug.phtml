@@ -1,0 +1,59 @@
+<?php if (count($profilerList = $this->getDatabaseProfilers()) > 0): ?>
+<table>
+  <col width="200" />
+  <col width="1500" />
+  <thead>
+    <tr>
+      <th>Connection Name</th>
+      <th>Query profiles</th>
+    </tr>
+  </thead>
+  <tbody>
+<?php foreach ($profilerList as $connectionName => $profiler): ?>
+    <tr>
+      <td>
+        <?php echo $this->escape($connectionName) ?>
+      </td>
+      <td>
+        <table>
+          <col width="100" />
+          <col width="1100" />
+          <col width="300" />
+          <thead>
+            <tr>
+              <th>Duration</th>
+              <th>Query</th>
+              <th>Params</th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php foreach ($profiler->getQueryProfiles() as $query): ?>
+            <tr>
+              <td>
+                <?php $time = new Zend_Measure_Time($query->getElapsedSecs(), Zend_Measure_Time::SECOND) ?>
+                <?php echo $time->convertTo(Zend_Measure_Time::MICROSECOND)?>
+              </td>
+              <td>
+                <pre><code><?php echo $this->escape($query->getQuery()) ?></code></pre>
+              </td>
+              <td>
+                <?php if (count($boundParams = $query->getQueryParams()) > 0): ?>
+                  <ul>
+                  <?php foreach ($query->getQueryParams() as $paramName => $paramValue): ?>
+                    <li><?php echo $this->escape($paramName) ?> := "<?php echo $this->escape($paramValue) ?>"</li>
+                  <?php endforeach ?>
+                  </ul>
+                <?php else: ?>
+                <em>Empty</em>
+                <?php endif ?>
+              </td>
+            </tr>
+          <?php endforeach ?>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+<?php endforeach ?>
+  </tbody>
+</table>
+<?php endif ?>

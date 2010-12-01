@@ -1,0 +1,66 @@
+  <div id="customerGrid_massaction">
+    <table cellspacing="0" cellpadding="0" class="massaction">
+      <tbody>
+        <tr>
+          <td>
+            <a onclick="return customerGrid_massactionJsObject.selectAll()" href="#">Select All</a>
+            <span class="separator">|</span>
+            <a onclick="return customerGrid_massactionJsObject.unselectAll()" href="#">Unselect All</a>
+            <span class="separator">|</span>
+            <a onclick="return customerGrid_massactionJsObject.selectVisible()" href="#">Select Visible</a>
+            <span class="separator">|</span>
+            <a onclick="return customerGrid_massactionJsObject.unselectVisible()" href="#">Unselect Visible</a>
+            <span class="separator">|</span>
+            <strong id="customerGrid_massaction-count">0</strong> items selected
+          </td>
+          <td>
+            <div class="right">
+              <div class="entry-edit">
+                <form method="post" id="customerGrid_massaction-form" action="">
+                  <div><input type="hidden" value="hEQz5bS6FIYpMc5P" name="form_key"></div>
+                  <fieldset>
+                    <span class="field-row">
+                      <label>Actions</label>
+                      <select class="required-entry select absolute-advice local-validation" id="customerGrid_massaction-select">
+                        <option value=""></option>
+                        <option value="delete">Delete</option>
+                        <option value="newsletter_subscribe">Subscribe to Newsletter</option>
+                        <option value="newsletter_unsubscribe">Unsubscribe from Newsletter</option>
+                        <option value="assign_group">Assign a Customer Group</option>
+                      </select>
+                    </span>
+                    <span id="customerGrid_massaction-form-hiddens" class="outer-span"></span>
+                    <span id="customerGrid_massaction-form-additional" class="outer-span"></span>
+                    <span class="field-row">
+                      <button style="" onclick="customerGrid_massactionJsObject.apply()" class="scalable " type="button" id="id_115ee78f4ee25664de510dbbdbef98a3"><span>Submit</span></button>
+                    </span>
+                  </fieldset>
+                </form>
+              </div>
+              <div class="no-display">
+                <div id="customerGrid_massaction-item-delete-block">
+                </div>
+                <div id="customerGrid_massaction-item-newsletter_subscribe-block">
+                </div>
+                <div id="customerGrid_massaction-item-newsletter_unsubscribe-block">
+                </div>
+                <div id="customerGrid_massaction-item-assign_group-block">
+                  <div class="entry-edit">
+                    <span class="field-row">
+                      <label for="visibility">Group</label>
+                      <select class="required-entry absolute-advice select" name="group" id="visibility">
+                        <option selected="selected" value=""></option>
+                        <option value="1">General</option>
+                        <option value="2">Wholesale</option>
+                        <option value="3">Retailer</option>
+                      </select>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

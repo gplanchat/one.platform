@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * This file is part of XNova:Legacies
+ *
+ * @license http://www.gnu.org/licenses/agpl-3.0.txt
+ * @see http://www.xnova-ng.org/
+ *
+ * Copyright (c) 2009-2010, Grégory PLANCHAT <g.planchat at gmail.com>
+ * All rights reserved.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * NOTICE:
+ * This file is part of the core development branch, changing its contents will
+ * make you unable to use the automatic updates manager. Please refer to the
+ * documentation for further information about customizing XNova.
+ *
+ */
+-->
+<config>
+  <default>
+    <modules>
+      <One_Admin_Core>
+        <version>0.1.0</version>
+      </One_Admin_Core>
+    </modules>
+
+    <model>
+      <admin.core>
+        <namespace>One_Admin_Core_Model</namespace>
+      </admin.core>
+    </model>
+
+    <exception>
+      <admin.core>
+        <namespace>One_Admin_Core_Exception</namespace>
+      </admin.core>
+    </exception>
+
+    <block>
+      <admin.core>
+        <namespace>One_Admin_Core_Block</namespace>
+      </admin.core>
+    </block>
+
+    <resource>
+      <dao>
+        <admin.core>
+          <namespace>One_Admin_Core_Resource_Dao</namespace>
+        </admin.core>
+      </dao>
+      <orm>
+        <admin.core>
+          <namespace>One_Admin_Core_Resource_Orm</namespace>
+        </admin.core>
+      </orm>
+      <dal>
+        <database>
+          <admin.core>
+            <namespace>One_Admin_Core_Dal_Database</namespace>
+            <connection>
+              <read>admin_core_read</read>
+              <write>admin_core_write</write>
+              <setup>admin_core_setup</setup>
+            </connection>
+          </admin.core>
+        </database>
+      </dal>
+    </resource>
+    
+    <general>
+      <layout>
+        <admin.core>core.xml</admin.core>
+      </layout>
+      
+      <forms>
+        <admin-user-entity>
+          <actions>
+            <submit>
+              <params>
+                <controller>grid</controller>
+                <action>form-post</action>
+              </params>
+            </submit>
+            <success>
+              <params>
+                <controller>grid</controller>
+              </params>
+            </success>
+            <error>
+              <params>
+                <controller>grid</controller>
+                <action>form</action>
+              </params>
+            </error>
+          </actions>
+          <fieldsets>
+            <login />
+          </fieldsets>
+          <params>
+            <name>login</name>
+          </params>
+        </admin-user-entity>
+      </forms>
+
+      <grids>
+        <admin-user-entity>
+          <indexer>
+            <type>admin.core/grid.column.indexer</type>
+            <params>
+              <width>50</width>
+            </params>
+          </indexer>
+          <entity>
+            <type>admin.core/grid.column.entity</type>
+            <params>
+              <field>entity_id</field>
+              <label>#ID</label>
+              <width>100</width>
+              <align>left</align>
+            </params>
+          </entity>
+          <username>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>username</field>
+              <label>Username</label>
+              <width>250</width>
+              <align>left</align>
+            </params>
+          </username>
+          <group>
+            <type>admin.core/grid.column.select</type>
+            <params>
+              <field>primary_group_id</field>
+              <label>Primary Group</label>
+              <width>250</width>
+              <align>left</align>
+              <source>
+                <type>user/group.collection</type>
+                <field>label</field>
+              </source>
+              <values value="" />
+              <values value="Administrators" />
+              <values value="Moderators" />
+              <values value="Users" />
+              <values value="Guests" />
+            </params>
+          </group>
+          <email>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>email</field>
+              <label>e-mail</label>
+              <align>left</align>
+            </params>
+          </email>
+          <realname>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>realname</field>
+              <label>Real name</label>
+              <align>left</align>
+            </params>
+          </realname>
+          <created_at>
+            <type>admin.core/grid.column.date-time</type>
+            <params>
+              <field>created_at</field>
+              <label>Created at</label>
+              <width>100</width>
+              <align>left</align>
+            </params>
+          </created_at>
+          <updated_at>
+            <type>admin.core/grid.column.date-time</type>
+            <params>
+              <field>updated_at</field>
+              <label>Updated at</label>
+              <width>100</width>
+              <align>left</align>
+            </params>
+          </updated_at>
+          <action>
+            <type>admin.core/grid.column.action</type>
+            <params>
+              <width>50</width>
+            </params>
+          </action>
+        </admin-user-entity>
+      </grids>
+    </general>
+  </default>
+</config>

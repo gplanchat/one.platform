@@ -1,0 +1,42 @@
+<div class="pager">
+  <?php echo $this->translate('Page')?>
+  <?php if ($this->getCurrentPageNum() > 1): ?>
+  <a href="<?php echo $this->escape($this->getPrevPageUrl()) ?>">
+    <img class="arrow next" alt="<?php echo $this->translate('Go to Previous page')?>" src="http://magento/skin/adminhtml/default/default/images/pager_arrow_left.gif">
+  </a>
+  <?php else: ?>
+  <img class="arrow next" alt="<?php echo $this->translate('Go to Previous page')?>" src="http://magento/skin/adminhtml/default/default/images/pager_arrow_left_off.gif">
+  <?php endif ?>
+  <input type="text" class="input-text page" value="<?php echo $this->escape($this->getCurrentPageNum())?>" name="page">
+  <?php if ($this->getCurrentPageNum() < $this->getLastPageNum()): ?>
+  <a href="<?php echo $this->escape($this->getNextPageUrl()) ?>">
+    <img class="arrow next" alt="<?php echo $this->translate('Go to Next page')?>" src="http://magento/skin/adminhtml/default/default/images/pager_arrow_right.gif">
+  </a>
+  <?php else: ?>
+  <img class="arrow next" alt="<?php echo $this->translate('Go to Next page')?>" src="http://magento/skin/adminhtml/default/default/images/pager_arrow_right_off.gif">
+  <?php endif ?>
+    <?php echo $this->translate('of %d pages', $this->getLastPageNum()) ?><span class="separator">|</span>
+    <?php echo $this->translate('View') ?>
+    <select name="limit" class="limit">
+    <?php foreach ($this->getPageItemCountList() as $itemCount): ?>
+      <option<?php if ($this->getPageSize() == $itemCount):?> selected="selected"<?php endif ?> value="<?php echo $this->escape($itemCount) ?>"<?php if ($this->getCurrentItemCount() == $itemCount):?> selected="selected"<?php endif ?>><?php echo $this->escape($itemCount) ?></option>
+    <?php endforeach ?>
+    </select>
+    <?php echo $this->translate('per page') ?><span class="separator">|</span>
+    <?php echo $this->translate('Total %d records found', $this->getItemsCount())?>
+    <span class="no-display" id="customerGrid-total-count"><?php echo $this->escape($this->getItemsCount())?></span>
+</div>
+
+<div class="export a-right">
+  <img class="v-middle" alt="" src="http://magento/skin/adminhtml/default/default/images/icon_export.gif">&nbsp; Export to:
+  <select style="width: 8em;" id="customerGrid_export" name="customerGrid_export">
+    <option value="http://magento/index.php/admin/customer/exportCsv/key/ae4e4c96e58d4fe03e43fedb38d5c632/">CSV</option>
+    <option value="http://magento/index.php/admin/customer/exportXml/key/18ab697cfe1f66ff28a2f2c78a9baaca/">XML</option>
+  </select>
+  <button style="" onclick="customerGridJsObject.doExport()" class="scalable task" type="button" id="id_650a7b67063f2d620ce7b4895d45cd5b"><span>Export</span></button>
+</div>
+
+<div class="filter-actions a-right">
+  <button style="" onclick="customerGridJsObject.resetFilter()" class="scalable " type="button" id="id_66148894a5422dda917182253bafe508"><span>Reset Filter</span></button>
+  <button style="" onclick="customerGridJsObject.doFilter()" class="scalable task" type="button" id="id_c5649a953c6c69e587a54d21ddfb8d1c"><span>Search</span></button>
+</div>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+  <admin.grid>
+    <reference name="content">
+      <block type="admin.core/grid.container" name="container">
+        <action method="addButtonAdd" />
+        <action method="setTitle">
+          <params>
+            <label>My Sample Grid</label>
+          </params>
+        </action>
+        <block type="admin.core/grid" name="grid" />
+      </block>
+      <block type="core/html.notifications" name="notifications" template="page/notifications.phtml" session-type="admin.core/session" />
+    </reference>
+  </admin.grid>
+  <admin.form>
+    <reference name="content">
+      <block type="admin.core/form.container" name="container">
+        <action method="addButtonBack" />
+        <action method="addButtonReset" />
+        <action method="addButtonDelete" />
+        <action method="addButtonDuplicate" />
+        <action method="addButtonSave" />
+        <action method="addButtonSaveContinue" />
+        <action method="setTitle">
+          <params>
+            <label>My Sample Form</label>
+          </params>
+        </action>
+        <block type="admin.core/form" name="form" />
+      </block>
+      <block type="core/html.notifications" name="notifications" template="page/notifications.phtml" session-type="admin.core/session" />
+    </reference>
+  </admin.form>
+  <user.entity.form>
+    <reference name="form">
+      <form>admin-user-entity</form>
+    </reference>
+  </user.entity.form>
+</layout>

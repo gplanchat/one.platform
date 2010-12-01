@@ -1,0 +1,35 @@
+<div class="header-top">
+    <a href="http://magento/index.php/admin/index/index/key/4dbc16fc4bf8e1e3f61022d4d878cdcd/"><img src="<?php echo $this->baseUrl('design/images/logo.png') ?>" alt="One Platform - Admin Panel" class="logo" /></a>
+    <div class="header-right">
+        <p class="super">
+            Logged in as admin<span class="separator">|</span>Thursday, October 21, 2010<span class="separator">|</span><a class="link-logout" href="http://magento/index.php/admin/index/logout/key/21f2400af3d4cb1b0701b43f021f2332/">Log Out</a>
+        </p>
+                <fieldset>
+            <legend>Search</legend>
+            <span style="display: none;" class="autocomplete-indicator" id="global_search_indicator">
+                <img class="v-middle" alt="Loading..." src="http://magento/skin/adminhtml/default/default/images/ajax-loader.gif">
+            </span>
+                        <input type="text" onblur="if(this.value=='')this.value='Global Record Search';" onfocus="if(this.value=='Global Record Search')this.value=''; " value="Global Record Search" class="input-text" name="query" id="global_search" autocomplete="off">
+            <div class="autocomplete" id="global_search_autocomplete" style="display: none;"></div>
+            <script type="text/javascript">
+                new Ajax.Autocompleter(
+                    'global_search',
+                    'global_search_autocomplete',
+                    'http://magento/index.php/admin/index/globalSearch/key/69091e50b14a8680f8dbc7483d8a24e0/',
+                    {
+                        paramName:"query",
+                        minChars:2,
+                        indicator:"global_search_indicator",
+                        updateElement:getSelectionId,
+                        evalJSON:'force'
+                    }
+                );
+                function getSelectionId(li) {
+                    location.href = li.getAttribute('url');
+                }
+            </script>
+        </fieldset>
+            </div>
+</div>
+        <div class="clear"></div>
+<?php echo $this->renderChild('navigation') ?>
