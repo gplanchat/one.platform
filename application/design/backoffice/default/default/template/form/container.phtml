@@ -96,6 +96,34 @@ $(document).ready(function(e){
             $('.content-header-floating').fadeOut();
         }
         });
+
+    var form = $('#content form');
+    $('[class^=content-header] button[name=save]').click(function(){
+        form.submit();
+        });
+
+    $('[class^=content-header] button[name=savecontinue]').click(function(){
+        // FIXME: save and go back to the edit form
+        form.submit();
+    });
+
+    $('[class^=content-header] button[name=delete]').click(function(){
+        // TODO
+        });
+
+    $('[class^=content-header] button[name=reset]').click(function(){
+        form.trigger('reset');
+    });
+
+    $('[class^=content-header] button[name=back]').click(function(){
+        var url = new $.one.Url('admin/');
+        document.location = url.toString([{name: 'action', value: 'index'}]);
+    });
+
+    $('[class^=content-header] button[name=duplicate]').click(function(){
+        // TODO
+        });
+
     });
 /*]]>*/
       </script>

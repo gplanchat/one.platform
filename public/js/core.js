@@ -90,6 +90,7 @@ var $$ = function(identifier) {
 
             this._baseUrl    = '';
             this._prefix     = '';
+            this._module     = '';
             this._controller = '';
             this._action     = '';
             this._params     = [];
@@ -100,7 +101,7 @@ var $$ = function(identifier) {
             this._baseUrl = (match[1] !== undefined ? match[1] : '/' ) + path;
 
             match = document.location.pathname.match('^' + this._baseUrl + '(.*)$');
-            var route = match[1] || ''; 
+            var route = match[1] || '';
 
             match = route.match('([^/]+)(?:/?(.*))');
             this._prefix = (match !== null && match[1] !== undefined) ? match[1] : 'core';
@@ -111,6 +112,7 @@ var $$ = function(identifier) {
             match = match[2] !== undefined ? match[2].match('([^/]+)(?:/?(.*))') : null;
             this._action = (match !== null && match[1] !== undefined) ? match[1] : '';
             },
+
         toString: function(options) {
             options = options || [];
 
@@ -120,7 +122,6 @@ var $$ = function(identifier) {
             var action     = this._action;
             var params     = this._params;
 
-            var query = '';
             $(options).each(function(index, element){
                 switch (element.name) {
                 case 'base-url':
@@ -145,6 +146,7 @@ var $$ = function(identifier) {
                 }
                 });
 
+            var query = '';
             $(params).each(function(index, element){
                 var chr = '&';
                 if (index === 0) {
@@ -153,14 +155,16 @@ var $$ = function(identifier) {
                 query += chr + element.name + '=' + element.value;
                 });
             var url = baseUrl
-            if (prefix !== '') {
-                url += '/' + prefix;
+            if (prefix !== undefined && prefix !== '') {
+                url += prefix + '/';
             }
-            if (controller !== '') {
-                url += '/' + controller;
+            if (controller !== undefined && controller !== '') {
+                url += controller + '/';
+            } else {
+                url += 'index/';
             }
-            if (action !== '') {
-                url += '/' + action;
+            if (action !== undefined && action !== '') {
+                url += action + '/';
             }
             return url + query;
             }
