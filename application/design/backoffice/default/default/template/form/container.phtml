@@ -26,10 +26,29 @@
             links.removeClass('active');
             $(this).addClass('active');
 
-            // $(this).addClass('changed');
+            var element = $(this);
             // $(this).addClass('error');
-            $('#content form .subform').hide();
-            $('#' + $(this).attr('rel')).parent().show();
+            $('#content form .subform').hide().trigger('validate');
+            $('#' + element.attr('rel')).parent().show();
+            });
+
+        $('#content form :input').live('change', function(event){
+            var subform = $(this).parents('fieldset').attr('id');
+            $(this).trigger('validate');
+
+            $('ul.tabs li a.tab-item-link[rel='+subform+']').addClass('changed');
+            });
+
+        $('#content form').live('validate', function(event){
+            $(':input', $(this)).each(function(){
+                $(this).trigger('validate');
+                });
+            });
+
+        $('#content form .subform').live('validate', function(event){
+            $(':input', $(this)).each(function(){
+                $(this).trigger('validate');
+                });
             });
 
         links.first().click();
