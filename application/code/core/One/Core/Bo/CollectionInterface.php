@@ -79,7 +79,7 @@ interface One_Core_Bo_CollectionInterface
      * @param mixed $identifier
      * @return One_Core_Model_EntityAbstract
      */
-    public function load($identifiers);
+    public function load($identifiers = array());
 
     /**
      * Save the model into its static representation
@@ -154,7 +154,7 @@ interface One_Core_Bo_CollectionInterface
      * @param int $pageCount
      * @return One_Core_Bo_CollectionInterface
      */
-    public function setPage($page, $pageCount);
+    public function setPage($page, $pageCount = null);
 
     /**
      * Set the page limits

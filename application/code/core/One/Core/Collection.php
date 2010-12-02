@@ -87,10 +87,10 @@ class One_Core_Collection
      * @param Zend_Config|array $data
      * @return void
      */
-    public function __construct($moduleName = 'core', Array $data = array(), One_Core_Model_application $application = null)
+    public function __construct($moduleName, Array $data = array(), One_Core_Model_application $application = null)
     {
         if (!is_string($moduleName)) {
-            One::throwException('core/invalid-method-call', 'Parameter 1 sould be a string.');
+            $moduleName = 'core';
         }
         $this->_moduleName = $moduleName;
         $this->_app = $application;

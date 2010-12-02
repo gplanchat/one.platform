@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <default>
+    <model>
+      <setup>
+        <namespace>One_Core_Setup_Model</namespace>
+      </setup>
+    </model>
+  </default>
+</config>

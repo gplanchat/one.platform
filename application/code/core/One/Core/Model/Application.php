@@ -34,7 +34,7 @@ class One_Core_Model_Application
     public function __construct($websiteId, $environment, Array $moreSections = array(), Array $applicationConfig = array())
     {
         $this->_websiteId = $websiteId;
-        $this->_event = new One_Core_Model_Event_Dispatcher();
+        $this->_event = new One_Core_Model_Event_Dispatcher('core');
 
         if (isset($applicationConfig['config']) && !empty($applicationConfig['config'])) {
             $moreFiles = (array) $applicationConfig['config'];
