@@ -39,17 +39,17 @@
             $('ul.tabs li a.tab-item-link[rel='+subform+']').addClass('changed');
             });
 
-        $('#content form').live('validate', function(event){
-            $(':input', $(this)).each(function(){
-                $(this).trigger('validate');
-                });
-            });
+//        $('#content form').live('validate', function(event){
+//            $(':input', $(this)).each(function(){
+//                $(this).trigger('validate');
+//                });
+//            });
 
-        $('#content form .subform').live('validate', function(event){
-            $(':input', $(this)).each(function(){
-                $(this).trigger('validate');
-                });
-            });
+//        $('#content form .subform').live('validate', function(event){
+//            $(':input', $(this)).each(function(){
+//                $(this).trigger('validate');
+//                });
+//            });
 
         links.first().click();
         });
