@@ -19,8 +19,6 @@
       <block type="admin.core/form.container" name="container">
         <action method="addButtonBack" />
         <action method="addButtonReset" />
-        <action method="addButtonDelete" />
-        <action method="addButtonDuplicate" />
         <action method="addButtonSave" />
         <action method="addButtonSaveContinue" />
         <action method="setTitle">

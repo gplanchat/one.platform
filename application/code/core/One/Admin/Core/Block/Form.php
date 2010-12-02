@@ -34,7 +34,6 @@ class One_Admin_Core_Block_Form
     {
         $this->_form = new Zend_Form(array(
             'attribs' => array(
-                'title' => 'Test',
                 ),
             'action' => $action,
             'method' => $method,
@@ -143,5 +142,12 @@ class One_Admin_Core_Block_Form
     public function getTabs()
     {
         return $this->_form->getSubForms();
+    }
+
+    public function setAction($action)
+    {
+        $this->_form->setAction($action);
+
+        return $this;
     }
 }

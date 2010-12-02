@@ -157,6 +157,7 @@ class One_Core_Model_Layout
                         $block = $this->app()->getBlock($type, $childBlock, $this);
 
                         $this->_blocks[$reference['name']]->appendChild($block->getName(), $block);
+                        $this->registerBlock($block->getName(), $block);
                     }
                 }
 
@@ -238,6 +239,11 @@ class One_Core_Model_Layout
             return $this->_blocks[(string) $name];
         }
         return null;
+    }
+
+    public function getAllBlocks()
+    {
+        return $this->_blocks;
     }
 
     public function getRequest()

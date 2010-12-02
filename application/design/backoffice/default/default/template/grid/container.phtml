@@ -35,6 +35,11 @@ $(document).ready(function(e){
             $('.content-header-floating').fadeOut();
         }
         });
+
+    $('[class^=content-header] button[name=add]').click(function(){
+        var url = new $.one.Url('admin/');
+        document.location = url.toString([{name: 'action', value: 'new'}]);
+        });
     });
 /*]]>*/
 </script>
