@@ -6,7 +6,6 @@ h2. Download the sources
 
 First of all, you can download the sources by using git :
 @$ cd /opt/@
-@$ mkdir one-platform@
 @$ git clone git://github.com/gplanchat/one.platform.git one-platform@
 @$ cd one-platform@
 
@@ -16,7 +15,7 @@ h2. Create your bootstrap
 
 Copy the public directory into Apache's _DocumentRoot_ directory and rename the bootstrap :
 
-@$ cp -R /opt/one-platform/public/ /var/www/@
+@$ cp -R /opt/one-platform/public/* /var/www/@
 @$ mv /var/www/index.php.sample /var/www/index.php@
 
 h2. Configure rewrite rules
@@ -44,6 +43,10 @@ h2. Run the SQL script
 Run the SQL script named _install.mysql_, located in the folder setup, using this command :
 
 @$ mysql -u root -h localhost -p < /opt/one-platform/setup/install.mysql@
+
+h2. Install the Zend Framework
+
+Download the tarball at http://framework.zend.com/ and uncompress the libraries files into the folder _/opt/one-platform/externals/libraries/_.
 
 h2. Run One.Platform
 

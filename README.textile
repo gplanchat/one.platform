@@ -1,0 +1,11 @@
+h1. Introduction
+
+One.Platform is designed for Rich Web Applications, it brings high level abstractions to build easily web applications. It is based on the Zend Framework, and it can therefore directly use its components.
+
+h1. Installation
+
+See the INSTALL.textile file for installation instructions.
+
+h1. Copyright
+
+One.Platform is released under the terms of the new BSD license that is bundled with this package in the file LICENSE.
