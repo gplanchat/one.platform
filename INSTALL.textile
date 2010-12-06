@@ -23,8 +23,7 @@ h2. Configure rewrite rules
 
 Create a file named _.htaccess_ in your directory _/var/www_ :
 
-==<pre>
-
+<pre>
 RewriteEngine On
 
 RewriteBase /
@@ -38,5 +37,14 @@ RewriteRule . index.php [L,NC]
 
 SetEnv ROOT_PATH /opt/one-platform
 SetEnv APPLICATION_ENV production
-</pre>==
+</pre>
 
+h2. Run the SQL script
+
+Run the SQL script named _install.mysql_, located in the folder setup, using this command :
+
+@$ mysql -u root -h localhost -p < /opt/one-platform/setup/install.mysql@
+
+h2. Run One.Platform
+
+Connect to http://your.domain.tld/ and enjoy.
