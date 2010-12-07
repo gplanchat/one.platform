@@ -11,23 +11,23 @@
         <title>One Platform - Admin Panel</title>
         <action method="addStylesheet">
           <params>
-            <stylesheet>http://magento/skin/adminhtml/default/default/reset.css</stylesheet>
+            <stylesheet>design/reset.css</stylesheet>
           </params>
         </action>
         <action method="addStylesheet">
           <params>
-            <stylesheet>http://magento/skin/adminhtml/default/default/boxes.css</stylesheet>
+            <stylesheet>design/boxes.css</stylesheet>
           </params>
         </action>
         <action method="addStylesheet">
           <params>
-            <stylesheet>http://magento/skin/adminhtml/default/default/print.css</stylesheet>
+            <stylesheet>design/print.css</stylesheet>
             <media>print</media>
           </params>
         </action>
         <action method="addStylesheet">
           <params>
-            <stylesheet>http://magento/skin/adminhtml/default/default/menu.css</stylesheet>
+            <stylesheet>design/menu.css</stylesheet>
             <media>screen,projection</media>
           </params>
         </action>

@@ -9,7 +9,7 @@
       </One_Cms>
       <One_Admin_Cms>
         <codePool>core</codePool>
-        <active>0</active>
+        <active>1</active>
         <route type="admin.core/router.route" path="cms" name="cms" />
         <requires>
           <One_Cms />
@@ -25,11 +25,4 @@
       </One_Cms>
     </modules>
   </production>
-  <backoffice>
-    <modules>
-      <One_Admin_Cms>
-        <active>1</active>
-      </One_Admin_Cms>
-    </modules>
-  </backoffice>
 </config>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <config>
-  <default>
+  <frontoffice>
     <system>
       <routes>
         <cms>
@@ -27,5 +27,5 @@
         </default>
       </routes>
     </system>
-  </default>
+  </frontoffice>
 </config>

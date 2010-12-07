@@ -4,7 +4,7 @@
   <default>
     <system>
       <routes>
-        <default>
+        <core>
           <type value="Zend_Controller_Router_Route_Static" />
           <route value="" />
           <defaults>
@@ -12,7 +12,7 @@
             <controller value="index" />
             <action value="index" />
           </defaults>
-        </default>
+        </core>
       </routes>
     </system>
   </default>

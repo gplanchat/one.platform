@@ -534,6 +534,10 @@ class One_Core_Model_Application
 
     public function getConfig($path = null)
     {
+        if ($path === null) {
+            return $this->getOptions();
+        }
+
         $pathExploded = explode('.', $path);
         $firstChunk = array_shift($pathExploded);
 

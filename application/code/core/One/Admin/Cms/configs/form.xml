@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-  <backoffice>
+  <default>
     <general>
       <forms>
         <cms-page-general>
@@ -128,5 +128,5 @@
         </cms-page-layout>
       </forms>
     </general>
-  </backoffice>
+  </default>
 </config>

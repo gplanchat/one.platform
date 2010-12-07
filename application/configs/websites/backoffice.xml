@@ -3,6 +3,9 @@
   <default>
     <system>
       <hostname>one</hostname>
+      <rendering>
+        <class>backoffice</class>
+      </rendering>
     </system>
     <modules>
       <One_User>

@@ -100,6 +100,9 @@ class One_Core_Block_Html_Head
 
     public function addStylesheet($stylesheet, $media = 'all')
     {
+        if (preg_match('#^https?://|^/#i', $stylesheet) === 0) {
+            $stylesheet = $this->app()->getFrontController()->getBaseUrl() . '/' . $stylesheet;
+        }
         $this->headLink()->appendStylesheet($stylesheet, $media);
     }
 }

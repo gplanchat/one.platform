@@ -71,14 +71,14 @@ class One_Core_Model_Router_Route_Stack
 
     public function assemble($data = array(), $reset = false, $encode = false)
     {
-        $prefix = 'core';
+        $path = 'core';
         if (isset($data['path']) && !empty($data['path'])) {
-            $prefix = (string) $data['path'];
+            $path = (string) $data['path'];
             unset($data['path']);
         }
 
-        if (isset($this->_routes[$prefix])) {
-            return $this->_routes[$prefix]->assemble($data, $reset, $encode);
+        if (isset($this->_routes[$path])) {
+            return $this->_routes[$path]->assemble($data, $reset, $encode);
         }
         return false;
     }
