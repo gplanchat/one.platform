@@ -54,18 +54,10 @@
         <active>0</active>
         <route type="core/router.route" path="core" name="core" />
       </One_Core>
-      <One_Admin_Core>
-        <codePool>core</codePool>
-        <active>0</active>
-        <route type="admin.core/router.route" path="core" name="core" />
-        <requires>
-          <One_Core />
-        </requires>
-      </One_Admin_Core>
     </modules>
     <frontoffice>
       <layout>
-        <design>legacies</design>
+        <design>default</design>
         <template>default</template>
       </layout>
     </frontoffice>

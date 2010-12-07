@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <applications>
-  <default>
-    <config>websites/default.xml</config>
+  <frontoffice>
+    <config>websites/frontoffice.xml</config>
     <env>production</env>
-    <id>1</id>
-    <no-cache value="1" />
-  </default>
-  <backoffice extends="default">
+  </frontoffice>
+  <backoffice extends="frontoffice">
     <config>websites/backoffice.xml</config>
-    <extra value="backoffice" />
-    <id>0</id>
   </backoffice>
 </applications>

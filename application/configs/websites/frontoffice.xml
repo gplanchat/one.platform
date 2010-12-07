@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
   <default>
-    <placeholder />
-  </default>
-  <production>
     <system>
       <hostname>one</hostname>
     </system>
@@ -15,8 +12,9 @@
         <active>1</active>
       </One_Cms>
     </modules>
-  </production>
+  </default>
+  <production extends="default" />
   <preprod extends="production" />
   <testing extends="production" />
-  <debug extends="production"></debug>
+  <debug extends="production" />
 </application>

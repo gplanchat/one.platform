@@ -27,8 +27,10 @@ Zend_Loader_Autoloader::getInstance()
     ->registerNamespace('One_Core')
 ;
 
+date_default_timezone_set('Europe/Paris');
+
 try {
-    One::app(null, APPLICATION_ENV)
+    One::app('frontoffice', APPLICATION_ENV)
         ->bootstrap()
         ->run()
     ;

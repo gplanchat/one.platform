@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `legacies_core_website` (
 
 INSERT INTO `legacies_core_website` (`entity_id`, `identity_string`, `parent_website_id`) VALUES
 (1, '_root_', 1),
-(2, 'default', 1),
+(2, 'frontoffice', 1),
 (3, 'backoffice', 1);
 
 CREATE TABLE IF NOT EXISTS `legacies_user_authentication` (

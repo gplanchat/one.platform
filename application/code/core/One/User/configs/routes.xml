@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <config>
-  <default>
+  <frontoffice>
     <system>
       <routes>
         <user>
@@ -30,5 +30,5 @@
         </user-account-login-logout>
       </routes>
     </system>
-  </default>
+  </frontoffice>
 </config>

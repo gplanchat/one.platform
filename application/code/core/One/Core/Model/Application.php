@@ -106,7 +106,6 @@ class One_Core_Model_Application
         $response->setHeader('Content-Type', 'text/html; encoding=UTF-8');
         $this->_frontController->setResponse($response);
 
-
         foreach ($config->modules as $moduleName => $moduleConfig) {
             if (!in_array($moduleName, $this->_activeModules)) {
                 continue;

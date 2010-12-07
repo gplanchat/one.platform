@@ -10,7 +10,7 @@
             <module value="One_Cms" />
             <controller value="display" />
             <action value="page" />
-            <page-id value="homepage" />
+            <page-id value="no-route" />
             <layout>cms.page</layout>
           </defaults>
         </cms>

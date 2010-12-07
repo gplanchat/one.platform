@@ -44,6 +44,8 @@
       </database>
     </general>
   </default>
-  <production>
-  </production>
+  <production extends="default" />
+  <preprod extends="production" />
+  <testing extends="production" />
+  <debug extends="production" />
 </local>
