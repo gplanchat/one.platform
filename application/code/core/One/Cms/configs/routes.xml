@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+  <default>
+    <system>
+      <routes>
+        <cms>
+          <type value="cms/router.route" />
+          <defaults>
+            <module value="One_Cms" />
+            <controller value="display" />
+            <action value="page" />
+            <page-id value="homepage" />
+            <layout>cms.page</layout>
+          </defaults>
+        </cms>
+        <default>
+          <type value="Zend_Controller_Router_Route_Static" />
+          <route value="" />
+          <defaults>
+            <module value="One_Cms" />
+            <controller value="display" />
+            <action value="page" />
+            <page-id value="homepage" />
+            <layout>cms.page</layout>
+          </defaults>
+        </default>
+      </routes>
+    </system>
+  </default>
+</config>

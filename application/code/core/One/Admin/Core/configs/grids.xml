@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <default>
+    <general>
+      <grids>
+        <admin-user-entity>
+          <indexer>
+            <type>admin.core/grid.column.indexer</type>
+            <params>
+              <width>50</width>
+            </params>
+          </indexer>
+          <entity>
+            <type>admin.core/grid.column.entity</type>
+            <params>
+              <field>entity_id</field>
+              <label>#ID</label>
+              <width>100</width>
+              <align>left</align>
+            </params>
+          </entity>
+          <username>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>username</field>
+              <label>Username</label>
+              <width>250</width>
+              <align>left</align>
+            </params>
+          </username>
+          <group>
+            <type>admin.core/grid.column.select</type>
+            <params>
+              <field>primary_group_id</field>
+              <label>Primary Group</label>
+              <width>250</width>
+              <align>left</align>
+              <source>
+                <type>user/group.collection</type>
+                <field>label</field>
+              </source>
+              <values value="" />
+              <values value="Administrators" />
+              <values value="Moderators" />
+              <values value="Users" />
+              <values value="Guests" />
+            </params>
+          </group>
+          <email>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>email</field>
+              <label>e-mail</label>
+              <align>left</align>
+            </params>
+          </email>
+          <realname>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>realname</field>
+              <label>Real name</label>
+              <align>left</align>
+            </params>
+          </realname>
+          <created_at>
+            <type>admin.core/grid.column.date-time</type>
+            <params>
+              <field>created_at</field>
+              <label>Created at</label>
+              <width>100</width>
+              <align>left</align>
+            </params>
+          </created_at>
+          <updated_at>
+            <type>admin.core/grid.column.date-time</type>
+            <params>
+              <field>updated_at</field>
+              <label>Updated at</label>
+              <width>100</width>
+              <align>left</align>
+            </params>
+          </updated_at>
+          <action>
+            <type>admin.core/grid.column.action</type>
+            <params>
+              <width>50</width>
+            </params>
+          </action>
+        </admin-user-entity>
+      </grids>
+    </general>
+  </default>
+</config>

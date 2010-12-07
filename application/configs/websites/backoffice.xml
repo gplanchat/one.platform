@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+  <default>
+    <placeholder />
+  </default>
+  <production>
+    <system>
+      <hostname>one</hostname>
+    </system>
+    <modules>
+      <One_User>
+        <active>1</active>
+      </One_User>
+      <One_Cms>
+        <active>1</active>
+      </One_Cms>
+    </modules>
+  </production>
+  <preprod extends="production" />
+  <testing extends="production" />
+  <debug extends="production"></debug>
+</application>

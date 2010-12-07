@@ -3,7 +3,7 @@
 class One_Core_Model_Application
     extends Zend_Application
 {
-    protected $_websiteId = null;
+    protected $_website = null;
 
     protected $_activeModules = array();
 
@@ -33,7 +33,6 @@ class One_Core_Model_Application
 
     public function __construct($websiteId, $environment, Array $moreSections = array(), Array $applicationConfig = array())
     {
-        $this->_websiteId = $websiteId;
         $this->_event = new One_Core_Model_Event_Dispatcher('core');
 
         if (isset($applicationConfig['config']) && !empty($applicationConfig['config'])) {
@@ -85,6 +84,13 @@ class One_Core_Model_Application
         }
 
         parent::__construct($environment, $config);
+
+        $this->_website = new One_Core_Model_Website('core', array(), $this);
+        if (is_int($websiteId)) {
+            $this->_website->load($websiteId);
+        } else {
+            $this->_website->load($websiteId, 'identity_string');
+        }
 
         $routeStack = One_Core_Model_Router_Route_Stack::getInstance(new Zend_Config(array()));
         $routeStack->app($this);
@@ -295,9 +301,14 @@ class One_Core_Model_Application
         }
     }
 
+    public function getWebsite()
+    {
+        return $this->_website;
+    }
+
     public function getWebsiteId()
     {
-        return $this->_websiteId;
+        return $this->_website->getId();
     }
 
     public function setClassInflector($inflector)

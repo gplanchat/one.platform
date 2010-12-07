@@ -79,7 +79,7 @@
         </database>
       </dal>
     </resource>
-    
+
     <general>
       <layout>
         <core>core.xml</core>

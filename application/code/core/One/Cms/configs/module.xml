@@ -37,21 +37,6 @@
       </One_Cms>
     </modules>
 
-    <system>
-      <routes>
-        <cms>
-          <type value="cms/router.route" />
-          <defaults>
-            <module value="One_Cms" />
-            <controller value="display" />
-            <action value="page" />
-            <page-id value="homepage" />
-            <layout>cms.page</layout>
-          </defaults>
-        </cms>
-      </routes>
-    </system>
-
     <model>
       <cms>
         <namespace>One_Cms_Model</namespace>
@@ -101,6 +86,7 @@
         </entities>
       </dal>
     </resource>
+
     <general>
       <database>
         <connection>

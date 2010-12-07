@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+  <default>
+    <system>
+      <routes>
+        <default>
+          <type value="Zend_Controller_Router_Route_Static" />
+          <route value="" />
+          <defaults>
+            <module value="One_Admin_Core" />
+            <controller value="index" />
+            <action value="index" />
+          </defaults>
+        </default>
+      </routes>
+    </system>
+  </default>
+</config>

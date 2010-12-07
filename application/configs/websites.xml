@@ -7,6 +7,7 @@
     <no-cache value="1" />
   </default>
   <backoffice extends="default">
+    <config>websites/backoffice.xml</config>
     <extra value="backoffice" />
     <id>0</id>
   </backoffice>
