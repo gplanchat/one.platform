@@ -87,6 +87,7 @@ class One_Admin_Core_Block_Form_Container
 
     public function getEntityLabel()
     {
-        return $this->_form->getModel()->getPath();
+        // FIXME
+        return '';
     }
 }

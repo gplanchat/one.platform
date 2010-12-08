@@ -199,4 +199,33 @@ class One_Admin_Core_Block_Form
 
         return $this;
     }
+
+    /**
+     *
+     * @param mixed $values
+     * @param Zend_Form_Subform $element
+     */
+    public function setValues($values, $form = null)
+    {
+        if (is_null($form)) {
+            $form = $this->_form;
+        }
+
+        foreach ($values as $elementName => $value) {
+            if (is_array($value)) {
+                if (($subform = $form->getSubForm($elementName)) instanceof Zend_Form_Subform) {
+                    $this->setValues($value, $subform);
+                    continue;
+                }
+            } else {
+                $formElement = $form->getElement($elementName);
+
+                if ($formElement instanceof Zend_Form_Element) {
+                    $formElement->setValue($value);
+                }
+            }
+        }
+
+        return $this;
+    }
 }

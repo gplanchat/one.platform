@@ -52,8 +52,6 @@
 abstract class One_Admin_Core_ControllerAbstract
     extends One_Core_ControllerAbstract
 {
-    protected $_entityModel = null;
-
     protected $_collectionModel = null;
 
     /**
@@ -82,25 +80,12 @@ abstract class One_Admin_Core_ControllerAbstract
         return $grid;
     }
 
-    public function prepareForm($entityModel, $entityId = null)
+    protected function _prepareForm()
     {
         $this->loadLayout('admin.form');
 
-        if (is_string($entityModel)) {
-            $this->_entityModel = $this->app()->getModel($entityModel);
-        } else if ($this->_entityModel === null) {
-            $this->_entityModel = $entityModel;
-        }
-
-        if ($entityId !== null) {
-            $this->_entityModel
-                ->load($entityId)
-            ;
-        }
-
         $this->_form = $this->getLayout()
             ->getBlock('form')
-            ->setModel($this->_entityModel)
         ;
 
         return $this;

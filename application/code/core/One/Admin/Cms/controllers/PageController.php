@@ -167,7 +167,8 @@ class One_Admin_Cms_PageController
 
     protected function _buildEditForm()
     {
-        $this->prepareForm('cms/page', $this->_getParam('id'));
+        $this->_prepareForm();
+
         $url = $this->app()
             ->getRouter()
             ->assemble(array(
@@ -181,5 +182,24 @@ class One_Admin_Cms_PageController
         $this->addTab('cms-page-content', 'content', 'Content');
         $this->addTab('cms-page-meta', 'meta', 'Meta data');
         $this->addTab('cms-page-layout', 'layout', 'Layout updates');
+
+        $entityModel = $this->app()
+            ->getModel('cms/page')
+            ->load($this->_getParam('id'))
+        ;
+
+        $this->_form->setValues(array(
+            'form_key' => uniqid(),
+            'general' => array(
+                'url-key' => $entityModel->getPath()
+                ),
+            'content' => array(
+                'html' => $entityModel->getContent()
+                ),
+            'meta' => array(
+                ),
+            'layout' => array(
+                )
+            ));
     }
 }
