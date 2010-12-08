@@ -8,8 +8,6 @@
  * Copyright (c) 2009-2010, Grégory PLANCHAT <g.planchat at gmail.com>
  * All rights reserved.
  *
- * All rights reserved.
- *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  *
@@ -38,7 +36,7 @@
  *                                --> NOTICE <--
  *  This file is part of the core development branch, changing its contents will
  * make you unable to use the automatic updates manager. Please refer to the
- * documentation for further information about customizing XNova.
+ * documentation for further information about customizing One.Platform.
  *
  */
 /**

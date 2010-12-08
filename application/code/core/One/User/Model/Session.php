@@ -1,9 +1,9 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * This file is part of One.Platform
  *
- * @license http://www.gnu.org/licenses/gpl-3.0.txt
- * @see http://www.xnova-ng.org/
+ * @license Modified BSD
+ * @see https://github.com/gplanchat/one.platform
  *
  * Copyright (c) 2009-2010, Grégory PLANCHAT <g.planchat at gmail.com>
  * All rights reserved.
@@ -24,7 +24,7 @@
  *                                --> NOTICE <--
  *  This file is part of the core development branch, changing its contents will
  * make you unable to use the automatic updates manager. Please refer to the
- * documentation for further information about customizing XNova.
+ * documentation for further information about customizing One.Platform.
  *
  */
 
