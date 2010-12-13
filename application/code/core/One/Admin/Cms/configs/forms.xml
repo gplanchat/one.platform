@@ -49,12 +49,31 @@
             <id>cms_page_general</id>
           </attribs>
           <elements>
+            <title>
+              <type>text</type>
+              <name>title</name>
+              <options>
+                <label>Page Title</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>general:title</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                </validators>
+              </options>
+            </title>
             <url-key>
-              <type>textarea</type>
+              <type>text</type>
               <name>url-key</name>
               <options>
                 <label>URL Key</label>
-                <order>1</order>
+                <order>2</order>
                 <required>1</required>
                 <allowEmpty>1</allowEmpty>
                 <attribs>
@@ -62,9 +81,12 @@
                 </attribs>
                 <disableTranslator>0</disableTranslator>
                 <validators>
-                  <required>
-                    <validator>NotEmpty</validator>
-                  </required>
+                  <format>
+                    <validator>Regex</validator>
+                    <params>
+                      <pattern>#^[[:alnum:]](?:[[:alnum:]\-\.\_]+[[:alnum:]])?$#i</pattern>
+                    </params>
+                  </format>
                 </validators>
               </options>
             </url-key>
@@ -85,6 +107,7 @@
                 <allowEmpty>1</allowEmpty>
                 <attribs>
                   <id>content:html</id>
+                  <class>wysiwyg</class>
                 </attribs>
                 <disableTranslator>0</disableTranslator>
                 <validators>
@@ -111,6 +134,7 @@
                 <allowEmpty>1</allowEmpty>
                 <attribs>
                   <id>meta:keywords</id>
+                  <rows>3</rows>
                 </attribs>
                 <disableTranslator>0</disableTranslator>
                 <validators>
@@ -130,6 +154,7 @@
                 <allowEmpty>1</allowEmpty>
                 <attribs>
                   <id>meta:description</id>
+                  <rows>3</rows>
                 </attribs>
                 <disableTranslator>0</disableTranslator>
                 <validators>
@@ -146,16 +171,16 @@
             <id>cms_page_layout</id>
           </attribs>
           <elements>
-            <html>
+            <updates>
               <type>textarea</type>
-              <name>html</name>
+              <name>updates</name>
               <options>
-                <label>HTML Content</label>
-                <order>5</order>
+                <label>Layout updates</label>
+                <order>2</order>
                 <required>1</required>
                 <allowEmpty>1</allowEmpty>
                 <attribs>
-                  <id>content:html</id>
+                  <id>layout:updates</id>
                 </attribs>
                 <disableTranslator>0</disableTranslator>
                 <validators>
@@ -164,7 +189,26 @@
                   </required>
                 </validators>
               </options>
-            </html>
+            </updates>
+            <active>
+              <type>checkbox</type>
+              <name>active</name>
+              <options>
+                <label>Activate Layout updates</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>layout:active</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                </validators>
+              </options>
+            </active>
           </elements>
         </cms-page-layout>
       </forms>

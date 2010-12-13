@@ -177,6 +177,8 @@ class One_Admin_Cms_PageController
                 'action'     => 'edit-post'
                 ));
         $this->_form->setAction($url);
+        $this->getLayout()->getBlock('head')
+            ->headScript('js/tiny_mce/jquery.tinymce.js');
 
         $this->addTab('cms-page-general', 'general', 'General');
         $this->addTab('cms-page-content', 'content', 'Content');
@@ -191,14 +193,19 @@ class One_Admin_Cms_PageController
         $this->_form->setValues(array(
             'form_key' => uniqid(),
             'general' => array(
+                'title'   => $entityModel->getTitle(),
                 'url-key' => $entityModel->getPath()
                 ),
             'content' => array(
                 'html' => $entityModel->getContent()
                 ),
             'meta' => array(
+                'description' => $entityModel->getMetaDescription(),
+                'keywords'    => $entityModel->getMetaKeywords()
                 ),
             'layout' => array(
+                'updates' => $entityModel->getLayoutUpdates(),
+                'active'  => $entityModel->getLayoutUpdatesActivation(),
                 )
             ));
     }

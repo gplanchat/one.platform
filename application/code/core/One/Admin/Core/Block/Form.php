@@ -58,9 +58,11 @@ class One_Admin_Core_Block_Form
     {
         $this->headScript()
             ->appendFile('/js/jquery.js')
+            ->appendFile('/js/tiny_mce/tiny_mce.js')
+            ->appendFile('/js/tiny_mce/jquery.tinymce.js')
             ->appendFile('/js/core.js')
-            ->appendFile('/js/admin/core.js')
-            ->appendFile('/js/admin/form.js')
+            ->appendFile('/admin/js/core.js')
+            ->appendFile('/admin/js/form.js')
         ;
 
         $action = '#';
