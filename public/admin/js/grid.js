@@ -34,7 +34,7 @@
                     }
                     });
 
-                document.location = (new $.one.Url('admin')).toString(params);
+                document.location = (new $.one.Url('admin/')).toString(params);
                 }
 
             pager.change(function(e){
