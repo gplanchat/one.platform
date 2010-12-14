@@ -9,8 +9,8 @@
       </One_User>
       <One_Admin_User>
         <codePool>core</codePool>
-        <active>0</active>
-        <route type="admin.core/router.route" path="user" />
+        <active>1</active>
+        <route type="admin.core/router.route" path="user" name="user" />
         <requires>
           <One_User />
           <One_Admin_Core />

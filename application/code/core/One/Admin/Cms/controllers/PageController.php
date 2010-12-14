@@ -59,18 +59,7 @@ class One_Admin_Cms_PageController
     {
         $this->loadLayout('admin.grid');
 
-        $collection = $this->app()
-            ->getModel('cms/page.collection')
-            ->setPage($this->_getParam('p'), $this->_getParam('n'));
-
-        $this->_prepareGrid('cms-page', 'cms/page.collection');
-
-        $grid = $this->getLayout()
-            ->getBlock('grid')
-            ->setCollection($collection)
-            ->loadColumns('cms-page')
-            ->sort($this->_getParam('sort'))
-        ;
+        $this->_prepareGrid('cms-page', 'cms/page.collection', $this->_getParam('sort'));
 
         $container = $this->getLayout()
             ->getBlock('container')
@@ -370,8 +359,6 @@ class One_Admin_Cms_PageController
                 'action'     => 'edit-post'
                 ));
         $this->_form->setAction($url);
-        $this->getLayout()->getBlock('head')
-            ->headScript('js/tiny_mce/jquery.tinymce.js');
 
         $this->addTab('cms-page-general', 'general', 'General');
         $this->addTab('cms-page-content', 'content', 'Content');

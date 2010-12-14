@@ -60,7 +60,7 @@ abstract class One_Admin_Core_ControllerAbstract
      */
     protected $_form = null;
 
-    protected function _prepareGrid($gridName, $collectionModel)
+    protected function _prepareGrid($gridName, $collectionModel, $sort = array())
     {
         $this->loadLayout('admin.grid');
 
@@ -73,7 +73,9 @@ abstract class One_Admin_Core_ControllerAbstract
         $grid = $this->getLayout()
             ->getBlock('grid')
             ->setCollection($this->_collectionModel)
+            ->loadColumns($gridName)
             ->setPage($this->_getParam('p'), $this->_getParam('n'))
+            ->sort($sort)
         ;
 
         return $grid;
