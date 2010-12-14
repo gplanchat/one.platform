@@ -87,7 +87,10 @@ class One_Core_ErrorController
 </head>
 <body>
   <h1>Not Found</h1>
-  <div>The page you requested could not be found.</div>
+  <div>
+    <p>The page you requested could not be found.</p>
+    <p>The system returned the following error: <q>{$errors->exception->getMessage()}</q></p>
+  </div>
   <hr />
   <div>Powered by One.Platform</div>
 </body>
