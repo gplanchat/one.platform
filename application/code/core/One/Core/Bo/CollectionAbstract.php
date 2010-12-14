@@ -693,7 +693,7 @@ abstract class One_Core_Bo_CollectionAbstract
 
         $hash = array();
         foreach ($this->_items as $item) {
-            $hash[$this->getIdFieldName()] = $item->getData($field);
+            $hash[$item->getId()] = $item->getData($field);
         }
         return $hash;
     }

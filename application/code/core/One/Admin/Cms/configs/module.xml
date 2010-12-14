@@ -96,49 +96,6 @@
       <layout>
         <admin.cms>cms.xml</admin.cms>
       </layout>
-      <grids>
-        <cms-page>
-          <index>
-            <type>admin.core/grid.column.indexer</type>
-            <params>
-              <width>50</width>
-              <align>center</align>
-            </params>
-          </index>
-          <entity_id>
-            <type>admin.core/grid.column.entity</type>
-            <params>
-              <field>entity_id</field>
-              <label>#</label>
-              <width>100</width>
-              <align>left</align>
-            </params>
-          </entity_id>
-          <path>
-            <type>admin.core/grid.column.string</type>
-            <params>
-              <field>path</field>
-              <label>URL Path</label>
-              <width>250</width>
-              <align>left</align>
-            </params>
-          </path>
-          <content>
-            <type>admin.core/grid.column.string</type>
-            <params>
-              <field>content</field>
-              <label>HTML Content</label>
-              <align>left</align>
-            </params>
-          </content>
-          <action>
-            <type>admin.core/grid.column.action</type>
-            <params>
-              <width>50</width>
-            </params>
-          </action>
-        </cms-page>
-      </grids>
     </general>
   </default>
 </config>

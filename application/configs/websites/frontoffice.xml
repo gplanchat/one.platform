@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
   <default>
+    <no-cache>1</no-cache>
     <system>
       <hostname>one</hostname>
     </system>

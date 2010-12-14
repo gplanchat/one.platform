@@ -74,7 +74,6 @@ abstract class One_Admin_Core_ControllerAbstract
             ->getBlock('grid')
             ->setCollection($this->_collectionModel)
             ->setPage($this->_getParam('p'), $this->_getParam('n'))
-            ->loadColumns('cms-page')
         ;
 
         return $grid;

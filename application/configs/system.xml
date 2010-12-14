@@ -77,6 +77,11 @@
       </One_Core>
       <One_Admin_Core>
         <active>1</active>
+        <codePool>core</codePool>
+        <route type="admin.core/router.route" path="core" name="core" />
+        <requires>
+          <One_Core />
+        </requires>
       </One_Admin_Core>
     </modules>
     <system>

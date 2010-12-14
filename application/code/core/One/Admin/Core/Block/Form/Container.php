@@ -85,9 +85,9 @@ class One_Admin_Core_Block_Form_Container
         return $this->_form->getTabs();
     }
 
-    public function getEntityLabel()
-    {
-        // FIXME
-        return '';
-    }
+//    public function getEntityLabel()
+//    {
+//        // FIXME
+//        return '';
+//    }
 }

@@ -84,6 +84,7 @@ class One_Core_Model_Application
 
     public function __construct($websiteId, $environment, Array $moreSections = array(), Array $applicationConfig = array())
     {
+
         $this->_event = new One_Core_Model_Event_Dispatcher('core');
 
         if (isset($applicationConfig['config']) && !empty($applicationConfig['config'])) {
@@ -97,7 +98,7 @@ class One_Core_Model_Application
             $moreFiles = array();
         }
         if (isset($applicationConfig['extra']) && !empty($applicationConfig['extra'])) {
-            $moreSections = array_merge((array) $applicationConfig['extra'], $moreSections);
+            $moreSections = array_merge(array_keys($applicationConfig['extra']), $moreSections);
         }
 
         $moreFiles = array_merge(glob(implode(self::DS, array(APPLICATION_PATH, 'configs', 'modules', '*.xml'))), $moreFiles);
@@ -153,9 +154,12 @@ class One_Core_Model_Application
         ;
         $router = $this->_frontController->getRouter();
 
-        $response = new Zend_Controller_Response_Http();
+        $response = One::getDefaultResponseObject();
         $response->setHeader('Content-Type', 'text/html; encoding=UTF-8');
         $this->_frontController->setResponse($response);
+
+        $request = One::getDefaultRequestObject();
+        $this->_frontController->setRequest($request);
 
         foreach ($config->modules as $moduleName => $moduleConfig) {
             if (!in_array($moduleName, $this->_activeModules)) {
@@ -235,7 +239,6 @@ class One_Core_Model_Application
         array_unshift($moreSections, $environment);
 
         $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'system.xml'));
-        require_once 'Zend/Config/Xml.php';
         $config = new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true);
         foreach ($moreSections as $section) {
             try {
@@ -256,7 +259,7 @@ class One_Core_Model_Application
 
         $pathPattern = implode(self::DS, array(APPLICATION_PATH, 'code', '%s', '%s', 'configs', '*.xml'));
         if (($modules = $config->get('modules')) === null) {
-            require_once 'One/core/Exception/ConfigurationError.php';
+            require_once 'One/Core/Exception/ConfigurationError.php';
             throw new One_Core_Exception_ConfigurationError(
                 "No modules found. A core module should at least be declared.");
         }

@@ -80,8 +80,21 @@ class One_Core_ErrorController
     public function notFoundAction()
     {
         $errors = $this->_getParam('error_handler');
-        $this->getResponse()->setBody($errors->exception->getMessage());
-        $this->getResponse()->setBody(print_r($errors->exception, true));
+        $body =<<<HTML_EOF
+<html>
+<head>
+  <title>One.Platform :: Page not found</title>
+</head>
+<body>
+  <h1>Not Found</h1>
+  <div>The page you requested could not be found.</div>
+  <hr />
+  <div>Powered by One.Platform</div>
+</body>
+</html>
+HTML_EOF;
+        $this->getResponse()->setBody($body);
+
         $this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found');
     }
 }

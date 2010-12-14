@@ -63,13 +63,21 @@ class One_Admin_Cms_PageController
             ->getModel('cms/page.collection')
             ->setPage($this->_getParam('p'), $this->_getParam('n'));
 
+        $this->_prepareGrid('cms-page', 'cms/page.collection');
+
         $grid = $this->getLayout()
             ->getBlock('grid')
             ->setCollection($collection)
             ->loadColumns('cms-page')
             ->sort($this->_getParam('sort'))
         ;
-        $this->_prepareGrid('cms-page', 'cms/page.collection');
+
+        $container = $this->getLayout()
+            ->getBlock('container')
+            ->setTitle('CMS Pages')
+        ;
+
+        var_dump($container->getTitle());
 
         $this->renderLayout();
     }
@@ -95,64 +103,251 @@ class One_Admin_Cms_PageController
 
         $this->_buildEditForm();
 
+        $entityModel = $this->app()
+            ->getModel('cms/page')
+            ->load($this->_getParam('id'))
+        ;
+
+        $formKey = uniqid();
+        $this->app()
+            ->getSingleton('admin.core/session')
+            ->setFormKey($formKey);
+
+        $this->_form->populate(array(
+            'form_key' => $formKey,
+            'general' => array(
+                'title'   => $entityModel->getTitle(),
+                'url-key' => $entityModel->getPath(),
+                'websites' => $entityModel->getWebsiteId()
+                ),
+            'content' => array(
+                'html' => $entityModel->getContent()
+                ),
+            'meta' => array(
+                'description' => $entityModel->getMetaDescription(),
+                'keywords'    => $entityModel->getMetaKeywords()
+                ),
+            'layout' => array(
+                'updates' => $entityModel->getLayoutUpdates(),
+                'active'  => $entityModel->getLayoutUpdatesActivation(),
+                )
+            ));
+
+        $websites = $this->_form->getTab('general')
+            ->getElement('websites')
+            ->setMultiOptions($this->app()->getModel('core/website.collection')->load()->toHash('label'))
+        ;
+
         $this->getLayout()
             ->getBlock('container')
             ->addButtonDuplicate()
             ->addButtonDelete()
+            ->setTitle('CMS Page')
+            ->setEntityLabel(sprintf('Edit CMS Page "%s"', $entityModel->getTitle()))
+            ->headTitle(sprintf('Edit CMS Page "%s"', $entityModel->getTitle()))
         ;
+
+        $url = $this->app()
+            ->getRouter()
+            ->assemble(array(
+                'path'       => $this->_getParam('path'),
+                'controller' => $this->_getParam('controller'),
+                'action'     => 'edit-post'
+                ));
+
+        $this->_form->setAction($url);
 
         $this->renderLayout();
     }
 
     public function editPostAction()
     {
-        $this->app()
-            ->getModel('admin.core/session')
-            ->addInfo('Edit action is not implemented.')
-        ;// FIXME
+        $entityModel = $this->app()
+            ->getModel('cms/page')
+            ->load($this->_getParam('id'))
+        ;
 
-        $url = $this->app()
-            ->getRouter()
-            ->assemble(array(
+        $optionGroups = array(
+            'general' => array(
+                'title'    => array($entityModel, 'setTitle'),
+                'url-key'  => array($entityModel, 'setUrlKey'),
+                'websites' => array($entityModel, 'setWebsiteId')
+                ),
+            'content' => array(
+                'html' => array($entityModel, 'setContent')
+                ),
+            'meta' => array(
+                'description' => array($entityModel, 'setMetaDescription'),
+                'keywords'    => array($entityModel, 'setMetaKeywords')
+                ),
+            'layout' => array(
+                'active'  => array($entityModel, 'setLayoutActive'),
+                'updates' => array($entityModel, 'setLayoutUpdates')
+                )
+            );
+
+        $session = $this->app()
+            ->getSingleton('admin.core/session');
+
+        $request = $this->getRequest();
+
+        if ($request->getPost('form_key') === $session->getFormKey()) {
+            $session->addError('Invalid form data.');
+
+            $this->_helper->redirector->gotoRoute(array(
+                    'path'       => $this->_getParam('path'),
+                    'controller' => $this->_getParam('controller'),
+                    'action'     => 'index'
+                    ), null, true);
+            return;
+        }
+
+        foreach ($optionGroups as $groupName => $groupElements) {
+            $groupData = $request->getPost($groupName);
+            if (!is_array($groupElements) || empty($groupName) || !is_array($groupData)) {
+                continue;
+            }
+
+            foreach ($groupElements as $element => $callback) {
+                if (!isset($groupData[$element])) {
+                    continue;
+                }
+
+                call_user_func($callback, $groupData[$element]);
+            }
+        }
+        try {
+            $entityModel->save();
+            $session->addError('Page successfully updated.');
+        } catch (One_Core_Exception $e) {
+            $session->addError('Could not save page updates.');
+        }
+
+        $this->_helper->redirector->gotoRoute(array(
                 'path'       => $this->_getParam('path'),
                 'controller' => $this->_getParam('controller'),
                 'action'     => 'index'
-                ));
-
-        $this->_redirect($url);
+                ), null, true);
     }
 
     public function newAction()
     {
         $this->_buildEditForm();
 
-        $this->renderLayout();
-    }
+        $container = $this->getLayout()
+            ->getBlock('container')
+            ->setTitle('CMS Page')
+            ->setEntityLabel('Add a new CMS Page')
+            ->headTitle('Add a new CMS Page')
+        ;
 
-    public function newPostAction()
-    {
-        $this->app()
-            ->getModel('admin.core/session')
-            ->addInfo('Add action is not implemented.')
-        ;// FIXME
+        $websites = $this->_form->getTab('general')
+            ->getElement('websites')
+            ->setMultiOptions($this->app()->getModel('core/website.collection')->load()->toHash('label'))
+        ;
 
         $url = $this->app()
             ->getRouter()
             ->assemble(array(
                 'path'       => $this->_getParam('path'),
                 'controller' => $this->_getParam('controller'),
-                'action'     => 'index'
+                'action'     => 'new-post'
                 ));
 
-        $this->_redirect($url);
+        $this->_form->setAction($url);
+
+        $this->renderLayout();
+    }
+
+    public function newPostAction()
+    {
+        $entityModel = $this->app()
+            ->getModel('cms/page')
+        ;
+
+        $optionGroups = array(
+            'general' => array(
+                'title'    => array($entityModel, 'setTitle'),
+                'urlkey'  => array($entityModel, 'setPath'),
+                'websites' => array($entityModel, 'setWebsiteId')
+                ),
+            'content' => array(
+                'html' => array($entityModel, 'setContent')
+                ),
+            'meta' => array(
+                'description' => array($entityModel, 'setMetaDescription'),
+                'keywords'    => array($entityModel, 'setMetaKeywords')
+                ),
+            'layout' => array(
+                'active'  => array($entityModel, 'setLayoutActive'),
+                'updates' => array($entityModel, 'setLayoutUpdates')
+                )
+            );
+
+        $session = $this->app()
+            ->getSingleton('admin.core/session');
+
+        $request = $this->getRequest();
+
+        if ($request->getPost('form_key') === $session->getFormKey()) {
+            $session->addError('Invalid form data.');
+
+            $this->_helper->redirector->gotoRoute(array(
+                    'path'       => $this->_getParam('path'),
+                    'controller' => $this->_getParam('controller'),
+                    'action'     => 'index'
+                    ), null, true);
+            return;
+        }
+
+        foreach ($optionGroups as $groupName => $groupElements) {
+            $groupData = $request->getPost($groupName);
+            if (!is_array($groupElements) || empty($groupName) || !is_array($groupData)) {
+                continue;
+            }
+
+            foreach ($groupElements as $element => $callback) {
+                if (!isset($groupData[$element])) {
+                    continue;
+                }
+
+                call_user_func($callback, $groupData[$element]);
+            }
+        }
+
+        try {
+            $entityModel->save();
+            $session->addError('Page successfully updated.');
+        } catch (One_Core_Exception $e) {
+            $session->addError('Could not save page updates.');
+        }
+
+        $this->_helper->redirector->gotoRoute(array(
+                'path'       => $this->_getParam('path'),
+                'controller' => $this->_getParam('controller'),
+                'action'     => 'index'
+                ), null, true);
     }
 
     public function deleteAction()
     {
-        $this->app()
-            ->getModel('admin.core/session')
-            ->addInfo('Delete action is not implemented.')
-        ;// FIXME
+        try {
+            $entityModel = $this->app()
+                ->getModel('cms/page')
+                ->load($this->_getParam('id'))
+                ->delete()
+            ;
+
+            $this->app()
+                ->getModel('admin.core/session')
+                ->addInfo('The page has been successfully deleted.')
+            ;
+        } catch (One_Core_Exception $e) {
+            $this->app()
+                ->getModel('admin.core/session')
+                ->addError('An error occured while deleting the page.')
+            ;
+        }
 
         $url = $this->app()
             ->getRouter()
@@ -184,29 +379,5 @@ class One_Admin_Cms_PageController
         $this->addTab('cms-page-content', 'content', 'Content');
         $this->addTab('cms-page-meta', 'meta', 'Meta data');
         $this->addTab('cms-page-layout', 'layout', 'Layout updates');
-
-        $entityModel = $this->app()
-            ->getModel('cms/page')
-            ->load($this->_getParam('id'))
-        ;
-
-        $this->_form->setValues(array(
-            'form_key' => uniqid(),
-            'general' => array(
-                'title'   => $entityModel->getTitle(),
-                'url-key' => $entityModel->getPath()
-                ),
-            'content' => array(
-                'html' => $entityModel->getContent()
-                ),
-            'meta' => array(
-                'description' => $entityModel->getMetaDescription(),
-                'keywords'    => $entityModel->getMetaKeywords()
-                ),
-            'layout' => array(
-                'updates' => $entityModel->getLayoutUpdates(),
-                'active'  => $entityModel->getLayoutUpdatesActivation(),
-                )
-            ));
     }
 }

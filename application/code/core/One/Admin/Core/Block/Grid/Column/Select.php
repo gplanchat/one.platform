@@ -61,6 +61,19 @@ class One_Admin_Core_Block_Grid_Column_Select
             unset($options['values']);
         }
 
+        if (isset($options['collection']) && isset($options['collection']['model'])) {
+            $collection = $this->app()
+                ->getModel($options['collection']['model'])
+                ->load()
+            ;
+            $field = 'label';
+            if (isset($options['collection']['label'])) {
+                $field = $options['collection']['label'];
+            }
+            $this->setOptions($collection->toHash($field));
+            unset($options['collection']);
+        }
+
         return parent::_construct($options);
     }
 
@@ -104,14 +117,16 @@ class One_Admin_Core_Block_Grid_Column_Select
         return $this->_template;
     }
 
-    public function getLabel()
+    public function getValue()
     {
-        $value = $this->getValue();
+        $valueId = $this->getCollection()
+            ->current()
+            ->getData($this->_getData('field'))
+        ;
 
-        if (!isset($this->_options[$value])) {
-            return '';
+        if (isset($this->_options[$valueId])) {
+            return $this->_options[$valueId];
         }
-
-        return $this->_options[$value];
+        return null;
     }
 }

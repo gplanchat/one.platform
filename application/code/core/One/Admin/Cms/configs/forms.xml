@@ -90,6 +90,25 @@
                 </validators>
               </options>
             </url-key>
+            <websites>
+              <type>select</type>
+              <name>websites</name>
+              <options>
+                <label>Website</label>
+                <order>3</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>general:websites</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                </validators>
+              </options>
+            </websites>
           </elements>
         </cms-page-general>
         <cms-page-content>

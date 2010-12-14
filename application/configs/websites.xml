@@ -3,8 +3,15 @@
   <frontoffice>
     <config>websites/frontoffice.xml</config>
     <env>production</env>
+    <extra>
+      <frontoffice />
+    </extra>
   </frontoffice>
-  <backoffice extends="frontoffice">
+  <backoffice>
     <config>websites/backoffice.xml</config>
+    <env>production</env>
+    <extra>
+      <backoffice />
+    </extra>
   </backoffice>
 </applications>

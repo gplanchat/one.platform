@@ -29,6 +29,16 @@ final class One
     private static $_defaultWebsiteId = null;
 
     /**
+     * @var Zend_Controller_Response_Abstract
+     */
+    private static $_defaultResponseObject = null;
+
+    /**
+     * @var Zend_Controller_Request_Abstract
+     */
+    private static $_defaultRequestObject = null;
+
+    /**
      * @var Zend_Config
      */
     private static $_websitesConfig = null;
@@ -124,6 +134,38 @@ final class One
         return self::$_defaultWebsiteId;
     }
 
+    public static function getDefaultResponseObject()
+    {
+        if (self::$_defaultResponseObject === null) {
+            self::$_defaultResponseObject = new Zend_Controller_Response_Http();
+        }
+        return clone self::$_defaultResponseObject;
+    }
+
+    public static function setDefaultResponseObject(Zend_Controller_Response_Abstract $response)
+    {
+        $oldObject = self::$_defaultResponseObject;
+        self::$_defaultResponseObject = $response;
+
+        return $oldObject;
+    }
+
+    public static function getDefaultRequestObject()
+    {
+        if (self::$_defaultRequestObject === null) {
+            self::$_defaultRequestObject = new Zend_Controller_Request_Http();
+        }
+        return clone self::$_defaultRequestObject;
+    }
+
+    public static function setDefaultRequestObject(Zend_Controller_Request_Abstract $request)
+    {
+        $oldObject = self::$_defaultRequestObject;
+        self::$_defaultRequestObject = $request;
+
+        return $oldObject;
+    }
+
     /**
      * Get the current application instance
      *
@@ -154,6 +196,25 @@ final class One
         return self::$_app[$websiteId];
     }
 
+    /**
+     *
+     * @param mixed $websiteId
+     */
+    public static function terminateApp($websiteId)
+    {
+        if (!isset(self::$_app[$websiteId])) {
+            return false;
+        }
+        unset(self::$_app[$websiteId]);
+        return true;
+    }
+
+    /**
+     *
+     * @param string $identifier
+     * @param string $message
+     * @param mixed $...
+     */
     public static function throwException($identifier, $message = null, $_ = null)
     {
         $app = self::app();
