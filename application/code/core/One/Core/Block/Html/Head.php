@@ -146,6 +146,8 @@ class One_Core_Block_Html_Head
             unset($helper);
         }
 
+        $this->headTitle()->setSeparator(' - ');
+
         return parent::_construct($options);
     }
 

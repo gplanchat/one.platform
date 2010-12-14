@@ -77,8 +77,6 @@ class One_Admin_Cms_PageController
             ->setTitle('CMS Pages')
         ;
 
-        var_dump($container->getTitle());
-
         $this->renderLayout();
     }
 
