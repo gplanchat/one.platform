@@ -1,8 +1,6 @@
 <?php
 
-require_once 'One/Core/Model/Application.php';
-
-class One_Core_Model_ApplicationTest extends PHPUnit_Framework_TestCase
+class Test_One_Core_Model_ApplicationTest extends PHPUnit_Framework_TestCase
 {
     private $_applicationHandler = null;
 

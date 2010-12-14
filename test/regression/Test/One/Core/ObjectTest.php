@@ -1,6 +1,6 @@
 <?php
 
-class One_Core_ObjectTest extends PHPUnit_Framework_TestCase
+class Test_One_Core_ObjectTest extends PHPUnit_Framework_TestCase
 {
     protected $_className = 'One_Core_Object';
 

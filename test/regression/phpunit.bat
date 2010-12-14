@@ -37,10 +37,12 @@ REM
 if "%PHPBIN%" == "" set PHPBIN=php
 if not exist "%PHPBIN%" if "%PHP_PEAR_PHP_BIN%" neq "" goto USE_PEAR_PATH
 GOTO RUN
+
 :USE_PEAR_PATH
 set PHPBIN=%PHP_PEAR_PHP_BIN%
+
 :RUN
-cd D:\php-env\workspace\one-platform\test\regression
-"%PHPBIN%" "D:\php-env\workspace\one-platform\test\externals\libraries\phpunit\phpunit.php" AllTests
+cd %0\..\
+"%PHPBIN%" "..\externals\libraries\phpunit\phpunit.php" Test_AllTests
 
 pause
