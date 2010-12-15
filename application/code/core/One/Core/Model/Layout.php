@@ -80,14 +80,12 @@ class One_Core_Model_Layout
 
         $data = array_merge(array(
             'name'     => 'page',
+            'class'    => 'frontoffice',
             'design'   => 'default',
             'template' => 'default'
-            ), (array) $data);
+            ), (array) $this->app()->getConfig('system.layout'), (array) $data);
 
-        $this->_renderingClass = $this->app()->getConfig('system.rendering.class');
-        if ($this->_renderingClass === null) {
-            $this->_renderingClass = 'frontoffice';
-        }
+        $this->_renderingClass = $data['class'];
 
         $this->_baseScriptPath = realpath(implode(One::DS, array(APPLICATION_PATH, 'design', $this->_renderingClass,
             'default', 'base', 'template')));

@@ -4,9 +4,6 @@
     <no-cache>1</no-cache>
     <system>
       <hostname>one</hostname>
-      <rendering>
-        <class>backoffice</class>
-      </rendering>
     </system>
     <modules>
       <One_User>

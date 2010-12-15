@@ -89,12 +89,8 @@ abstract class One_Core_BlockAbstract
 
     protected function _construct($options)
     {
-        $config = $this->app()->getOption($this->_renderingClass);
-        $basePath = implode(One::DS, array(APPLICATION_PATH, 'design', $this->_renderingClass,
-            $config['layout']['design'], $config['layout']['template']));
-
-        $this->setBasePath($basePath)
-            ->setScriptPath($basePath . One::DS . 'template')
+        $this->setBasePath(realpath(dirname($this->_layout->getTemplateScriptPath())))
+            ->setScriptPath($this->_layout->getTemplateScriptPath())
         ;
 
         if (isset($options['name'])) {

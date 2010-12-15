@@ -1,6 +1,6 @@
 1. How to install One.Platform
 
-This documentation file describes how to install the _One.Platform_, on a
+This documentation file describes how to install the One.Platform, on a
 running LAMP environment.
 
 2. Download the sources
@@ -16,7 +16,7 @@ at https://github.com/gplanchat/one.platform/tarball/master and extract it in
 
 3. Create your bootstraps
 
-Copy the public directory into Apache's _DocumentRoot_ directory and rename the
+Copy the public directory into Apache's DocumentRoot directory and rename the
 bootstrap files :
 
 $ cp -R /opt/one-platform/public/* /var/www/
@@ -25,7 +25,7 @@ $ mv /var/www/admin/index.php.sample /var/www/admin/index.php
 
 4. Configure rewrite rules
 
-Create a file named _.htaccess_ in your directory _/var/www_ :
+Create a file named .htaccess in your directory /var/www :
 
 RewriteEngine On
 
@@ -42,7 +42,7 @@ SetEnv ROOT_PATH /opt/one-platform
 SetEnv APPLICATION_ENV production
 
 
-Then create a second _.htaccess_ file in you directory _/var/www/admin_ : 
+Then create a second .htaccess file in you directory /var/www/admin : 
 
 RewriteEngine On
 
@@ -61,7 +61,7 @@ SetEnv APPLICATION_ENV production
 
 5. Run the SQL script
 
-Run the SQL script named _install.mysql_, located in the folder setup, using
+Run the SQL script named install.mysql, located in the folder setup, using
 this command :
 
 $ mysql -u root -h localhost -p < /opt/one-platform/setup/install.mysql
@@ -69,7 +69,7 @@ $ mysql -u root -h localhost -p < /opt/one-platform/setup/install.mysql
 7. Install the Zend Framework
 
 Download the tarball at http://framework.zend.com/ and uncompress the libraries
-files into the folder _/opt/one-platform/externals/libraries/_.
+files into the folder /opt/one-platform/externals/libraries/.
 
 8. Run One.Platform
 

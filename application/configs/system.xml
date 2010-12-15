@@ -4,9 +4,11 @@
     <system>
       <hostname>www.example.com</hostname>
       <base-url>/</base-url>
-      <rendering>
+      <layout>
         <class>frontoffice</class>
-      </rendering>
+        <design>default</design>
+        <template>default</template>
+      </layout>
     </system>
     <general>
       <locale>
@@ -51,22 +53,10 @@
     <modules>
       <One_Core>
         <codePool>core</codePool>
-        <active>0</active>
+        <active>1</active>
         <route type="core/router.route" path="core" name="core" />
       </One_Core>
     </modules>
-    <frontoffice>
-      <layout>
-        <design>default</design>
-        <template>default</template>
-      </layout>
-    </frontoffice>
-    <backoffice>
-      <layout>
-        <design>default</design>
-        <template>default</template>
-      </layout>
-    </backoffice>
   </default>
   <backoffice>
     <modules>
@@ -86,9 +76,11 @@
     </modules>
     <system>
       <default-module>One_Admin_Core</default-module>
-      <rendering>
+      <layout>
         <class>backoffice</class>
-      </rendering>
+        <design>default</design>
+        <template>default</template>
+      </layout>
     </system>
   </backoffice>
   <production>
