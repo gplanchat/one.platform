@@ -1,6 +1,9 @@
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
+
+
+
 CREATE TABLE IF NOT EXISTS `legacies_cms_page` (
   `entity_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `path` varchar(255) COLLATE utf8_bin NOT NULL,
@@ -18,8 +21,9 @@ CREATE TABLE IF NOT EXISTS `legacies_cms_page` (
   KEY `IDX_CMS_PAGE__WEBSITE_ID` (`website_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=32 ;
 
+
 INSERT INTO `legacies_cms_page` (`entity_id`, `path`, `title`, `content`, `website_id`, `meta_keywords`, `meta_description`, `layout_updates`, `layout_active`) VALUES
-(1, 'homepage', 'Home Page', '<h1>One.Platform homepage</h1>\r\n<div class="navigation">\r\n<ul>\r\n<li><a href="../../../../../account/login">Log In</a></li>\r\n<li><a href="../../../../../account/logout">Log Out</a></li>\r\n<li><a href="../../">CMS Page management</a></li>\r\n</ul>\r\n</div>', 2, 'test,cms,one,platform', 'Tesing the CMS functionnalities of One.Platform', '<reference name="root">\r\n</reference>', 0),
+(1, 'homepage', 'Home Page', '<h1>One.Platform homepage</h1>\r\n<div class="navigation">\r\n<ul>\r\n<li><a href="../../../../../account/login">Log In</a></li>\r\n<li><a href="../../../../../account/logout">Log Out</a></li>\r\n<li><a href="/admin/cms/page/">CMS Page management</a></li>\r\n</ul>\r\n</div>', 2, 'test,cms,one,platform', 'Tesing the CMS functionnalities of One.Platform', '<reference name="root">\r\n</reference>', 0),
 (2, 'no-route', '', '<form action="account/login-post" method="post">\r\n  <fieldset>\r\n    <p>\r\n      <label for="login_username">username</label>\r\n      <input type="text" name="login[username]" id="login_username" />\r\n    </p>\r\n    <p>\r\n      <label for="login_password">password</label>\r\n      <input type="password" name="login[password]" id="login_password" />\r\n    </p>\r\n    <p>\r\n      <input type="submit"  id="login" />\r\n    </p>\r\n  </fieldset>\r\n</form>', 1, '', '', '', 0),
 (3, 'no-route-test-2', '', '<form action="account/login-post" method="post">\r\n  <fieldset>\r\n    <p>\r\n      <label for="login_username">username</label>\r\n      <input type="text" name="login[username]" id="login_username" />\r\n    </p>\r\n    <p>\r\n      <label for="login_password">password</label>\r\n      <input type="password" name="login[password]" id="login_password" />\r\n    </p>\r\n    <p>\r\n      <input type="submit"  id="login" />\r\n    </p>\r\n  </fieldset>\r\n</form>', 1, '', '', '', 0),
 (4, 'no-route-test-3', '', '<form action="account/login-post" method="post">\r\n  <fieldset>\r\n    <p>\r\n      <label for="login_username">username</label>\r\n      <input type="text" name="login[username]" id="login_username" />\r\n    </p>\r\n    <p>\r\n      <label for="login_password">password</label>\r\n      <input type="password" name="login[password]" id="login_password" />\r\n    </p>\r\n    <p>\r\n      <input type="submit"  id="login" />\r\n    </p>\r\n  </fieldset>\r\n</form>', 1, '', '', '', 0),
@@ -43,6 +47,8 @@ INSERT INTO `legacies_cms_page` (`entity_id`, `path`, `title`, `content`, `websi
 (28, '', 'Testing Controller', '<h1>Testing Website</h1>\r\n<p>This is just a <strong>test</strong></p>', 2, 'test,one,platform', 'One.Platform is a PHP development platform', '', 0),
 (31, 'testing', 'Testing Page', '<h1>Testing CMS Page</h1>', 2, '', '', '', 0);
 
+
+
 CREATE TABLE IF NOT EXISTS `legacies_core_config` (
   `entity_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `path` varchar(512) NOT NULL,
@@ -52,6 +58,10 @@ CREATE TABLE IF NOT EXISTS `legacies_core_config` (
   UNIQUE KEY `UNQ_CORE_CONFIG__PATH` (`path`(255),`website_id`),
   KEY `IDX_CORE_CONFIG__WEBSITE_ID` (`website_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
+
+
 
 CREATE TABLE IF NOT EXISTS `legacies_core_website` (
   `entity_id` tinyint(4) unsigned NOT NULL AUTO_INCREMENT,
@@ -63,10 +73,13 @@ CREATE TABLE IF NOT EXISTS `legacies_core_website` (
   KEY `label` (`label`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
+
 INSERT INTO `legacies_core_website` (`entity_id`, `identity_string`, `parent_website_id`, `label`) VALUES
 (1, '_root_', 1, 'Root Website'),
 (2, 'frontoffice', 1, 'Main Front Office'),
 (3, 'backoffice', 1, 'Main Back Office');
+
+
 
 CREATE TABLE IF NOT EXISTS `legacies_user_authentication` (
   `user_entity_id` smallint(5) unsigned NOT NULL,
@@ -75,12 +88,15 @@ CREATE TABLE IF NOT EXISTS `legacies_user_authentication` (
   PRIMARY KEY (`user_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
+
 INSERT INTO `legacies_user_authentication` (`user_entity_id`, `server_salt`, `server_hash`) VALUES
 (1, 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=', 'CUY57ai5hferPYyfcrUtelhqplOAhklLoPqln+PwNZI=');
 
+
+
 CREATE TABLE IF NOT EXISTS `legacies_user_entity` (
   `entity_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `game_entity_id` tinyint(3) unsigned NOT NULL,
+  `website_id` tinyint(3) unsigned NOT NULL,
   `username` varchar(24) NOT NULL,
   `realname` varchar(50) NOT NULL,
   `email` varchar(120) NOT NULL,
@@ -88,14 +104,35 @@ CREATE TABLE IF NOT EXISTS `legacies_user_entity` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`entity_id`),
-  UNIQUE KEY `email` (`email`,`game_entity_id`),
-  UNIQUE KEY `username` (`username`,`game_entity_id`),
-  KEY `realname` (`realname`,`game_entity_id`),
-  KEY `game_entity_id` (`game_entity_id`)
+  UNIQUE KEY `UNQ_USER_ENTITY__EMAIL` (`email`,`website_id`),
+  UNIQUE KEY `UNQ_USER_ENTITY__USERNAME` (`username`,`website_id`),
+  KEY `IDX_USER_ENTITY__WEBSITE_ID` (`website_id`),
+  KEY `IDX_USER_ENTITY__RELANAME` (`realname`,`website_id`),
+  KEY `IDX_USER_ENTITY__PRIMARY_GROUP_ID` (`primary_group_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
-INSERT INTO `legacies_user_entity` (`entity_id`, `game_entity_id`, `username`, `realname`, `email`, `primary_group_id`, `created_at`, `updated_at`) VALUES
-(1, 1, 'gplanchat', 'Grégory PLANCHAT', 'g.planchat@gmail.com', 1, '2010-06-16 22:49:26', '2010-06-16 22:49:26');
+
+INSERT INTO `legacies_user_entity` (`entity_id`, `website_id`, `username`, `realname`, `email`, `primary_group_id`, `created_at`, `updated_at`) VALUES
+(1, 2, 'gplanchat', 'Grégory PLANCHAT', 'g.planchat@gmail.com', 1, '2010-06-16 22:49:26', '2010-06-16 22:49:26');
+
+
+
+CREATE TABLE IF NOT EXISTS `legacies_user_group` (
+  `group_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `website_id` tinyint(4) unsigned NOT NULL,
+  `label` varchar(100) NOT NULL,
+  PRIMARY KEY (`group_id`),
+  UNIQUE KEY `UNQ_USER_GROUP__LABEL` (`website_id`,`label`),
+  KEY `IDX_USER_GROUP__LABEL` (`label`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+
+
+INSERT INTO `legacies_user_group` (`group_id`, `website_id`, `label`) VALUES
+(1, 1, 'Super Administrators'),
+(2, 1, 'Super Moderators'),
+(3, 2, 'Administrators (Frontoffice)'),
+(3, 2, 'Moderators (Frontoffice)');
+
 
 ALTER TABLE `legacies_cms_page`
   ADD CONSTRAINT `FK_CMS_PAGE_WEBSITE_ID__CORE_WEBSITE_ENTITY_ID` FOREIGN KEY (`website_id`) REFERENCES `legacies_core_website` (`entity_id`);
@@ -105,3 +142,10 @@ ALTER TABLE `legacies_core_website`
 
 ALTER TABLE `legacies_user_authentication`
   ADD CONSTRAINT `FK_USER_AUTHENTICATION_USER_ENTITY_ID__USER_ENTITY_ENTITY_ID` FOREIGN KEY (`user_entity_id`) REFERENCES `legacies_user_entity` (`entity_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `legacies_user_entity`
+  ADD CONSTRAINT `FK_USER_ENTITY_WEBSITE_ID__CORE_WEBSITE_ENTITY_ID` FOREIGN KEY (`website_id`) REFERENCES `legacies_core_website` (`entity_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_USER_ENTITY_PRIMARY_GROUP_ID__USER_GROUP_GROUP_ID` FOREIGN KEY (`primary_group_id`) REFERENCES `legacies_user_group` (`group_id`) ON UPDATE CASCADE;
+
+ALTER TABLE `legacies_user_group`
+  ADD CONSTRAINT `FK_USER_GROUP_WEBSITE_ID__CORE_WEBSITE_ENTITY_ID` FOREIGN KEY (`website_id`) REFERENCES `legacies_core_website` (`entity_id`) ON UPDATE CASCADE;
