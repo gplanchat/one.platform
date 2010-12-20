@@ -54,6 +54,8 @@
 class One_Admin_Core_Model_User_Entity
     extends One_User_Model_Entity
 {
+    protected $_sessionModel = 'admin.core/session';
+
     public function _construct($options)
     {
         One_Core_Bo_EntityAbstract::_construct($options);

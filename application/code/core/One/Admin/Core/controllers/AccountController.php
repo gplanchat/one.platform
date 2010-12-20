@@ -40,78 +40,59 @@
  *
  */
 
+require_once 'One/User/controllers/AccountController.php';
 /**
- * User login block, displays a login form
+ * User account controller
  *
  * @access      public
  * @author      gplanchat
- * @category    User
- * @package     One_User
- * @subpackage  One_User
+ * @category    Admin
+ * @package     One_Admin
+ * @subpackage  One_Admin_Core
  */
-class One_User_Block_Login
-    extends One_Core_Block_Html_Form
+class One_Admin_Core_AccountController
+    extends One_User_AccountController
 {
-    protected $_submitLabel = 'Log in';
+    protected $_userSessionModel = 'admin.core/session';
 
-    public function _construct($options)
+    /**
+     * TODO: PHPDoc
+     *
+     */
+    public function loginAjaxPostAction()
     {
-        if (!isset($options['form'])) {
-            $options['form'] = 'login';
-        }
+        parent::loginAjaxPostAction();
+    }
 
-        $options = parent::_construct($options);
+    /**
+     * TODO: PHPDoc
+     *
+     */
+    public function registerAction()
+    {
+        $this->_redirect('no-route');
+    }
 
-        $config = $this->app()->getModel('core/config');
+    /**
+     * TODO: PHPDoc
+     *
+     */
+    public function registerPostAction()
+    {
+        $this->_redirect('no-route');
+    }
 
-        $this->headScript()
-            ->appendFile($config->getUrl('/js/jquery.js'))
-            ->appendFile($config->getUrl('/js/core.js'))
-            ->appendFile($config->getUrl('/js/security.js'))
-            ->appendFile($config->getUrl('/js/auth.js'))
-        ;
-
-        $script =<<<SCRIPT_EOF
-$(document).ready(function(){
-    $.one.User.login($('#{$this->_form->getName()}'));
-  });
-SCRIPT_EOF;
-
-        $this->headScript()
-            ->appendScript($script)
-        ;
-
-        $salt = base64_encode($this->app()->getHelper('core/security')->random(32, null, true));
-
-        $this->app()
-            ->getSingleton('user/session')
-            ->setTransferSalt($salt)
-        ;
-
-        $this->_form
-            ->getSubform('login')
-            ->getElement('salt')
-            ->setValue($salt)
-        ;
-
-        $this->_form->addElement('hidden', 'load_identity', array(
-            'value' => $this->app()->getRouter()->assemble(array(
-                'controller' => 'account',
-                'action'     => 'login-ajax'
-                ), 'account'),
-            'decorators' => array(
-                'element' => array(
-                    'decorator' => 'ViewHelper',
-                    'params'    => 'FormHidden'
-                    )
-                )
-            ));
-
-        $this->_form->setAction($this->app()->getRouter()->assemble(array(
-            'controller' => 'account',
-            'action'     => 'login-ajax-post'
-            ), 'account'));
-
-        return $options;
+    /**
+     * TODO: PHPDoc
+     *
+     */
+    protected function _getRedirectLoginSuccessUrl()
+    {
+        return $this->app()->getRouter()->assemble(array(
+            'controller' => 'dashboard',
+            'action'     => 'index',
+            'path'       => 'core',
+            'module'     => 'One_Admin_Core'
+            ), 'default');
     }
 }

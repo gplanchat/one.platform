@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?php
 /**
  * This file is part of One.Platform
  *
@@ -34,39 +33,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *                                    NOTICE
+ *                                --> NOTICE <--
  *  This file is part of the core development branch, changing its contents will
  * make you unable to use the automatic updates manager. Please refer to the
  * documentation for further information about customizing One.Platform.
  *
  */
--->
-<config>
-  <frontoffice>
-    <system>
-      <routes>
-        <cms-no-route>
-          <type value="cms/router.route" />
-          <defaults>
-            <module value="One_Cms" />
-            <controller value="display" />
-            <action value="page" />
-            <page-id value="no-route" />
-            <layout>cms.page</layout>
-          </defaults>
-        </cms-no-route>
-        <cms>
-          <type value="Zend_Controller_Router_Route_Static" />
-          <route value="" />
-          <defaults>
-            <module value="One_Cms" />
-            <controller value="display" />
-            <action value="page" />
-            <page-id value="homepage" />
-            <layout>cms.page</layout>
-          </defaults>
-        </cms>
-      </routes>
-    </system>
-  </frontoffice>
-</config>
+
+/**
+ * Administration base index controller
+ *
+ * @access      public
+ * @author      gplanchat
+ * @category    Core
+ * @package     One_Admin_Core
+ * @subpackage  One_Admin_Core
+ */
+class One_Admin_Core_DashboardController
+    extends One_Core_ControllerAbstract
+{
+    public function indexAction()
+    {
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+}

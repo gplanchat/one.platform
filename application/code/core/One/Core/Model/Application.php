@@ -221,7 +221,7 @@ class One_Core_Model_Application
             }
         }
 
-        $router->addRoute('modules-stack', $routeStack);
+        $router->addRoute('default', $routeStack);
 
         $defaultModule = $config->system->get('default-module', 'One_Core');
         $this->_frontController->setDefaultModule($defaultModule);

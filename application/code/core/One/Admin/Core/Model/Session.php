@@ -50,7 +50,7 @@
  * @subpackage  One_Admin_Core
  */
 class One_Admin_Core_Model_Session
-    extends One_Core_Model_SessionAbstract
+    extends One_Core_Model_Session
 {
     /**
      * FIXME: PHPDoc

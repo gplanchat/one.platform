@@ -54,6 +54,19 @@
             <action value="index" />
           </defaults>
         </core>
+        <account>
+          <type value="Zend_Controller_Router_Route_Regex" />
+          <route value="account/(log(?:in(?:-ajax)?|out)(?:-post)?)" />
+          <defaults>
+            <module value="One_Admin_Core" />
+            <controller value="account" />
+            <action value="login" />
+          </defaults>
+          <map>
+            <action>1</action>
+          </map>
+          <reverse>account/%s</reverse>
+        </account>
       </routes>
     </system>
   </default>

@@ -117,7 +117,7 @@ class One_User_AccountController
             'redirect' => $this->app()->getRouter()->assemble(array(
                 'controller' => 'account',
                 'action'     => 'login'
-                ))
+                ), 'account')
             );
 
         if (!$this->getRequest()->isPost()) {
@@ -131,7 +131,7 @@ class One_User_AccountController
         }
 
         if (!$this->_validateFieldset('login')) {
-            $returnObject['messages'] = $this->app()->getSingleton('core/session')->getMessages();
+            $returnObject['messages'] = $this->_getSession()->getMessages();
             $returnObject['messages'][Zend_Log::ERR][] = 'Invalid form datas.';
 
             $this->getResponse()
@@ -145,7 +145,7 @@ class One_User_AccountController
         try {
             if (!$user->login($this->getRequest()->getPost('login'))) {
                 $returnObject['messages'] = $this->app()->getSingleton('core/session')->getMessages();
-                $returnObject['messages'] += $this->app()->getSingleton('user/session')->getMessages();
+                $returnObject['messages'] += $this->_getSession()->getMessages();
 
                 $this->getResponse()
                     ->setBody(Zend_Json::encode($returnObject))
@@ -154,16 +154,12 @@ class One_User_AccountController
                 return;
             }
 
-            $this->app()->getSingleton('user/session')
+            $this->_getSession()
                 ->addInfo('Login successful.')
             ;
 
             $returnObject['error'] = false;
-            $returnObject['redirect'] = $this->app()->getRouter()->assemble(array(
-                'controller' => 'account',
-                'action'     => 'index',
-                'username'   => $user->getUsername()
-                ), 'user');
+            $returnObject['redirect'] = $this->_getRedirectLoginSuccessUrl();
 
             $this->getResponse()
                 ->setBody(Zend_Json::encode($returnObject))
@@ -180,6 +176,15 @@ class One_User_AccountController
         }
     }
 
+    protected function _getRedirectLoginSuccessUrl()
+    {
+        return $this->app()->getRouter()->assemble(array(
+            'controller' => 'account',
+            'action'     => 'index',
+            'username'   => $user->getUsername()
+            ), 'user');
+    }
+
     /**
      * TODO: PHPDoc
      *
@@ -188,8 +193,7 @@ class One_User_AccountController
     {
         $this->_redirectIfNotLoggedIn('/');
 
-        $this->app()
-            ->getSingleton('user/session')
+        $this->_getSession()
             ->clear()
         ;
 

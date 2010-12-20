@@ -54,9 +54,6 @@ class One_Admin_Core_IndexController
 {
     public function indexAction()
     {
-        $this->_forward('index', 'grid');
-
-//        $this->loadLayout();
-//        $this->renderLayout();
+        $this->_forward('index', 'dashboard');
     }
 }

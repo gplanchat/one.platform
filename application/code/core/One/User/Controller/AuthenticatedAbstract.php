@@ -56,6 +56,19 @@ abstract class One_User_Controller_AuthenticatedAbstract
 
     protected $_userSessionModel = 'user/session';
 
+    protected $_session = null;
+
+    protected function _getSession()
+    {
+        if ($this->_session === null) {
+            if (!is_string($this->_userSessionModel)) {
+                $this->_userSessionModel = 'user/session';
+            }
+            $this->_session = $this->app()->getSingleton($this->_userSessionModel);
+        }
+        return $this->_session;
+    }
+
     /**
      * TODO: PHPDoc
      *
@@ -64,14 +77,7 @@ abstract class One_User_Controller_AuthenticatedAbstract
     protected function _getUser()
     {
         if (!($this->_userModel instanceof One_core_ObjectInterface)) {
-            if (!is_string($this->_userSessionModel)) {
-                $this->_userSessionModel = 'user/session';
-            }
-
-            $this->_userModel = $this->app()
-                ->getSingleton($this->_userSessionModel)
-                ->getUserEntity()
-            ;
+            $this->_userModel = $this->_getSession()->getUserEntity();
         }
         return $this->_userModel;
     }
