@@ -41,23 +41,78 @@
  */
 
 /**
- * Administration abstract controller for grids and forms management
+ * User account controller
  *
  * @access      public
  * @author      gplanchat
- * @category    Core
- * @package     One_Admin_Core
- * @subpackage  One_Admin_Core
+ * @category    User
+ * @package     One_User
+ * @subpackage  One_User
  */
-abstract class One_Admin_Core_ControllerAbstract
-    extends One_User_Controller_AuthenticatedAbstract
+abstract class One_User_Controller_AuthenticatedAbstract
+    extends One_Core_ControllerAbstract
 {
-    protected $_userSessionModel = 'admin.core/session';
+    protected $_userModel = null;
 
-    public function preDispatch()
+    protected $_userSessionModel = 'user/session';
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @return One_User_Model_Entity
+     */
+    protected function _getUser()
     {
-        parent::preDispatch();
+        if (!($this->_userModel instanceof One_core_ObjectInterface)) {
+            if (!is_string($this->_userSessionModel)) {
+                $this->_userSessionModel = 'user/session';
+            }
 
-        $this->_redirectIfNotLoggedIn('account/login');
+            $this->_userModel = $this->app()
+                ->getSingleton($this->_userSessionModel)
+                ->getUserEntity()
+            ;
+        }
+        return $this->_userModel;
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @return void
+     */
+    protected function _isLoggedIn()
+    {
+        return (($user = $this->_getUser()) !== null && $user->getId() !== null);
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @return void
+     */
+    protected function _redirectIfNotLoggedIn($redirect = null)
+    {
+        if ($this->_isLoggedIn()) {
+            return;
+        }
+
+        $this->_redirect(is_null($redirect) ? 'account/login' : $redirect);
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @return void
+     */
+    protected function _redirectIfLoggedIn($redirect = null)
+    {
+        if (!$this->_isLoggedIn()) {
+            return;
+        }
+
+        $username = $this->_getUser()->getUsername();
+
+        $this->_redirect(is_null($redirect) ? 'user/' . $username : $redirect);
     }
 }

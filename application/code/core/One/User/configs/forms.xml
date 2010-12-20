@@ -104,17 +104,6 @@
                     <breakChainOnFailure>1</breakChainOnFailure>
                   </email>
                 </validators>
-                <decorators>
-                  <element>
-                    <decorator>ViewHelper</decorator>
-                    <options>
-                      <helper>FormText</helper>
-                    </options>
-                  </element>
-                  <label>
-                    <decorator>Label</decorator>
-                  </label>
-                </decorators>
               </options>
             </identity>
             <password>
@@ -154,29 +143,22 @@
                     </options>
                   </length>
                 </validators>
-                <decorators>
-                  <element>
-                    <decorator>ViewHelper</decorator>
-                    <options>
-                      <helper>FormPassword</helper>
-                    </options>
-                  </element>
-                  <label>
-                    <decorator>Label</decorator>
-                  </label>
-                </decorators>
               </options>
             </password>
-            <stealth_salt>
+            <salt>
               <type>hidden</type>
-              <name>stealth_salt</name>
+              <name>salt</name>
               <options>
                 <value></value>
-                <order>0</order>
+                <order>3</order>
                 <required>1</required>
                 <allowEmpty>0</allowEmpty>
                 <ignore>0</ignore>
                 <disableTranslator>1</disableTranslator>
+                <attribs>
+                  <id>login_salt</id>
+                  <class>login salt input required</class>
+                </attribs>
                 <validators>
                   <required>
                     <validator>NotEmpty</validator>
@@ -199,7 +181,7 @@
                   </length>
                 </validators>
               </options>
-            </stealth_salt>
+            </salt>
           </elements>
         </login>
       </fieldsets>

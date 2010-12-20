@@ -149,8 +149,6 @@ class One_Admin_Core_Block_Form
             ->getForm($configIdentifier)
         ;
 
-        $test = uniqid('test_');
-
         $defaultConfig = array(
             'disableLoadDefaultDecorators' => true,
             'legend' => $label,

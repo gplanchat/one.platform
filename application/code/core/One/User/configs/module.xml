@@ -98,6 +98,9 @@
             <authentication>
               <table>user_authentication</table>
             </authentication>
+            <group>
+              <table>user_group</table>
+            </group>
           </user>
         </entities>
       </dal>

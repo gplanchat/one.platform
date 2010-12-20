@@ -41,6 +41,8 @@ class One_User_Model_Session
     extends One_Core_Model_SessionAbstract
     implements One_User_Model_Entity_Authentication_StorageInterface
 {
+    const STORAGE_KEY = 'auth_storage';
+
     protected $_userEntity = NULL;
 
     public function _construct($options)
@@ -56,15 +58,14 @@ class One_User_Model_Session
     {
         if (is_null($this->_userEntity)) {
             $this->_userEntity = $this->app()
-                ->getSingleton('user/entity')
+                ->getModel('user/entity')
             ;
-
-            $storage = $this->app()->getModel('user/entity.authentication.storage', $this);
-
-            if (!$this->_userEntity->isLoaded() && !$storage->isEmpty()) {
-                $this->_userEntity->load($storage->read(), 'username');
-            }
         }
+
+        if ($this->_userEntity->getId() === null && !$this->isEmpty()) {
+            $this->_userEntity->load($this->read(), 'username');
+        }
+
         return $this->_userEntity;
     }
 
@@ -84,7 +85,7 @@ class One_User_Model_Session
      */
     public function isEmpty()
     {
-        return (bool) !($this->_getData('identity') === null);
+        return (bool) ($this->_getData(self::STORAGE_KEY) === null);
     }
 
     /**
@@ -104,7 +105,7 @@ class One_User_Model_Session
                 'User account storage is empty');
         }
 
-        return $this->_getData('identity');
+        return $this->_getData(self::STORAGE_KEY);
     }
 
     /**
@@ -117,7 +118,9 @@ class One_User_Model_Session
      */
     public function write($contents)
     {
-        $this->_setData('identity', $contents);
+        $this->_setData(self::STORAGE_KEY, $contents);
+
+        return $this;
     }
 
     /**
@@ -129,7 +132,9 @@ class One_User_Model_Session
      */
     public function clear()
     {
-        $this->_unsetData('identity');
+        $this->_unsetData(self::STORAGE_KEY);
+
+        return $this;
     }
 }
 

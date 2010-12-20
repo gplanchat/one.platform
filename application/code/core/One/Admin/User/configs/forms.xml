@@ -73,7 +73,7 @@
               <name>websites</name>
               <options>
                 <label>Website</label>
-                <order>3</order>
+                <order>2</order>
                 <required>1</required>
                 <allowEmpty>1</allowEmpty>
                 <attribs>
@@ -87,8 +87,53 @@
                 </validators>
               </options>
             </websites>
+            <group>
+              <type>select</type>
+              <name>group</name>
+              <options>
+                <label>Primary Group</label>
+                <order>3</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>general:group</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                </validators>
+              </options>
+            </group>
           </elements>
         </user-entity-general>
+        <user-entity-groups>
+          <attribs>
+            <id>user_entity_groups</id>
+          </attribs>
+          <elements>
+            <list>
+              <type>multiselect</type>
+              <name>list</name>
+              <options>
+                <label>Groups</label>
+                <order>3</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>groups:list</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                </validators>
+              </options>
+            </list>
+          </elements>
+        </user-entity-groups>
       </forms>
     </general>
   </default>

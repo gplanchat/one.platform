@@ -98,6 +98,16 @@ class One_Admin_User_EntityController
             ->setMultiOptions($this->app()->getModel('core/website.collection')->load()->toHash('label'))
         ;
 
+        $groupHash = $this->app()->getModel('user/group.collection')->load()->toHash('label');
+        $this->_form->getTab('general')
+            ->getElement('group')
+            ->setMultiOptions($groupHash)
+        ;
+        $this->_form->getTab('groups')
+            ->getElement('list')
+            ->setMultiOptions($groupHash)
+        ;
+
         $this->getLayout()
             ->getBlock('container')
             ->addButtonDuplicate()
@@ -150,5 +160,6 @@ class One_Admin_User_EntityController
         $this->_form->setAction($url);
 
         $this->addTab('user-entity-general', 'general', 'General');
+        $this->addTab('user-entity-groups', 'groups', 'Groups');
     }
 }

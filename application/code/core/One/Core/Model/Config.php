@@ -76,7 +76,45 @@ class One_Core_Model_Config
         if (!isset($this->_fieldsets[$fieldsetName])) {
             return null;
         }
-        return new Zend_Form_SubForm($this->_fieldsets[$fieldsetName]);
+
+        $defaultConfig = array(
+            'disableLoadDefaultDecorators' => true,
+            'decorators' => array(
+                'Tooltip',
+                'FormElements',
+                'fieldset' => array(
+                    'decorator' => 'Fieldset',
+                    'options'    => array(
+                        ),
+                    ),
+                'wrapper' => array(
+                    'decorator' => 'HtmlTag',
+                    'options'    => array(
+                        'tag'   => 'div',
+                        'class' => 'subform'
+                        )
+                    )
+                ),
+            'elementDecorators' => array(
+                'element' => array(
+                    'decorator' => 'ViewHelper'
+                    ),
+                'label' => array(
+                    'decorator' => 'Label'
+                    ),
+                'wrapper' => array(
+                    'decorator' => 'HtmlTag',
+                    'params'    => array(
+                        'tag'   => 'div',
+                        'class' => 'form-element'
+                        )
+                    )
+                )
+            );
+
+        $formConfig = array_merge($defaultConfig, (array)$this->_fieldsets[$fieldsetName]);
+
+        return new Zend_Form_SubForm($formConfig);
     }
 
     /**

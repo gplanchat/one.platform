@@ -72,13 +72,7 @@ class One_User_Model_Entity
             return false;
         }
         $credential = $loginFieldsetDatas['password'];
-
-        if (!isset($loginFieldsetDatas['stealth_salt']) || !is_string($loginFieldsetDatas['stealth_salt'])) {
-            // TODO: I18n
-            $session->addError('Precondition failed: stealth salt data invalid or empty.');
-            return false;
-        }
-        $salt = $loginFieldsetDatas['stealth_salt'];
+        $salt = $session->getTransferSalt();
 
         $this->app()->dispatchEvent('user.login.before', array(
             'identity'   => &$identity,
@@ -107,10 +101,7 @@ class One_User_Model_Entity
             $this->load($result->getIdentity(), 'username');
 
             if ($this->getId()) {
-                $this->app()
-                    ->getSingleton('user/entity.authentication.storage', $session)
-                    ->write($result->getIdentity())
-                ;
+                $session->write($result->getIdentity());
             }
 
             $this->app()->dispatchEvent('user.login.success', array(

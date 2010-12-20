@@ -50,7 +50,7 @@
  * @subpackage  One_User
  */
 class One_User_AccountController
-    extends One_User_Controller_AuthenticationAware
+    extends One_User_Controller_AuthenticatedAbstract
 {
     /**
      * TODO: PHPDoc
@@ -88,13 +88,13 @@ class One_User_AccountController
         ;
 
         $datas = array(
-            'exists'       => false,
-            'stealth_salt' => null
+            'exists' => false,
+            'salt'   => null
             );
 
         if ($user->getId() !== null) {
             $datas['exists'] = true;
-            $datas['stealth_salt'] = $user->getServerSalt();
+            $datas['salt'] = $user->getServerSalt();
         }
 
         $this->getResponse()
@@ -178,6 +178,22 @@ class One_User_AccountController
                 ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
             ;
         }
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     */
+    public function logoutAction()
+    {
+        $this->_redirectIfNotLoggedIn('/');
+
+        $this->app()
+            ->getSingleton('user/session')
+            ->clear()
+        ;
+
+        $this->_redirect('/');
     }
 
     /**

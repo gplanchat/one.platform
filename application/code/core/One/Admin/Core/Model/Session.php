@@ -52,5 +52,15 @@
 class One_Admin_Core_Model_Session
     extends One_Core_Model_SessionAbstract
 {
+    /**
+     * FIXME: PHPDoc
+     */
+    protected function _construct($options)
+    {
+        parent::_construct($options);
 
+        $this->_init('admin.core');
+
+        return $this;
+    }
 }

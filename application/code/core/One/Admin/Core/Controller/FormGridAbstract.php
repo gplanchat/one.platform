@@ -49,15 +49,63 @@
  * @package     One_Admin_Core
  * @subpackage  One_Admin_Core
  */
-abstract class One_Admin_Core_ControllerAbstract
-    extends One_User_Controller_AuthenticatedAbstract
+abstract class One_Admin_Core_Controller_FormGridAbstract
+    extends One_Admin_Core_ControllerAbstract
 {
-    protected $_userSessionModel = 'admin.core/session';
+    protected $_collectionModel = null;
 
-    public function preDispatch()
+    /**
+     *
+     * @var One_Admin_Core_Block_Form
+     */
+    protected $_form = null;
+
+    protected function _prepareGrid($gridName, $collectionModel, $sort = array())
     {
-        parent::preDispatch();
+        $this->loadLayout('admin.grid');
 
-        $this->_redirectIfNotLoggedIn('account/login');
+        if (is_string($collectionModel)) {
+            $this->_collectionModel = $this->app()->getModel($collectionModel);
+        } else if ($this->_collectionModel === null) {
+            $this->_collectionModel = $collectionModel;
+        }
+
+        $grid = $this->getLayout()
+            ->getBlock('grid')
+            ->setCollection($this->_collectionModel)
+            ->loadColumns($gridName)
+            ->setPage($this->_getParam('p'), $this->_getParam('n'))
+            ->sort($sort)
+        ;
+
+        return $grid;
     }
+
+    protected function _prepareForm()
+    {
+        $this->loadLayout('admin.form');
+
+        $this->_form = $this->getLayout()
+            ->getBlock('form')
+        ;
+
+        return $this;
+    }
+
+    public function addTab($configIdentitifer, $name, $label)
+    {
+        $this->_form->addTab($configIdentitifer, $name, $label);
+    }
+
+    abstract public function indexAction();
+
+    abstract public function newAction();
+
+    abstract public function newPostAction();
+
+    abstract public function editAction();
+
+    abstract public function editPostAction();
+
+    abstract public function deleteAction();
 }

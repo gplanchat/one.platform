@@ -81,6 +81,19 @@ SCRIPT_EOF;
             ->appendScript($script)
         ;
 
+        $salt = base64_encode($this->app()->getHelper('core/security')->random(32, null, true));
+
+        $this->app()
+            ->getSingleton('user/session')
+            ->setTransferSalt($salt)
+        ;
+
+        $this->_form
+            ->getSubform('login')
+            ->getElement('salt')
+            ->setValue($salt)
+        ;
+
         $this->_form->addElement('hidden', 'load_identity', array(
             'value' => $this->app()->getRouter()->assemble(array(
                 'controller' => 'account',
