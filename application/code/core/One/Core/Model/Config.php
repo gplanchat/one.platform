@@ -53,7 +53,12 @@ class One_Core_Model_Config
     extends One_Core_Bo_EntityAbstract
 {
     protected $_forms = null;
+
     protected $_fieldsets = null;
+
+    protected $_baseUrl = null;
+
+    protected $_host = null;
 
     protected function _construct($options)
     {
@@ -212,5 +217,31 @@ class One_Core_Model_Config
         }
 
         return $form;
+    }
+
+    public function getUrl($path)
+    {
+        if ($this->_host === null) {
+            $this->_host = $this->app()->getConfig('system.hostname');
+        }
+
+        if (substr($path, 0, 1) !== '/') {
+            $path = '/' . $path;
+        }
+
+        return 'http://' . $this->_host . $path;
+    }
+
+    public function getBaseUrl($path)
+    {
+        if ($this->_baseUrl === null) {
+            $this->_baseUrl = $this->app()->getConfig('system.base-url');
+        }
+
+        if (substr($path, 0, 1) !== '/') {
+            $path = '/' . $path;
+        }
+
+        return $this->getUrl($this->_baseUrl . $path);
     }
 }

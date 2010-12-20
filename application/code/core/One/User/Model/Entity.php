@@ -42,6 +42,8 @@
 class One_User_Model_Entity
     extends One_Core_Bo_EntityAbstract
 {
+    protected $_sessionModel = 'user/session';
+
     public function _construct($options)
     {
         parent::_construct($options);
@@ -57,7 +59,7 @@ class One_User_Model_Entity
             return false;
         }
 
-        $session = $this->app()->getSingleton('user/session');
+        $session = $this->app()->getSingleton($this->_sessionModel);
 
         if (!isset($loginFieldsetDatas['identity']) || !is_string($loginFieldsetDatas['identity'])) {
             // TODO: I18n

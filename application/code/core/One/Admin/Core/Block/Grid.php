@@ -72,10 +72,10 @@ class One_Admin_Core_Block_Grid
         }
 
         $this->headScript()
-            ->appendFile('/js/jquery.js')
-            ->appendFile('/js/core.js')
-            ->appendFile('/js/admin/core.js')
-            ->appendFile('/admin/js/grid.js')
+            ->appendFile($config->getUrl('/js/jquery.js'))
+            ->appendFile($config->getUrl('/js/core.js'))
+            ->appendFile($config->getBaseUrl('/js/core.js'))
+            ->appendFile($config->getBaseUrl('/js/grid.js'))
         ;
 
         return parent::_construct($options);

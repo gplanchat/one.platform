@@ -62,13 +62,13 @@ class One_User_Block_Login
 
         $options = parent::_construct($options);
 
-        $baseUrl = $this->app()->getFrontController()->getBaseUrl();
+        $config = $this->app()->getModel('core/config');
 
         $this->headScript()
-            ->appendFile($baseUrl . '/js/jquery.js')
-            ->appendFile($baseUrl . '/js/core.js')
-            ->appendFile($baseUrl . '/js/security.js')
-            ->appendFile($baseUrl . '/js/auth.js')
+            ->appendFile($config->getUrl('/js/jquery.js'))
+            ->appendFile($config->getUrl('/js/core.js'))
+            ->appendFile($config->getUrl('/js/security.js'))
+            ->appendFile($config->getUrl('/js/auth.js'))
         ;
 
         $script =<<<SCRIPT_EOF
