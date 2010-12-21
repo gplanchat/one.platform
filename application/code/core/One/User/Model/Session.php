@@ -42,10 +42,11 @@ class One_User_Model_Session
     implements One_User_Model_Entity_Authentication_StorageInterface
 {
     const STORAGE_KEY = 'auth_storage';
+    const TIME_KEY = 'auth_time';
 
     protected $_userEntity = NULL;
 
-    public function _construct($options)
+    protected function _construct($options)
     {
         $options = parent::_construct($options);
 
@@ -74,6 +75,11 @@ class One_User_Model_Session
         $this->_user = $user;
 
         return $this;
+    }
+
+    public function getLogonTime()
+    {
+        return $this->_getData(self::TIME_KEY);
     }
 
     /**
@@ -119,6 +125,7 @@ class One_User_Model_Session
     public function write($contents)
     {
         $this->_setData(self::STORAGE_KEY, $contents);
+        $this->_setData(self::TIME_KEY, time());
 
         return $this;
     }
@@ -133,6 +140,7 @@ class One_User_Model_Session
     public function clear()
     {
         $this->_unsetData(self::STORAGE_KEY);
+        $this->_unsetData(self::TIME_KEY);
 
         return $this;
     }

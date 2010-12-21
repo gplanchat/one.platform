@@ -50,10 +50,12 @@
  * @subpackage  One_Admin_Core
  */
 class One_Admin_Core_IndexController
-    extends One_Core_ControllerAbstract
+    extends One_Admin_Core_ControllerAbstract
 {
     public function indexAction()
     {
-        $this->_forward('index', 'dashboard');
+        $this->_redirectIfNotLoggedIn();
+
+        $this->_redirect('core/dashboard');
     }
 }

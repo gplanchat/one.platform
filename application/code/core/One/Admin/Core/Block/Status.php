@@ -41,7 +41,7 @@
  */
 
 /**
- * Administrator session handler
+ * Administration base grid block
  *
  * @access      public
  * @author      gplanchat
@@ -49,18 +49,21 @@
  * @package     One_Admin_Core
  * @subpackage  One_Admin_Core
  */
-class One_Admin_Core_Model_Session
-    extends One_User_Model_Session
+class One_Admin_Core_Block_Status
+    extends One_Core_Block_Html
 {
-    /**
-     * FIXME: PHPDoc
-     */
-    protected function _construct($options)
+    public function getSession()
     {
-        parent::_construct($options);
+        return $this->app()->getSingleton('admin.core/session');
+    }
 
-        $this->_init('admin.core');
+    public function getUser()
+    {
+        return $this->getSession()->getUserEntity();
+    }
 
-        return $this;
+    public function getLogonTime()
+    {
+        return $this->getSession()->getLogonTime();
     }
 }
