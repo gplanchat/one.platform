@@ -7,6 +7,13 @@
       <frontoffice />
     </extra>
   </frontoffice>
+  <setup>
+    <config>websites/setup.xml</config>
+    <env>production</env>
+    <extra>
+      <setup />
+    </extra>
+  </setup>
   <backoffice>
     <config>websites/backoffice.xml</config>
     <env>production</env>

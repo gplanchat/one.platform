@@ -56,13 +56,37 @@
         <active>1</active>
         <route type="core/router.route" path="core" name="core" />
       </One_Core>
+      <One_Core_Setup>
+        <codePool>core</codePool>
+        <active>0</active>
+        <route type="core/router.route" path="setup" name="setup" />
+        <requires>
+          <One_Core />
+        </requires>
+      </One_Core_Setup>
     </modules>
   </default>
+  <setup>
+    <modules>
+      <One_Core>
+        <route />
+      </One_Core>
+      <One_Core_Setup>
+        <active>1</active>
+      </One_Core_Setup>
+    </modules>
+    <system>
+      <default-module>One_Core_Setup</default-module>
+      <layout>
+        <class>setup</class>
+        <design>default</design>
+        <template>default</template>
+      </layout>
+    </system>
+  </setup>
   <backoffice>
     <modules>
       <One_Core>
-        <codePool>core</codePool>
-        <active>1</active>
         <route />
       </One_Core>
       <One_Admin_Core>
