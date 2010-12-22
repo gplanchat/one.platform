@@ -36,4 +36,12 @@
       <form>admin-user-entity</form>
     </reference>
   </user.entity.form>
+  <account.login>
+    <reference name="content">
+      <block type="user/login" name="login"></block>
+    </reference>
+  </account.login>
+  <core.dashboard.index>
+    <placeholder />
+  </core.dashboard.index>
 </layout>

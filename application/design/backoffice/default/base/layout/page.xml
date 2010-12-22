@@ -39,6 +39,7 @@
       </block>
       <block type="core/html" template="page/header.phtml" name="header">
         <block type="core/html.navigation" name="navigation" template="navigation/menu.phtml" />
+        <block type="admin.core/status" name="status" template="page/status.phtml" />
       </block>
       <block type="core/text.concat" name="content" />
       <block type="core/html" name="footer" template="page/footer.phtml" />
