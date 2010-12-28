@@ -41,7 +41,7 @@
  */
 
 /**
- * SCM adapter interface
+ * Subversion SCM adapter
  *
  * @access      public
  * @author      gplanchat
@@ -49,7 +49,10 @@
  * @package     One_Core
  * @subpackage  One_Core_Setup
  */
-interface One_Core_Setup_Model_Scm_AdapterInterface
-    extends One_Core_ObjectInterface
+class One_Core_Setup_Model_Scm_Subversion
+    extends One_Core_Setup_Model_Scm_AdapterAbstract
 {
+    protected $_executable = 'git';
+
+    protected $_extraParams = array('svn');
 }

@@ -1,0 +1,10 @@
+<?php if (!$this->getSession()->isEmpty()): ?>
+<p class="super">
+  <?php //echo $this->translate('Logged in as %s', $this->getUser()->getUsername()) ?>
+  <?php echo sprintf('Logged in as %s', $this->getUser()->getUsername()) ?>
+  <span class="separator">|</span>
+  <?php var_dump($this->getLogonTime()) ?>
+  <span class="separator">|</span>
+  <a class="link-logout" href="<?php echo $this->url(array('action' => 'logout'), 'account')?>"><?php echo $this->translate('Log Out') ?></a>
+</p>
+<?php endif ?>

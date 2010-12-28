@@ -41,42 +41,16 @@
  */
 
 /**
- * Git SCM adapter
+ * Invalid command call exception, thrown when :
+ *  - a command fails
  *
  * @access      public
  * @author      gplanchat
  * @category    Exception
  * @package     One_Core
- * @subpackage  One_Core_Setup
+ * @subpackage  One_Core
  */
-class One_Core_Setup_Model_Scm_Adapter_Subversion
-    extends One_Core_Setup_Model_Scm_AdapterAbstract
+class One_Core_Exception_CommandError
+    extends One_Core_Exception_InvalidMethodCall
 {
-    protected $_localRepository = null;
-
-    protected $_executable = 'svn';
-
-    protected $_cwd = null;
-
-    protected function _construct($options = array())
-    {
-        if (!isset($options['repository']) || $options['repository'] === null) {
-            $this->_localRepository = realpath(getcwd());
-        } else {
-            $this->_localRepository = $options['repository'];
-            unset($options['repository']);
-        }
-        parent::_construct($options);
-    }
-
-    protected function _beforeExecCommand()
-    {
-        $this->_cwd = getcwd();
-        chdir($this->_localRepository);
-    }
-
-    protected function _afterExecCommand()
-    {
-        chdir($this->_cwd);
-    }
 }

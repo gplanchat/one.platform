@@ -56,14 +56,6 @@
         <active>1</active>
         <route type="core/router.route" path="core" name="core" />
       </One_Core>
-      <One_Core_Setup>
-        <codePool>core</codePool>
-        <active>0</active>
-        <route type="core/router.route" path="setup" name="setup" />
-        <requires>
-          <One_Core />
-        </requires>
-      </One_Core_Setup>
     </modules>
   </default>
   <setup>
@@ -72,7 +64,12 @@
         <route />
       </One_Core>
       <One_Core_Setup>
+        <codePool>core</codePool>
         <active>1</active>
+        <route type="core/router.route" path="core" name="core" />
+        <requires>
+          <One_Core />
+        </requires>
       </One_Core_Setup>
     </modules>
     <system>

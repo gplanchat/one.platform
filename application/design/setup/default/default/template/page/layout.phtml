@@ -1,0 +1,7 @@
+<?php echo $this->doctype() ?>
+<html>
+  <head><?php echo $this->renderChild('head')?></head>
+  <body<?php if (count($this->getBodyClasses()) > 0):?> class="<?php echo $this->renderBodyClasses() ?>"<?php endif?>>
+    <?php echo $this->renderChild('body') ?>
+  </body>
+</html>

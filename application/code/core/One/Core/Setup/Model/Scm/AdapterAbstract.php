@@ -50,64 +50,18 @@
  * @subpackage  One_Core_Setup
  */
 class One_Core_Setup_Model_Scm_AdapterAbstract
-    implements One_Core_Setup_Model_Scm_AdapterInterface
+    extends One_Core_Model_Command
 {
-    protected $_executable = null;
-
-    protected $_app = null;
-
-    protected $_module = null;
+    protected $_localRepository = null;
 
     public function __construct($moduleName, Array $options = array(), One_Core_Model_Application $app = null)
     {
-        $this->_app = $app;
-        $this->_module = $moduleName;
-
-        $this->_construct($options);
-    }
-
-    protected function _construct($options)
-    {
-    }
-
-    public function app()
-    {
-        return $this->_app;
-    }
-
-    protected function _beforeExecCommand()
-    {
-    }
-
-    protected function _afterExecCommand()
-    {
-    }
-
-    protected function _execCommand($command)
-    {
-        $this->_beforeExecCommand();
-        exec($command, $output, $return);
-        $this->_afterExecCommand();
-
-        return array(
-            'output' => $output,
-            'return' => $return
-            );
-    }
-
-    public function __call($method, $params)
-    {
-        $command = sprintf('"%s" %s', escapeshellcmd($this->_executable), escapeshellarg($method));
-
-        foreach ($params as $param) {
-            $command .= ' ' . escapeshellarg($param);
+        if (!isset($options['repository']) || $options['repository'] === null) {
+            $this->_localRepository = realpath(getcwd());
+        } else {
+            $this->_localRepository = $options['repository'];
+            unset($options['repository']);
         }
-
-        $result = $this->_execCommand($command);
-
-        if ($result['return'] === 0) {
-            return true;
-        }
-        $this->app()->throwException('core.setup/scm', $result['output']);
+        parent::_construct($options);
     }
 }

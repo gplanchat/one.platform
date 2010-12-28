@@ -1,8 +1,5 @@
 <?php
 
-defined('APPLICATION_PATH') ||
-    define('APPLICATION_PATH', realpath(dirname(__FILE__)));
-
 final class One
 {
     const ENV_PRODUCTION = 'production';

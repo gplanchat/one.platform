@@ -42,16 +42,28 @@
  */
 -->
 <config>
-  <default>
-    <model>
-      <setup>
-        <namespace>One_Core_Setup_Model</namespace>
-      </setup>
-    </model>
-    <block>
-      <setup>
-        <namespace>One_Core_Setup_Block</namespace>
-      </setup>
-    </block>
-  </default>
+  <setup>
+    <system>
+      <routes>
+        <setup>
+          <type value="Zend_Controller_Router_Route" />
+          <route value=":action/*" />
+          <defaults>
+            <module value="One_Core_Setup" />
+            <controller value="index" />
+            <action value="index" />
+          </defaults>
+        </setup>
+        <base>
+          <type value="Zend_Controller_Router_Route_Static" />
+          <route value="" />
+          <defaults>
+            <module value="One_Core_Setup" />
+            <controller value="index" />
+            <action value="index" />
+          </defaults>
+        </base>
+      </routes>
+    </system>
+  </setup>
 </config>

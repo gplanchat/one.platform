@@ -161,6 +161,7 @@ class One_Core_Model_Application
         $request = One::getDefaultRequestObject();
         $this->_frontController->setRequest($request);
 
+        // Configure modules & module route stack
         foreach ($config->modules as $moduleName => $moduleConfig) {
             if (!in_array($moduleName, $this->_activeModules)) {
                 continue;
@@ -196,6 +197,7 @@ class One_Core_Model_Application
             }
         }
 
+        // Configure ZF routes
         if ($config->system->routes instanceof Zend_Config) {
             foreach ($config->system->routes as $routeName => $routeConfig) {
                 if (isset($routeConfig->type)) {
@@ -234,6 +236,13 @@ class One_Core_Model_Application
         $this->_frontController->setParam('noViewRenderer', true);
     }
 
+    /**
+     * TODO: PHPDoc
+     *
+     * @param string $environment
+     * @param array $moreSections
+     * @param array $moreFiles
+     */
     protected function _initConfig($environment, Array $moreSections, Array $moreFiles)
     {
         array_unshift($moreSections, $environment);
@@ -304,12 +313,15 @@ class One_Core_Model_Application
             }
         }
 
-        $this->_validateModulesActivation($modules);
+        $this->_validateModulesActivation();
 
         return $config;
     }
 
-    protected function _validateModulesActivation($modulesConfig)
+    /**
+     * TODO: PHPDoc
+     */
+    protected function _validateModulesActivation()
     {
         $moduleDependencies = $this->_dependencies;
         $sortedModules = array();
@@ -340,7 +352,13 @@ class One_Core_Model_Application
         $this->_activeModules = array_keys($sortedModules);
     }
 
-    protected function _addModule($moduleName, $moduleConfig)
+    /**
+     * TODO: PHPDoc
+     *
+     * @param string $moduleName
+     * @param Zend_Config $moduleConfig
+     */
+    protected function _addModule($moduleName, Zend_Config $moduleConfig)
     {
         if (($dependencies = $moduleConfig->get('requires')) !== null) {
             foreach ($dependencies as $dependency) {
@@ -354,16 +372,25 @@ class One_Core_Model_Application
         }
     }
 
+    /**
+     * TODO: PHPDoc
+     */
     public function getWebsite()
     {
         return $this->_website;
     }
 
+    /**
+     * TODO: PHPDoc
+     */
     public function getWebsiteId()
     {
         return $this->_website->getId();
     }
 
+    /**
+     * TODO: PHPDoc
+     */
     public function setClassInflector($inflector)
     {
         $this->_classInflector = $inflector;

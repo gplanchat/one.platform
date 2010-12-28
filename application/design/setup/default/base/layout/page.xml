@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+  <default>
+    <block name="root" type="core/html.page" template="page/layout.phtml">
+      <block name="head" type="core/html.head" template="page/head.phtml">
+        <title>One.Platform :: Setup Manager</title>
+      </block>
+      <block name="body" type="core/text.concat"></block>
+    </block>
+  </default>
+  <setup.stage-one>
+    <reference name="head">
+      <action method="headTitle">
+        <params>
+          <headTitle>Stage One</headTitle>
+        </params>
+      </action>
+    </reference>
+    <reference name="body">
+      <block name="content" type="core/text.concat">
+        <block name="stage-one" type="core.setup/stage-one" template="stage-one.phtml">
+          <block name="form" type="core/html.form">
+            <form>stage-one</form>
+          </block>
+        </block>
+      </block>
+    </reference>
+  </setup.stage-one>
+  <setup.stage-two>
+    <reference name="body">
+      <block name="scm" type="core.setup/stage-two"></block>
+    </reference>
+  </setup.stage-two>
+  <setup.stage-three>
+    <reference name="body">
+      <block name="scm" type="core.setup/stage-three"></block>
+    </reference>
+  </setup.stage-three>
+  <setup.stage-four>
+    <reference name="body">
+      <block name="scm" type="core.setup/stage-four"></block>
+    </reference>
+  </setup.stage-four>
+</layout>
