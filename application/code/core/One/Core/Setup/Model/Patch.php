@@ -57,27 +57,52 @@ class One_Core_Setup_Model_Patch
     /**
      * TODO: PHPDoc
      */
-    const NEWLINE_UNIX = "#(\n)#";
+    const NEWLINE_UNIX_REGEX = "#(\n)#";
 
     /**
      * TODO: PHPDoc
      */
-    const NEWLINE_WINDOWS = "#(\r\n)#";
+    const NEWLINE_WINDOWS_REGEX = "#(\r\n)#";
 
     /**
      * TODO: PHPDoc
      */
-    const NEWLINE_MAC = "#(\r)#";
+    const NEWLINE_MAC_REGEX = "#(\r)#";
 
     /**
      * TODO: PHPDoc
      */
-    const NEWLINE_COMPAT = "#(\r\n|\r|\n)#";
+    const NEWLINE_COMPAT_REGEX = "#(\r\n|\r|\n)#";
 
     /**
      * TODO: PHPDoc
      */
-    const NEWLINE_DEFAULT = self::NEWLINE_COMPAT;
+    const NEWLINE_DEFAULT_REGEX = self::NEWLINE_COMPAT_REGEX;
+
+    /**
+     * TODO: PHPDoc
+     */
+    const NEWLINE_UNIX = "\n";
+
+    /**
+     * TODO: PHPDoc
+     */
+    const NEWLINE_WINDOWS = "\r\n";
+
+    /**
+     * TODO: PHPDoc
+     */
+    const NEWLINE_MAC = "\r";
+
+    /**
+     * TODO: PHPDoc
+     */
+    const NEWLINE_SYSTEM = PHP_EOL;
+
+    /**
+     * TODO: PHPDoc
+     */
+    const NEWLINE_DEFAULT = self::NEWLINE_UNIX;
 
     const LINE_ADD     = '+';
     const LINE_REMOVE  = '-';
@@ -141,7 +166,7 @@ class One_Core_Setup_Model_Patch
     public function getNewline()
     {
         if (!$this->hasData('newline')) {
-            $this->setData('newline', self::NEWLINE_DEFAULT);
+            $this->setData('newline', self::NEWLINE_DEFAULT_REGEX);
         }
         return $this->getData('newline');
     }
@@ -149,9 +174,57 @@ class One_Core_Setup_Model_Patch
     /**
      * TODO: PHPDoc
      */
-    public function merge($patchFile, $path, $prefix = null, $reverse = false)
+    public function merge($patchFile, $path, $write = true, $newline = self::NEWLINE_DEFAULT, $reverse = false)
     {
         $this->_loadPatch($patchFile);
+
+        foreach ($this->_patchMeta as $fileData) {
+            $this->_loadSource($fileData['filename'], $path);
+            $this->_destinations[$fileData['filename']] = array();
+
+            $fileOutput = isset($this->_sources[$fileData['filename']]) ? $this->_sources[$fileData['filename']] : array();
+//            $blockRejects = array();
+
+            foreach ($fileData['blocks'] as $blockData) {
+                $offset = $blockData['ranges'][0] - 1;
+                $contextOffsets = 0;
+                $lineOffsets = 0;
+
+                foreach ($blockData['datas'] as $lineData) {
+                    if (($lineData['type'] === self::LINE_ADD && !$reverse) || ($lineData['type'] === self::LINE_REMOVE && $reverse)) {
+//                        if (isset($this->_sources[$fileData['filename']]) && $lineData['line'] == $this->_sources[$fileData['filename']][$offset]) {
+//                            $this->_addWarning($fileData['filename'], $blockData['ranges'][2],
+//                                'Block seems to exist already, does your patch have been already applied?');
+//                            $blockRejects[$fileData['filename']][] = $blockData;
+//                            break;
+//                        }
+                        array_splice($fileOutput, $blockData['ranges'][2] + $lineOffsets + $contextOffsets - 1, 0, array($lineData['line']));
+                        $lineOffsets++;
+                    } else if (($lineData['type'] === self::LINE_REMOVE && !$reverse) || ($lineData['type'] === self::LINE_ADD && $reverse)) {
+//                        if (isset($this->_sources[$fileData['filename']]) && $lineData['line'] != $this->_sources[$fileData['filename']][$offset]) {
+//                            $this->_addWarning($fileData['filename'], $blockData['ranges'][2],
+//                                'Unmatched block, skipped.');
+//                            $blockRejects[$fileData['filename']][] = $blockData;
+//                            break;
+//                        }
+                        array_splice($fileOutput, $blockData['ranges'][2] + $lineOffsets + $contextOffsets - 1, 1);
+                    } else if ($lineData['type'] === self::LINE_CONTEXT) {
+//                        if (isset($this->_sources[$fileData['filename']]) && $lineData['line'] != $this->_sources[$fileData['filename']][$offset]) {
+//                            $this->_addWarning($fileData['filename'], $blockData['ranges'][2],
+//                                'Unmatched block, skipped.');
+//                            $blockRejects[$fileData['filename']][] = $blockData;
+//                            break;
+//                        }
+                        $contextOffsets++;
+                    } else if ($lineData['type'] === self::LINE_SYSTEM) {
+                        $lineOffsets++;
+                    }
+                    $offset++;
+                }
+            }
+
+            file_put_contents($path . DS . $fileData['filename'], implode($newline, $fileOutput));
+        }
 
         return $this;
     }
@@ -347,8 +420,6 @@ class One_Core_Setup_Model_Patch
         $this->_beginPatch();
         do {
             $offset = $linesIterator->key();
-            //var_dump($linesIterator->current());
-
             if (substr($linesIterator->current(), 0, 4) === '--- ') {
                 $this->_endBlock($patchData, $offset - 1);
                 $this->_endFile($patchData, $offset - 1);
@@ -477,62 +548,5 @@ class One_Core_Setup_Model_Patch
             );
 
         return $this;
-    }
-
-
-
-    public function __test($patch)
-    {
-        $this->_loadPatch($patch);
-        $root = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))) . DS;
-
-        foreach ($this->_patchMeta as $file) {
-            $this->_loadSource($file['filename'], $root);
-            $this->_destinations[$file['filename']] = array();
-
-            $fileOutput = isset($this->_sources[$file['filename']]) ? $this->_sources[$file['filename']] : array();
-
-            $blockOffsets = 0;
-            $contextOffsets = 0;
-            foreach ($file['blocks'] as $block) {
-                $offset = $block['ranges'][0] - 1;
-
-                foreach ($block['datas'] as $line) {
-                    if ($line['type'] === self::LINE_ADD) {
-                        if (isset($this->_sources[$file['filename']]) && $line['line'] == $this->_sources[$file['filename']][$offset]) {
-                            $this->_addWarning($file['filename'], $block['ranges'][2],
-                                'Block seems to exist already, does your patch have been already applied?');
-                            break;
-                        }
-                        $fullOffset = $blockOffsets + $contextOffsets + ($block['ranges'][0] - 1);
-                        array_splice($fileOutput, $fullOffset, 0, array((string) $line['line']));
-                        $blockOffsets++;
-                    } else if ($line['type'] === self::LINE_REMOVE) {
-                        if (isset($this->_sources[$file['filename']]) && $line['line'] != $this->_sources[$file['filename']][$offset]) {
-                            $this->_addWarning($file['filename'], $block['ranges'][2],
-                                'Unmatched block, skipped.');
-                            break;
-                        }
-                        array_splice($fileOutput, $blockOffsets + $block['ranges'][0], 1);
-                        $blockOffsets--;
-                        $offset++;
-                    } else if ($line['type'] === self::LINE_CONTEXT) {
-                        if (isset($this->_sources[$file['filename']]) && $line['line'] != $this->_sources[$file['filename']][$offset]) {
-                            $this->_addWarning($file['filename'], $block['ranges'][2],
-                                'Unmatched block, skipped.');
-                            //break;
-                        }
-                        $contextOffsets++;
-                        $offset++;
-                    } else if ($line['type'] === self::LINE_SYSTEM) {
-                        array_splice($fileOutput, $blockOffsets + $block['ranges'][0], 0, array(''));
-                        $blockOffsets++;
-                    }
-                }
-            }
-            //$this->_writeSource($file['filename'], $root, $fileOutput);
-            //var_dump($fileOutput);
-        }
-        //var_dump($this->getMessages());
     }
 }

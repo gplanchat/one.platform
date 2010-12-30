@@ -54,7 +54,6 @@
 class One_Core_Setup_IndexController
     extends One_Core_ControllerAbstract
 {
-    private $_git = null;
     private $_session = null;
 
     public function indexAction()
@@ -64,11 +63,45 @@ class One_Core_Setup_IndexController
 
     public function preDispatch()
     {
-        $this->_git = $this->app()->getModel('core/command', array(
-            'command' => 'git'
-            ));
+        $this->_session = $this->app()->getModel('core/session');
+    }
 
-        $this->_session = $this->app()->gteModel('core/session');
+    protected function _git()
+    {
+        static $git = null;
+        if ($git === null) {
+            $git = $this->app()->getModel('core/command', array(
+                'command' => 'git'
+                ));
+        }
+        return $git;
+    }
+
+    protected function _getBranches($repository)
+    {
+        $options = array('HEAD');
+        $list = $this->_git()->{'ls-remote'}($repository);
+
+        $tags = array();
+        $branches = array();
+        foreach (explode("\n", $list) as $item) {
+            if (!preg_match('#^([0-9A-F]{32,64})\s(?:refs/(?:(head|tag)s)/([^\s\^]+)|(HEAD)]*)$#i', $item, $matches)) {
+                continue;
+            }
+            if ($matches[2] == 'tag') {
+                $tags[$matches[3]] = $matches[3];
+            } else if ($matches[2] == 'head') {
+                $branches[$matches[3]] = $matches[3];
+            }
+        }
+        if (!empty($branches)) {
+            $options['Branches'] = $branches;
+        }
+        if (!empty($tags)) {
+            $options['Tags'] = $tags;
+        }
+
+        return $options;
     }
 
     public function stageOneAction()
@@ -99,40 +132,16 @@ class One_Core_Setup_IndexController
 
         $this->_session->setRepositoryUrl($repository);
 
+        try {
+            $data = $this->_getBranches($repository);
+        } catch (One_Core_Exception_CommandError $e) {
+            $data = array();
+        }
+
         $this->getResponse()
-            ->setBody(Zend_Json::encode($this->_getBranches($repository)))
+            ->setBody(Zend_Json::encode($data))
             ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
         ;
-    }
-
-    protected function _getBranches($repository)
-    {
-        $options = array('HEAD');
-        try {
-            $list = $this->_git->{'ls-remote'}($repository);
-
-            $tags = array();
-            $branches = array();
-            foreach (explode("\n", $list) as $item) {
-                if (!preg_match('#^([0-9A-F]{32,64})\s(?:refs/(?:(head|tag)s)/([^\s\^]+)|(HEAD)]*)$#i', $item, $matches)) {
-                    continue;
-                }
-                if ($matches[2] == 'tag') {
-                    $tags[$matches[3]] = $matches[3];
-                } else if ($matches[2] == 'head') {
-                    $branches[$matches[3]] = $matches[3];
-                }
-            }
-            if (!empty($branches)) {
-                $options['Branches'] = $branches;
-            }
-            if (!empty($tags)) {
-                $options['Tags'] = $tags;
-            }
-        } catch (One_Core_Exception_CommandError $e) {
-            var_dump($e);
-        }
-        return $options;
     }
 
     public function stageOnePostAction()
@@ -143,25 +152,27 @@ class One_Core_Setup_IndexController
             if (realpath(dirname($datas['destination'])) === false) {
                 $this->app()->throwException('core/invalid-method-call', 'Destination path does not exist.');
             } else if (realpath($datas['destination']) === false) {
-                $this->_git->clone($datas['repository'], $datas['destination']);
+                $this->_git()->clone($datas['repository'], $datas['destination']);
 
-                $this->_git
+                $this->_git()
                     ->setWorkingDirectory($datas['destination'])
                     ->checkout($datas['branch'])
                 ;
             } else {
-                $this->_git
+                $this->_git()
                     ->setWorkingDirectory($datas['destination'])
                     ->checkout($datas['branch'])
                 ;
 
-                $this->_git->pull($datas['repository']);
+                $this->_git()->pull($datas['repository']);
             }
 
             $this->_session->setRepositoryUrl($datas['repository']);
         } catch (One_Core_Exception_CommandError $e) {
-            var_dump($e);
+            $this->_session->addError($e->getMessage());
+            $this->_redirectError('stage-one');
         }
+        $this->_session->setStageOnePassed(true);
 
         $url = $this->app()->getRouter()->assemble(array(
             'action' => 'stage-two'
@@ -171,13 +182,72 @@ class One_Core_Setup_IndexController
 
     public function stageTwoAction()
     {
+        if ($this->_session->getStageOnePassed() !== true) {
+            $this->_redirectError('stage-one');
+        }
+
         $this->loadLayout('setup.stage-two');
 
         $this->renderLayout();
     }
 
+    protected function _getDatabaseVersion($engine, $connectionConfig)
+    {
+        $connection = $this->app()
+            ->getResource($engine, 'dal.database', $connectionConfig, $this->app())
+        ;
+
+        return $connection->query('SELECT @@VERSION')->fetchColumn(0);
+    }
+
+    public function stageTwoRdbmsTestAjaxAction()
+    {
+        $connectionConfig = $this->_getParam('stagetwordbms');
+        $engine = $connectionConfig['engine'];
+        unset($connectionConfig['engine']);
+
+        try {
+            $return = array(
+                'status' => true,
+                'version' => $this->_getDatabaseVersion($engine, $connectionConfig)
+                );
+        } catch (One_Core_Exception $e) {
+            $return = array(
+                'status' => true,
+                'error' => $e->getMessage()
+                );
+        }
+
+        $this->getResponse()
+            ->setBody(Zend_Json::encode($return))
+            ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
+        ;
+    }
+
     public function stageTwoPostAction()
     {
+        if ($this->_session->getStageOnePassed() !== true) {
+            $this->_redirectError('stage-one');
+        }
+        $connectionConfig = $this->_getParam('stagetwordbms');
+        $engine = $connectionConfig['engine'];
+        unset($connectionConfig['engine']);
+        $prefixConfig = $this->_getParam('stagetwodatabase');
+        $prefixConfig = isset($prefixConfig['prefix']) ? $prefixConfig['prefix'] : 'platform_';
+
+        try {
+            $this->_getDatabaseVersion($engine, $connectionConfig);
+        } catch (One_Core_Exception $e) {
+            $this->_session->addError($e->getMessage());
+            $this->_redirectError('stage-two');
+        }
+
+        $this->_session->setDatabaseEngine($engine);
+        $this->_session->setDatabaseConfig($connectionConfig);
+        $this->_session->setDatabaseTablePrefix($prefixConfig);
+
+        $this->_session->setStagetwoPassed(true);
+
         $url = $this->app()->getRouter()->assemble(array(
             'action' => 'stage-three'
             ), 'setup');
@@ -213,5 +283,20 @@ class One_Core_Setup_IndexController
             'controller' => 'index',
             'action'     => 'index'
             ));
+    }
+
+    public function applyPatchAction()
+    {
+        $this->loadLayout('setup.apply-patch');
+
+        $this->renderLayout();
+    }
+
+    public function applyPatchPostAction()
+    {
+        $url = $this->app()->getRouter()->assemble(array(
+            'action' => 'apply-patch'
+            ), 'setup');
+        $this->_redirect($url);
     }
 }

@@ -27,8 +27,19 @@
     </reference>
   </setup.stage-one>
   <setup.stage-two>
+    <reference name="head">
+      <action method="headTitle">
+        <params>
+          <headTitle>Stage Two</headTitle>
+        </params>
+      </action>
+    </reference>
     <reference name="body">
-      <block name="scm" type="core.setup/stage-two"></block>
+      <block name="scm" type="core.setup/stage-two" template="stage-two.phtml">
+          <block name="form" type="core/html.form">
+            <form>stage-two</form>
+          </block>
+      </block>
     </reference>
   </setup.stage-two>
   <setup.stage-three>

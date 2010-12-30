@@ -74,10 +74,40 @@
             <name>stage-one</name>
           </params>
         </stage-one>
+        <stage-two>
+          <actions>
+            <submit>
+              <name>setup</name>
+              <params>
+                <action>stage-two-post</action>
+              </params>
+            </submit>
+            <success>
+              <name>setup</name>
+              <params>
+                <action>stage-three</action>
+              </params>
+            </success>
+            <error>
+              <name>setup</name>
+              <params>
+                <action>stage-two</action>
+              </params>
+            </error>
+          </actions>
+          <fieldsets>
+            <stage-two-rdbms />
+            <stage-two-database />
+          </fieldsets>
+          <params>
+            <name>stage-two</name>
+          </params>
+        </stage-two>
       </forms>
       <fieldsets>
         <stage-one-repository>
           <name>repository</name>
+          <legend>Select your source repository</legend>
           <elements>
             <repository>
               <type>select</type>
@@ -85,13 +115,12 @@
               <options>
                 <value>git://github.com/maeno/one.platform.git</value>
                 <label>Repository:</label>
-                <order>2</order>
+                <order>1</order>
                 <required>1</required>
                 <allowEmpty>0</allowEmpty>
                 <description>Enter your base repository URL</description>
                 <ignore>0</ignore>
                 <attribs>
-                  <readonly>readonly</readonly>
                   <id>repository_url</id>
                   <class>repository url input required</class>
                 </attribs>
@@ -120,7 +149,7 @@
               <options>
                 <value></value>
                 <label>Repository Branch:</label>
-                <order>3</order>
+                <order>2</order>
                 <required>1</required>
                 <allowEmpty>0</allowEmpty>
                 <description>Enter your base repository branch</description>
@@ -144,7 +173,7 @@
               <options>
                 <value>/opt/one-platform</value>
                 <label>Destination folder:</label>
-                <order>4</order>
+                <order>3</order>
                 <required>1</required>
                 <allowEmpty>0</allowEmpty>
                 <description>Enter the destination folder where the files should be installed</description>
@@ -164,6 +193,186 @@
             </destination>
           </elements>
         </stage-one-repository>
+        <stage-two-rdbms>
+          <name>rdbms</name>
+          <legend>Configure the Database server access</legend>
+          <elements>
+            <engine>
+              <type>select</type>
+              <name>engine</name>
+              <options>
+                <value>localhost</value>
+                <label>R-DBMS Driver:</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>0</allowEmpty>
+                <description>Enter your base repository URL</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>rdbms_engine</id>
+                  <class>rdbms engine input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+                <multiOptions>
+                  <mysqli>
+                    <key>core/connection.adapter.mysqli</key>
+                    <value>MySQLi Driver</value>
+                  </mysqli>
+                  <pdo-mysql>
+                    <key>core/connection.adapter.pdo.mysql</key>
+                    <value>PDO MySQL Driver</value>
+                  </pdo-mysql>
+                </multiOptions>
+              </options>
+            </engine>
+            <host>
+              <type>text</type>
+              <name>host</name>
+              <options>
+                <value>localhost</value>
+                <label>SQL Host:</label>
+                <order>2</order>
+                <required>1</required>
+                <allowEmpty>0</allowEmpty>
+                <description>Enter your SQL server host name</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <readonly>readonly</readonly>
+                  <id>rdbms_host</id>
+                  <class>rdbms host input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+              </options>
+            </host>
+            <username>
+              <type>text</type>
+              <name>username</name>
+              <options>
+                <value>root</value>
+                <label>Database user account:</label>
+                <order>3</order>
+                <required>1</required>
+                <allowEmpty>0</allowEmpty>
+                <description>Enter the database user name</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>rdbms_username</id>
+                  <class>rdbms username input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+              </options>
+            </username>
+            <password>
+              <type>text</type>
+              <name>password</name>
+              <options>
+                <value></value>
+                <label>Database user password:</label>
+                <order>4</order>
+                <required>1</required>
+                <allowEmpty>0</allowEmpty>
+                <description>Enter the database user password</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>rdbms_password</id>
+                  <class>rdbms password input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+              </options>
+            </password>
+            <dbname>
+              <type>text</type>
+              <name>dbname</name>
+              <options>
+                <value>db_one</value>
+                <label>Database name:</label>
+                <order>5</order>
+                <required>1</required>
+                <allowEmpty>0</allowEmpty>
+                <description>Enter your database name</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>database_dbname</id>
+                  <class>database dbname input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+              </options>
+            </dbname>
+            <test>
+              <type>button</type>
+              <options>
+                <label>Test connection</label>
+                <order>6</order>
+                <ignore>1</ignore>
+                <attribs>
+                  <id>rdbms_test</id>
+                  <class>rdbms test input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+              </options>
+            </test>
+          </elements>
+        </stage-two-rdbms>
+        <stage-two-database>
+          <name>database</name>
+          <legend>Configure your database structure</legend>
+          <elements>
+            <prefix>
+              <type>text</type>
+              <name>prefix</name>
+              <options>
+                <value>platform_</value>
+                <label>Table prefix:</label>
+                <order>2</order>
+                <required>1</required>
+                <allowEmpty>0</allowEmpty>
+                <description>Enter a short identifier which will prefix all your tables</description>
+                <ignore>0</ignore>
+                <attribs>
+                  <id>database_prefix</id>
+                  <class>database prefix input required</class>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                    <breakChainOnFailure>1</breakChainOnFailure>
+                  </required>
+                </validators>
+              </options>
+            </prefix>
+          </elements>
+        </stage-two-database>
       </fieldsets>
     </general>
   </default>
