@@ -109,6 +109,10 @@ class One_Core_Setup_Model_Patch
     const LINE_SYSTEM  = "\\";
     const LINE_CONTEXT = ' ';
 
+    const ERROR  = 3;
+    const WARN   = 4;
+    const NOTICE = 5;
+
     /**
      * TODO: PHPDoc
      */
@@ -316,7 +320,7 @@ class One_Core_Setup_Model_Patch
         array_shift($args);
         array_shift($args);
 
-        return $this->_addMessage($file, $line, vsprintf($message, $args), Zend_Log::ERROR);
+        return $this->_addMessage($file, $line, vsprintf($message, $args), self::ERROR);
     }
 
     /**
@@ -335,7 +339,7 @@ class One_Core_Setup_Model_Patch
         array_shift($args);
         array_shift($args);
 
-        return $this->_addMessage($file, $line, vsprintf($message, $args), Zend_Log::WARN);
+        return $this->_addMessage($file, $line, vsprintf($message, $args), self::WARN);
     }
 
     /**
@@ -354,7 +358,7 @@ class One_Core_Setup_Model_Patch
         array_shift($args);
         array_shift($args);
 
-        return $this->_addMessage($file, $line, vsprintf($message, $args), Zend_Log::NOTICE);
+        return $this->_addMessage($file, $line, vsprintf($message, $args), self::NOTICE);
     }
 
     /**
