@@ -87,7 +87,7 @@ interface One_Core_Dao_ResourceInterface
      * @param unknown_type $attributes
      * @return One_Core_Dao_ResourceInterface
      */
-    public function loadCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes);
+    public function loadCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper, Array $ids);
 
     /**
      * FIXME PHPDoc

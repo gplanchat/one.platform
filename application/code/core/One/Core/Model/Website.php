@@ -58,4 +58,44 @@ class One_Core_Model_Website
 
         return parent::_construct($options);
     }
+
+    public function isChildOf($websiteId)
+    {
+        if ($websiteId instanceof One_Core_Bo_EntityInterface) {
+            $website = $websiteId;
+            $websiteId = $website->getId();
+        }
+
+        $website = $this->app()
+            ->getModel('core/website.collection')
+            ->addFilters(array(
+                    One_Core_Bo_CollectionInterface::FILTER_LOWER_THAN   => array('__s_outline_left'  => $this->getData('__s_outline_left')),
+                    One_Core_Bo_CollectionInterface::FILTER_GREATER_THAN => array('__s_outline_right' => $this->getData('__s_outline_right')),
+                    'entity_id' => $websiteId
+                    )
+                )
+        ;
+
+        return $website->count() > 0;
+    }
+
+    public function isChild($websiteId)
+    {
+        if ($websiteId instanceof One_Core_Bo_EntityInterface) {
+            $website = $websiteId;
+            $websiteId = $website->getId();
+        }
+
+        $website = $this->app()
+            ->getModel('core/website.collection')
+            ->addFilters(array(
+                    One_Core_Bo_CollectionInterface::FILTER_GREATER_THAN => array('__s_outline_left'  => $this->getData('__s_outline_left')),
+                    One_Core_Bo_CollectionInterface::FILTER_LOWER_THAN   => array('__s_outline_right' => $this->getData('__s_outline_right')),
+                    'entity_id' => $websiteId
+                    )
+                )
+        ;
+
+        return $website->count() > 0;
+    }
 }

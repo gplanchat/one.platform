@@ -55,6 +55,19 @@
  */
 interface One_Core_Bo_CollectionInterface
 {
+    const FILTER_NOT      = 'NOT';
+    const FILTER_AND      = Zend_Db_Select::SQL_AND;
+    const FILTER_OR       = Zend_Db_Select::SQL_OR;
+    const FILTER_IN       = 'IN';
+    const FILTER_NOT_IN   = 'NIN';
+    const FILTER_LIKE     = 'LIKE';
+    const FILTER_NOT_LIKE = 'NLIKE';
+
+    const FILTER_GREATER_THAN          = 'GTHAN';
+    const FILTER_GREATER_THAN_OR_EQUAL = 'GTHANEQ';
+    const FILTER_LOWER_THAN            = 'LTHAN';
+    const FILTER_LOWER_THAN_OR_EQUAL   = 'LTHANEQ';
+
     /**
      * Get the entity identifier
      *
@@ -118,7 +131,7 @@ interface One_Core_Bo_CollectionInterface
      *
      * @return bool
      */
-    public function isLoaded($flag = NULL);
+    public function isLoaded($flag = null);
 
     /**
      * Get the saving status flag
@@ -127,7 +140,7 @@ interface One_Core_Bo_CollectionInterface
      *
      * @return bool
      */
-    public function isSaved($flag = NULL);
+    public function isSaved($flag = null);
 
     /**
      * Get the deletion status flag
@@ -136,7 +149,7 @@ interface One_Core_Bo_CollectionInterface
      *
      * @return bool
      */
-    public function isDeleted($flag = NULL);
+    public function isDeleted($flag = null);
 
     /**
      * Create a new collection item instance and add it to the collection
@@ -186,5 +199,39 @@ interface One_Core_Bo_CollectionInterface
      * @param array $field
      * @return array
      */
-    public function toHash($field);
+    public function toHash($field = null);
+
+    /**
+     * Adds an attribute filter
+     *
+     * @param string $attribute
+     * @param mixed $params
+     */
+    public function addAttributeFilter($attribute, $params);
+
+    /**
+     * Adds multiple filters
+     *
+     * @see Zend_Db_Select
+     * @uses Zend_Db_Select
+     *
+     * @param array $filter
+     */
+    public function addFilters(Array $filter);
+
+    /**
+     * Adds an expression filter. Beware of SQL expressions compatibility.
+     *
+     * @see Zend_Db_Expr
+     * @uses Zend_Db_Expr
+     *
+     * @param Zend_Db_Expr $expression
+     */
+    public function addExpressionFilter(Zend_Db_Expr $expression);
+
+    /**
+     * Get all the filters
+     *
+     */
+    public function getFilters();
 }

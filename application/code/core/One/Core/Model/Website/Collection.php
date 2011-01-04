@@ -58,4 +58,25 @@ class One_Core_Model_Website_Collection
 
         return parent::_construct($options);
     }
+
+    public function setRoot($entityId)
+    {
+        $this
+            ->addFilters(array(
+                'parent_website_id' => $entityId,
+                self::FILTER_NOT => array(
+                    'entity_id' => $entityId
+                    )
+                )
+            );
+
+        return $this;
+    }
+
+    public function loadRoots()
+    {
+        $this->addExpressionFilter(new Zend_Db_Expr('parent_website_id=entity_id'));
+
+        return $this->load();
+    }
 }

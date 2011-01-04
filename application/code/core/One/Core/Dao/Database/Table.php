@@ -324,16 +324,23 @@ abstract class One_Core_Dao_Database_Table
      * @param unknown_type $attributes
      * @return One_Core_Dao_Database_Table
      */
-    public function loadCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes)
+    public function loadCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper, Array $ids)
     {
         $select = $this->getSelect();
 
-        if (!empty($attributes)) {
+        if (!empty($ids)) {
             $selectString = "{$this->getReadConnection()->quoteIdentifier($this->getIdFieldName())} IN(?)";
-            $select->where($selectString, array_values($attributes));
+            $select->where($selectString, array_values($ids));
         }
 
-        $select->limit($this->_limit, $this->_offset);
+        $filters = $collection->getFilters();
+        if (!empty($filters)) {
+            $this->_buildFilter($select, $filters);
+        }
+
+        if ($this->_limit !== null) {
+            $select->limit($this->_limit, $this->_offset);
+        }
         $statement = $select->query(Zend_Db::FETCH_ASSOC);
 
         foreach ($statement->fetchAll() as $row) {
@@ -342,6 +349,70 @@ abstract class One_Core_Dao_Database_Table
         }
 
         return $this;
+    }
+
+    private function _buildFilter(Zend_Db_Select $select, $filters)
+    {
+        foreach ($filters as $attribute => $expression) {
+
+            if ($attribute === One_Core_Bo_CollectionInterface::FILTER_OR) {
+                $subSelect = $this->getReadConnection()->select();
+                $this->_buildFilter($subSelect, $expression);
+                $select->orWhere($subSelect);
+            } else if ($attribute === One_Core_Bo_CollectionInterface::FILTER_AND) {
+                $subSelect = $this->getReadConnection()->select();
+                $this->_buildFilter($subSelect, $expression);
+                $select->where($subSelect);
+            } else {
+                $keyword = $attribute;
+                if (is_array($expression)) {
+                    $attribute = key($expression);
+                    $expression = current($expression);
+
+                    switch ($keyword) {
+                    case One_Core_Bo_CollectionInterface::FILTER_NOT_LIKE:
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} LIKE ?", $expression);
+                        break;
+
+                    case One_Core_Bo_CollectionInterface::FILTER_LIKE:
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} LIKE ?", $expression);
+                        break;
+
+                    case One_Core_Bo_CollectionInterface::FILTER_IN:
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} IN(?)", $expression);
+                        break;
+
+                    case One_Core_Bo_CollectionInterface::FILTER_NOT_IN:
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} NOT IN(?)", $expression);
+                        break;
+
+                    case One_Core_Bo_CollectionInterface::FILTER_GREATER_THAN:
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} > ?", $expression);
+                        break;
+
+                    case One_Core_Bo_CollectionInterface::FILTER_GREATER_THAN_OR_EQUAL:
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} >= ?", $expression);
+                        break;
+
+                    case One_Core_Bo_CollectionInterface::FILTER_LOWER_THAN:
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} < ?", $expression);
+                        break;
+
+                    case One_Core_Bo_CollectionInterface::FILTER_LOWER_THAN_OR_EQUAL:
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} <= ?", $expression);
+                        break;
+
+                    case One_Core_Bo_CollectionInterface::FILTER_NOT:
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} != ?", $expression);
+                        break;
+                    }
+                } else if ($expression instanceof Zend_Db_Expr) {
+                    $select->where($expression);
+                } else {
+                    $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} = ?", $expression);
+                }
+            }
+        }
     }
 
     /**
@@ -354,8 +425,13 @@ abstract class One_Core_Dao_Database_Table
      */
     public function countItems(One_Core_Bo_CollectionInterface $collection)
     {
-        $select = clone $this->getSelect();
+        $select = $this->getSelect();
         $adapter = $select->getAdapter();
+
+        $filters = $collection->getFilters();
+        if (!empty($filters)) {
+            $this->_buildFilter($select, $filters);
+        }
 
         $select->reset(Zend_Db_Select::COLUMNS);
         $select->reset(Zend_Db_Select::LIMIT_COUNT);

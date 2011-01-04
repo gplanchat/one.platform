@@ -57,4 +57,86 @@ class One_Admin_Core_DashboardController
         $this->loadLayout();
         $this->renderLayout();
     }
+
+    public function websiteChildListAjaxAction()
+    {
+        try {
+            $currentWebsiteId = $this->app()->getWebsiteId();
+            $websiteId = $this->_getParam('website', $currentWebsiteId);
+            $website = $this->app()
+                ->getModel('core/website')
+                ->load($websiteId)
+            ;
+
+            if ($website->getId() !== $currentWebsiteId && !$website->isChildOf($currentWebsiteId)) {
+                $this->getResponse()
+//                    ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
+                    ->setBody(Zend_Json::encode(array()))
+                ;
+            }
+
+            $collection = $this->app()
+                ->getModel('core/website.collection')
+                ->setRoot($currentWebsiteId)
+                ->load()
+            ;
+
+            $this->getResponse()
+                ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
+                ->setBody(Zend_Json::encode($collection->toHash('label')))
+            ;
+        } catch (Zend_Db_Exception $e) {
+            $this->getResponse()
+                ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
+                ->setBody(Zend_Json::encode('An error occured: ' . $e->getMessage()))
+            ;
+        }
+    }
+
+    public function groupListAjaxAction()
+    {
+        $webiste = $this->app()
+            ->getModel('core/website')
+            ->load($this->_getParam('website'));
+
+        if (!$website->isChildOf($this->app()->getWebsiteId())) {
+            $this->getResponse()
+                ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
+                ->setBody(Zend_Json::encode(array()))
+            ;
+        }
+
+        $collection = $this->app()
+            ->getModel('user/group.collection')
+            ->addAttributeFilter('website_id', $website->getId());
+
+        $this->getResponse()
+            ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
+            ->setBody(Zend_Json::encode($collection->load()->toArray()))
+        ;
+    }
+
+    public function userListAjaxAction()
+    {
+        $collection = $this->app()
+            ->getModel('cms/page.collection')
+            ->setPage($this->_getParam('p'), $this->_getParam('n'));
+
+        $this->getResponse()
+            ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
+            ->setBody(Zend_Json::encode($collection->load()->toArray()))
+        ;
+    }
+
+    public function accessControlListAjaxAction()
+    {
+        $collection = $this->app()
+            ->getModel('cms/page.collection')
+            ->setPage($this->_getParam('p'), $this->_getParam('n'));
+
+        $this->getResponse()
+            ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
+            ->setBody(Zend_Json::encode($collection->load()->toArray()))
+        ;
+    }
 }

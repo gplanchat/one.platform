@@ -42,6 +42,8 @@
     </reference>
   </account.login>
   <core.dashboard.index>
-    <placeholder />
+    <reference name="content">
+      <block name="websites" type="admin.core/dashboard.websites" template="dashboard/websites.phtml" />
+    </reference>
   </core.dashboard.index>
 </layout>

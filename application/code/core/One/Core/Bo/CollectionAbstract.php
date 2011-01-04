@@ -58,6 +58,9 @@ abstract class One_Core_Bo_CollectionAbstract
     extends One_Core_Collection
     implements One_Core_Bo_CollectionInterface
 {
+    const MIN_PAGE_SIZE = 1;
+    const MAX_PAGE_SIZE = null;
+
     /**
      * Default primary key field name.
      *
@@ -146,7 +149,7 @@ abstract class One_Core_Bo_CollectionAbstract
      *
      * @var int
      */
-    protected $_page = 1;
+    protected $_page = null;
 
     /**
      * FIXME: PHPDoc
@@ -155,7 +158,7 @@ abstract class One_Core_Bo_CollectionAbstract
      *
      * @var int
      */
-    protected $_pageSize = 20;
+    protected $_pageSize = null;
 
     /**
      * FIXME: PHPDoc
@@ -165,6 +168,15 @@ abstract class One_Core_Bo_CollectionAbstract
      * @var int
      */
     protected $_itemsCount = null;
+
+    /**
+     * FIXME: PHPDoc
+     *
+     * @since 0.1.5
+     *
+     * @var array
+     */
+    protected $_filters = array();
 
     /**
      * FIXME: PHPDoc
@@ -351,7 +363,7 @@ abstract class One_Core_Bo_CollectionAbstract
         $this->getDao()
             ->setLimit($this->_pageSize)
             ->setOffset($this->_pageSize * ($this->_page - 1))
-            ->loadCollection($this, $this->getDataMapper(), $identifiers);
+            ->loadCollection($this, $this->getDataMapper(), $identifiers, $this->getFilters());
 
         return $this;
     }
@@ -619,7 +631,9 @@ abstract class One_Core_Bo_CollectionAbstract
      */
     public function setPage($page, $pageSize = null)
     {
-        $this->_pageSize = min(max(intval($pageSize), 5), 200);
+        if (self::MAX_PAGE_SIZE !== null) {
+            $this->_pageSize = min(max(intval($pageSize), self::MIN_PAGE_SIZE), self::MAX_PAGE_SIZE);
+        }
         $this->_page = min(max(1, intval($page)), ceil($this->count() / $this->_pageSize));
 
         return $this;
@@ -681,9 +695,13 @@ abstract class One_Core_Bo_CollectionAbstract
         return $this;
     }
 
-    public function toHash($field)
+    public function toHash($field = null)
     {
-        if (!current($this->_items)->hasData($field)) {
+        if ($field === null) {
+            $field = $this->getIdFieldName();
+        }
+
+        if (empty($this->_items) || !current($this->_items)->hasData($field)) {
             return array();
         }
 
@@ -696,5 +714,68 @@ abstract class One_Core_Bo_CollectionAbstract
             $hash[$item->getId()] = $item->getData($field);
         }
         return $hash;
+    }
+
+    /**
+     * Adds an attribute filter
+     *
+     * @param string $attribute
+     * @param mixed $params
+     */
+    public function addAttributeFilter($attribute, $params)
+    {
+//        if (!isset($this->_filters[(string) $attribute])) {
+//            $this->_filters[(string) $attribute] = array();
+//        }
+//        $this->_filters[(string) $attribute][] = $params;
+        $this->_filters[(string) $attribute] = $params;
+
+        return $this;
+    }
+
+    /**
+     * Adds an SQL filter from a specified Zend_Db_Select
+     *
+     * @param string $attribute
+     * @param mixed $params
+     */
+    public function addFilters(Array $filters)
+    {
+        foreach ($filters as $filterName => $filterSpec) {
+            if ($filterSpec instanceof Zend_Db_Expr) {
+                $this->addExpressionFilter($filterName, $filterSpec);
+            } else {
+                $this->addAttributeFilter($filterName, $filterSpec);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds an expression filter. Beware of SQL expressions compatibility.
+     *
+     * @see Zend_Db_Expr
+     * @uses Zend_Db_Expr
+     *
+     * @param string $attribute
+     * @param mixed $params
+     */
+    public function addExpressionFilter(Zend_Db_Expr $expression)
+    {
+        $this->_filters[] = $expression;
+
+        return $this;
+    }
+
+    /**
+     * Get all the filters
+     *
+     * @param string $attribute
+     * @param mixed $params
+     */
+    public function getFilters()
+    {
+        return $this->_filters;
     }
 }
