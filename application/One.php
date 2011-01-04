@@ -41,7 +41,7 @@
  */
 defined('APPLICATION_PATH') ||
     ($env = getenv('APPLICATION_PATH')) ? define('APPLICATION_PATH', $env) :
-        define('APPLICATION_PATH', ROOT_PATH . DS. 'application');
+        define('APPLICATION_PATH', dirname(__FILE__));
 
 /**
  * One.Platform Hub class

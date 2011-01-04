@@ -12,10 +12,6 @@ defined('APPLICATION_ENV') ||
     ($env = getenv('APPLICATION_ENV')) ? define('APPLICATION_ENV', $env) :
         define('APPLICATION_ENV', 'production');
 
-defined('APPLICATION_PATH') ||
-    ($env = getenv('APPLICATION_PATH')) ? define('APPLICATION_PATH', $env) :
-        define('APPLICATION_PATH', ROOT_PATH . DS. 'application');
-
 set_include_path(implode(PS, array(
     realpath(ROOT_PATH . DS . 'externals' . DS . 'libraries'),
     realpath(APPLICATION_PATH . DS . 'code' . DS . 'core'),
