@@ -33,6 +33,10 @@ class One_Core_Setup_Model_Updater_ScriptQueue
             return;
         }
 
+        if ($fromVersion === null) {
+            $fromVersion = '0.0.0';
+        }
+
         preg_match(self::PCRE_VERSION_PATTERN, $fromVersion, $matches);
         $fromVersion = array(
             'version' => $matches['version'],

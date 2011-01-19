@@ -109,6 +109,7 @@ class One_Core_Setup_Model_Updater
         $finalVersion = $scriptQueue->getFinalVersion();
         if ($finalVersion !== null) {
             $moduleSetup
+                ->setIdentifier($module)
                 ->setData('version', $finalVersion['version'])
                 ->setData('stage', $finalVersion['stage'] . $finalVersion['level'])
                 ->save()

@@ -322,6 +322,17 @@ class One_Core_Setup_IndexController
         } catch (Exception $e) {
         }
 
+        $this->_session->setStagetwoPassed(true);
+
+        $baseUrl = $this->getFrontController()->getBaseUrl();
+        $this->getResponse()
+            ->setRedirect($baseUrl . '/stage-three', 302);
+    }
+
+    public function stageThreeAction()
+    {
+        $updater = $this->app()->getModel('setup/updater');
+
         $modules = array();
         foreach ($updater->getApplicationModuleCollection('frontoffice') as $module) {
             $modules[$module->getData('identifier')] = array(
@@ -343,20 +354,9 @@ class One_Core_Setup_IndexController
             }
         }
 
-        $this->_session->setInstalledModules($modules);
-
-        $this->_session->setStagetwoPassed(true);
-
-        $baseUrl = $this->getFrontController()->getBaseUrl();
-        $this->getResponse()
-            ->setRedirect($baseUrl . '/stage-three', 302);
-    }
-
-    public function stageThreeAction()
-    {
         $this->loadLayout('setup.stage-three')
             ->getBlock('status')
-            ->setModules($this->_session->getInstalledModules())
+            ->setModules($modules)
         ;
 
         $this->renderLayout();
