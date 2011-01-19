@@ -1,5 +1,7 @@
 <?php
 
+$this->setSetupConnection('cms_setup');
+
 $sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('cms/page')} (
     `entity_id`         INT UNSIGNED        NOT NULL    AUTO_INCREMENT,
@@ -26,6 +28,17 @@ $this
     ->grant('cms/page', 'cms_write', array('SELECT', 'CREATE', 'UPDATE', 'DELETE'))
     ->grant('cms/page', 'cms_setup')
 ;
+
+$sql = <<<SQL_EOF
+ALTER TABLE {$this->getTableName('cms/page')}
+  ADD CONSTRAINT `FK_CMS_PAGE_WEBSITE_ID__CORE_WEBSITE_ENTITY_ID`
+    FOREIGN KEY (`website_id`)
+    REFERENCES {$this->getTableName('core/website')}(`entity_id`)
+      ON DELETE RESTRICT
+      ON UPDATE CASCADE;
+SQL_EOF;
+
+$this->query($sql);
 
 $sql = <<<SQL_EOF
 INSERT INTO {$this->getTableName('cms/page')} (

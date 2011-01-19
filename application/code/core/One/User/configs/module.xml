@@ -46,7 +46,8 @@
   <default>
     <modules>
       <One_User>
-        <version>0.1.2</version>
+        <version>0.2.0</version>
+        <stage>alpha3</stage>
       </One_User>
     </modules>
 

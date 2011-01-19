@@ -1,16 +1,19 @@
 <?php
 
-require_once dirname(dirname(__FILE__)) . '/application/One.php';
+defined('ROOT_PATH') ||
+    define('ROOT_PATH', realpath(dirname(dirname(__FILE__))));
 
 defined('DS') || define('DS', DIRECTORY_SEPARATOR);
 defined('PS') || define('PS', PATH_SEPARATOR);
 
-defined('ROOT_PATH') ||
-    define('ROOT_PATH', realpath(dirname(dirname(__FILE__))));
+require_once ROOT_PATH . DS . 'application' . DS . 'One.php';
 
+defined('APPLICATION_PATH') ||
+    define('APPLICATION_PATH', ROOT_PATH . DS . 'application');
+    
 defined('APPLICATION_ENV') ||
     ($env = getenv('APPLICATION_ENV')) ? define('APPLICATION_ENV', $env) :
-        define('APPLICATION_ENV', 'production');
+        define('APPLICATION_ENV', null);
 
 set_include_path(implode(PS, array(
     realpath(ROOT_PATH . DS . 'externals' . DS . 'libraries'),
@@ -24,11 +27,13 @@ Zend_Loader_Autoloader::getInstance()
     ->registerNamespace('One_Core')
 ;
 
+date_default_timezone_set('Europe/Paris');
+
 try {
-    One::app(null, APPLICATION_ENV)->bootstrap()
-        ->run();
-} catch (Exception $e) {
+    One::app('frontoffice', APPLICATION_ENV)
+        ->bootstrap()
+        ->run()
+    ;
+} catch (Zend_Exception $e) {
     echo $e->getMessage();
 }
-
-

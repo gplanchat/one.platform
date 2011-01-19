@@ -233,8 +233,6 @@ abstract class One_Core_Dao_Database_Table
         $entityData = $mapper->save($model);
 
         if (!$model->isLoaded() || $model->getId() === null) {
-            $entityData[$model->getIdFieldName()] = NULL;
-
             $id = $this->getWriteConnection()
                 ->insert($this->getTableName($this->getEntityTable()), $entityData);
 

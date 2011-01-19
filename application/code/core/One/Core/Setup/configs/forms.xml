@@ -98,6 +98,7 @@
           <fieldsets>
             <stage-two-rdbms />
             <stage-two-database />
+            <registration />
           </fieldsets>
           <params>
             <name>stage-two</name>

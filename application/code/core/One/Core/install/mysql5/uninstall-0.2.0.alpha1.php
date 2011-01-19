@@ -1,5 +1,7 @@
 <?php
 
+$this->setSetupConnection('core_setup');
+
 $sql = <<<SQL_EOF
 DROP TABLE {$this->getTableName('core/config')};
 SQL_EOF;

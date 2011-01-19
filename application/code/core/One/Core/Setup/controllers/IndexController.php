@@ -285,6 +285,8 @@ class One_Core_Setup_IndexController
         $this->_session->setDatabaseConfig($connectionConfig);
         $this->_session->setDatabaseTablePrefix($prefixConfig);
 
+        $this->_session->setRegistrationData($this->_getParam('registration'));
+
         $config = simplexml_load_file(APPLICATION_PATH . DS. 'configs' . DS . 'local.xml.sample');
         $connections = $config->default->general->database->connection;
         foreach (array('core_setup', 'core_read', 'core_write') as $connection) {
@@ -318,7 +320,24 @@ class One_Core_Setup_IndexController
         $updater = $this->app()->getModel('setup/updater');
 
         try {
-            $updater->setup('One_Core', $this->_session->getDatabaseEngine());
+            $updater
+                ->setup('One_Core', $this->_session->getDatabaseEngine())
+                ->setup('One_User', $this->_session->getDatabaseEngine())
+            ;
+
+            $group = $this->app()
+                ->getModel('user/group')
+                ->setWebsiteId(1)
+                ->setLabel('Super Administrators')
+                ->save()
+            ;
+
+            $registrationData = $this->_session->getRegistrationData();
+            $this->app()
+                ->getModel('user/entity')
+                ->setPrimaryGroupId($group->getId())
+                ->register($registrationData, 1)
+            ;
         } catch (Exception $e) {
         }
 

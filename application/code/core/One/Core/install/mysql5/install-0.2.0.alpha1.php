@@ -1,5 +1,7 @@
 <?php
 
+$this->setSetupConnection('core_setup');
+
 $sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('core/config')} (
     `entity_id`         TINYINT UNSIGNED    NOT NULL    AUTO_INCREMENT,
@@ -59,6 +61,17 @@ $this
     ->grant('core/website', 'core_write', array('SELECT', 'CREATE', 'UPDATE', 'DELETE'))
     ->grant('core/website', 'core_setup')
 ;
+
+$sql = <<<SQL_EOF
+ALTER TABLE {$this->getTableName('core/website')}
+  ADD CONSTRAINT `FK_CORE_WEBSITE_PARENT_WEBSITE_ID__CORE_WEBSITE_ENTITY_ID`
+    FOREIGN KEY (`parent_website_id`)
+    REFERENCES {$this->getTableName('core/website')} (`entity_id`)
+      ON DELETE RESTRICT
+      ON UPDATE CASCADE;
+SQL_EOF;
+
+$this->query($sql);
 
 $sql = <<<SQL_EOF
 INSERT INTO {$this->getTableName('core/website')} (`entity_id`, `identity_string`, `parent_website_id`, `label`) VALUES

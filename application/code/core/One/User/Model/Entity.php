@@ -141,9 +141,43 @@ class One_User_Model_Entity
         return false;
     }
 
-    public function register($userdata)
+    public function register($userData, $websiteId = null)
     {
-        return false;
+        if ($userData['email'] !== $userData['email_confirm']) {
+            return false;
+        }
+        if ($userData['password'] !== $userData['confirmation']) {
+            return false;
+        }
+
+        if ($websiteId === null) {
+            $websiteId = $this->app()->getWebsiteId();
+        }
+
+        $this
+            ->setId(null)
+            ->setUsername($userData['identity'])
+            ->setEmail($userData['email'])
+            ->setWebsiteId($websiteId)
+            ->save()
+        ;
+
+        $stealthAdapter = $this->app()->getModel('user/entity.authentication.adapter.password-stealth');
+
+        $serverSalt = '';
+        for ($i = 0; $i < 32; $i++) {
+            $serverSalt .= chr(mt_rand(0, 255));
+        }
+
+        $adapter = $this->app()
+            ->getModel('user/entity.authentication')
+            ->setId($this->getId())
+            ->setServerSalt($serverSalt, false)
+            ->setServerHash($stealthAdapter->hash($userData['password'], $serverSalt), false)
+            ->save()
+        ;
+
+        return true;
     }
 }
 
