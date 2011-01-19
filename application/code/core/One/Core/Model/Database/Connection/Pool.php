@@ -168,11 +168,17 @@ class One_Core_Model_Database_Connection_Pool
             if (isset($connectionConfig['use'])) {
                 $this->_connectionList[$connectionName] = $this->getConnection($connectionConfig['use']);
             } else {
-                $this->_connectionList[$connectionName] = $this->app()
+                $connection = $this->app()
                     ->getResource($connectionConfig['engine'], 'dal.database', $connectionConfig['params'], $this->app());
 
-                $this->_connectionList[$connectionName]
-                    ->query('SET NAMES "UTF8";');
+                if ($connection === null) {
+                    $this->app()
+                        ->throwException('core/configuration-error', 'No such engine "%s"', $connectionConfig['engine'])
+                    ;
+                }
+                $connection->query('SET NAMES "UTF8";');
+
+                $this->_connectionList[$connectionName] = $connection;
             }
         }
         return $this->_connectionList[$connectionName];

@@ -43,12 +43,6 @@
 -->
 <config>
   <default>
-    <modules>
-      <One_Admin_User>
-        <version>0.1.0</version>
-      </One_Admin_User>
-    </modules>
-
     <model>
       <admin.user>
         <namespace>One_Admin_User_Model</namespace>

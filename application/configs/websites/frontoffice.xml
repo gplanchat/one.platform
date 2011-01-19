@@ -12,6 +12,9 @@
       <One_Cms>
         <active>1</active>
       </One_Cms>
+      <One_OpenId>
+        <active>1</active>
+      </One_OpenId>
     </modules>
   </default>
   <production extends="default" />

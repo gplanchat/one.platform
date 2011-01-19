@@ -5,7 +5,6 @@
       <One_OpenId>
         <codePool>core</codePool>
         <active>0</active>
-        <route type="openid/router.route" />
       </One_OpenId>
       <One_Admin_OpenId>
         <codePool>core</codePool>

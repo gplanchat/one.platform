@@ -48,10 +48,53 @@
         <namespace>One_Core_Setup_Model</namespace>
       </setup>
     </model>
+
+    <resource>
+      <dao>
+        <setup>
+          <namespace>One_Core_Setup_Resource_Dao</namespace>
+        </setup>
+      </dao>
+      <dal>
+        <database>
+          <setup>
+            <connection>
+              <read>core_read</read>
+              <write>core_write</write>
+              <setup>core_setup</setup>
+            </connection>
+          </setup>
+        </database>
+        <entities>
+          <setup>
+            <module>
+              <table>core_module</table>
+            </module>
+          </setup>
+        </entities>
+      </dal>
+    </resource>
+
     <block>
       <setup>
         <namespace>One_Core_Setup_Block</namespace>
       </setup>
     </block>
+
+    <general>
+      <database>
+        <connection>
+          <setup_setup>
+            <use>core_setup</use>
+          </setup_setup>
+          <setup_read>
+            <use>core_read</use>
+          </setup_read>
+          <setup_write>
+            <use>core_write</use>
+          </setup_write>
+        </connection>
+      </database>
+    </general>
   </default>
 </config>

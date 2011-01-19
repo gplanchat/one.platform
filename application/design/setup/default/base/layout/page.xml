@@ -35,7 +35,7 @@
       </action>
     </reference>
     <reference name="body">
-      <block name="scm" type="core.setup/stage-two" template="stage-two.phtml">
+      <block name="database" type="core.setup/stage-two" template="stage-two.phtml">
           <block name="form" type="core/html.form">
             <form>stage-two</form>
           </block>
@@ -43,8 +43,15 @@
     </reference>
   </setup.stage-two>
   <setup.stage-three>
+    <reference name="head">
+      <action method="headTitle">
+        <params>
+          <headTitle>Stage Three</headTitle>
+        </params>
+      </action>
+    </reference>
     <reference name="body">
-      <block name="scm" type="core.setup/stage-three"></block>
+      <block name="status" type="core.setup/stage-three" template="stage-three.phtml"></block>
     </reference>
   </setup.stage-three>
   <setup.stage-four>

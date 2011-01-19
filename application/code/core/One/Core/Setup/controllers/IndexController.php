@@ -106,6 +106,13 @@ class One_Core_Setup_IndexController
 
     public function stageOneAction()
     {
+        $this->_session->setStageOnePassed(true);
+
+        $baseUrl = $this->getFrontController()->getBaseUrl();
+        $this->getResponse()
+            ->setRedirect($baseUrl . '/stage-two', 302);
+        return;
+
         $this->loadLayout('setup.stage-one');
 
         $repository = $this->getLayout()
@@ -174,10 +181,9 @@ class One_Core_Setup_IndexController
         }
         $this->_session->setStageOnePassed(true);
 
-        $url = $this->app()->getRouter()->assemble(array(
-            'action' => 'stage-two'
-            ), 'setup');
-        $this->_redirect($url);
+        $baseUrl = $this->getFrontController()->getBaseUrl();
+        $this->getResponse()
+            ->setRedirect($baseUrl . '/stage-two', 302);
     }
 
     public function stageTwoAction()
@@ -191,13 +197,22 @@ class One_Core_Setup_IndexController
         $this->renderLayout();
     }
 
-    protected function _getDatabaseVersion($engine, $connectionConfig)
+    protected function _getDatabaseVersion($adapter, $engine, $connectionConfig)
     {
         $connection = $this->app()
-            ->getResource($engine, 'dal.database', $connectionConfig, $this->app())
+            ->getResource($adapter, 'dal.database', $connectionConfig, $this->app())
         ;
 
-        return $connection->query('SELECT @@VERSION')->fetchColumn(0);
+        switch ($engine) {
+        case 'mysql5':
+            return $connection->query('SELECT @@VERSION')->fetchColumn(0);
+            break;
+
+        case 'postgre':
+            return $connection->query('SELECT VERSION()')->fetchColumn(0);
+            break;
+        }
+        return false;
     }
 
     public function stageTwoRdbmsTestAjaxAction()
@@ -211,9 +226,9 @@ class One_Core_Setup_IndexController
                 'status' => true,
                 'version' => $this->_getDatabaseVersion($engine, $connectionConfig)
                 );
-        } catch (One_Core_Exception $e) {
+        } catch (Zend_Db_Exception $e) {
             $return = array(
-                'status' => true,
+                'status' => false,
                 'error' => $e->getMessage()
                 );
         }
@@ -229,60 +244,190 @@ class One_Core_Setup_IndexController
         if ($this->_session->getStageOnePassed() !== true) {
             $this->_redirectError('stage-one');
         }
+
+        $adapters = array(
+            'mysqli' => array(
+                'adapter' => 'core/connection.adapter.mysqli',
+                'engine'  => 'mysql5'
+                ),
+            'pdo-mysql' => array(
+                'adapter' => 'core/connection.adapter.pdo.mysql',
+                'engine'  => 'mysql5'
+                ),
+            'postgre' => array(
+                'adapter' => 'core/connection.adapter.postgre',
+                'engine'  => 'postgre4'
+                ),
+            'pdo-postgre' => array(
+                'adapter' => 'core/connection.adapter.pdo.postgre',
+                'engine'  => 'postgre4'
+                )
+            );
+
         $connectionConfig = $this->_getParam('stagetwordbms');
-        $engine = $connectionConfig['engine'];
+        if (isset($adapters[$connectionConfig['engine']])) {
+            $adapter = $adapters[$connectionConfig['engine']]['adapter'];
+            $engine  = $adapters[$connectionConfig['engine']]['engine'];
+        }
         unset($connectionConfig['engine']);
         $prefixConfig = $this->_getParam('stagetwodatabase');
         $prefixConfig = isset($prefixConfig['prefix']) ? $prefixConfig['prefix'] : 'platform_';
 
         try {
-            $this->_getDatabaseVersion($engine, $connectionConfig);
+            $this->_getDatabaseVersion($adapter, $engine, $connectionConfig);
         } catch (One_Core_Exception $e) {
             $this->_session->addError($e->getMessage());
             $this->_redirectError('stage-two');
         }
 
         $this->_session->setDatabaseEngine($engine);
+        $this->_session->setDatabaseAdapter($engine);
         $this->_session->setDatabaseConfig($connectionConfig);
         $this->_session->setDatabaseTablePrefix($prefixConfig);
 
+        $config = simplexml_load_file(APPLICATION_PATH . DS. 'configs' . DS . 'local.xml.sample');
+        $connections = $config->default->general->database->connection;
+        foreach (array('core_setup', 'core_read', 'core_write') as $connection) {
+            $connections->$connection->engine = $adapter;
+            $connections->$connection->params->{'table-prefix'} = $prefixConfig;
+            $connections->$connection->params->host = $connectionConfig['host'];
+            $connections->$connection->params->username = $connectionConfig['username'];
+            if (!empty($connectionConfig['password'])) {
+                $connections->$connection->params->password = $connectionConfig['password'];
+            } else {
+                $connections->$connection->params->password = null;
+            }
+            $connections->$connection->params->dbname = $connectionConfig['dbname'];
+            $connections->$connection->params->profiler = 0;
+            $connections->$connection->params->charset = 'UTF8';
+        }
+
+        $config->asXml(APPLICATION_PATH . DS. 'configs' . DS . 'local.xml');
+
+        $baseUrl = $this->getFrontController()->getBaseUrl();
+        $this->getResponse()
+            ->setRedirect($baseUrl . '/stage-two-setup-database', 302);
+    }
+
+    public function stageTwoSetupDatabaseAction()
+    {
+        if ($this->_session->getStageOnePassed() !== true) {
+            $this->_redirectError('stage-one');
+        }
+
+        $updater = $this->app()->getModel('setup/updater');
+
+        try {
+            $updater->setup('One_Core', $this->_session->getDatabaseEngine());
+        } catch (Exception $e) {
+        }
+
+        $modules = array();
+        foreach ($updater->getApplicationModuleCollection('frontoffice') as $module) {
+            $modules[$module->getData('identifier')] = array(
+                'latest'    => $module->getVersion(),
+                'installed' => '0.0.0'
+                );
+        }
+
+        foreach ($updater->getApplicationModuleCollection('backoffice') as $module) {
+            $modules[$module->getData('identifier')] = array(
+                'latest'    => $module->getVersion(),
+                'installed' => '0.0.0'
+                );
+        }
+
+        foreach ($updater->getInstalledModuleCollection() as $module) {
+            if (isset($modules[$module->getIdentifier()])) {
+                $modules[$module->getIdentifier()]['installed'] = $module->getVersion();
+            }
+        }
+
+        $this->_session->setInstalledModules($modules);
+
         $this->_session->setStagetwoPassed(true);
 
-        $url = $this->app()->getRouter()->assemble(array(
-            'action' => 'stage-three'
-            ), 'setup');
-        $this->_redirect($url);
+        $baseUrl = $this->getFrontController()->getBaseUrl();
+        $this->getResponse()
+            ->setRedirect($baseUrl . '/stage-three', 302);
     }
 
     public function stageThreeAction()
     {
-        $this->loadLayout('setup.stage-three');
+        $this->loadLayout('setup.stage-three')
+            ->getBlock('status')
+            ->setModules($this->_session->getInstalledModules())
+        ;
 
         $this->renderLayout();
+    }
+
+    public function stageThreeInstallModuleAction()
+    {
+        $module = $this->getRequest()->getQuery('module');
+
+        $updater = $this->app()->getModel('setup/updater');
+        try {
+            $updater->setup($module, $this->_session->getDatabaseEngine());
+        } catch (Exception $e) {
+            var_dump($e);
+            die();
+        }
+
+        $baseUrl = $this->getFrontController()->getBaseUrl();
+        $this->getResponse()
+            ->setRedirect($baseUrl . '/stage-three', 302);
     }
 
     public function stageThreePostAction()
     {
-        $url = $this->app()->getRouter()->assemble(array(
-            'action' => 'stage-four'
-            ), 'setup');
-        $this->_redirect($url);
+        $baseUrl = $this->getFrontController()->getBaseUrl();
+        $this->getResponse()
+            ->setRedirect($baseUrl . '/stage-four', 302);
     }
 
     public function stageFourAction()
     {
-        $this->loadLayout('setup.stage-four');
+        $path = dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR;
+        $baseUrl = dirname($this->getFrontController()->getBaseUrl());
 
-        $this->renderLayout();
-    }
+        $htaccess =<<<HTACCESS_EOF
+RewriteEngine On
 
-    public function stageFourPostAction()
-    {
-        $this->_helper->redirector(array(
-            'module'     => 'One_Core',
-            'controller' => 'index',
-            'action'     => 'index'
-            ));
+RewriteBase {$baseUrl}/
+
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L,NC]
+
+RewriteRule . index.php [L,NC]
+
+SetEnv APPLICATION_ENV production
+HTACCESS_EOF;
+        file_put_contents($path . '.htaccess', $htaccess);
+        copy($path . 'index.php.sample', $path . 'index.php');
+
+        $htaccess =<<<HTACCESS_EOF
+RewriteEngine On
+
+RewriteBase {$baseUrl}/admin/
+
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L,NC]
+
+RewriteRule . index.php [L,NC]
+
+SetEnv APPLICATION_ENV production
+HTACCESS_EOF;
+        file_put_contents($path . 'admin' . DIRECTORY_SEPARATOR . '.htaccess', $htaccess);
+        copy($path . 'admin' . DIRECTORY_SEPARATOR . 'index.php.sample', $path . 'admin' . DIRECTORY_SEPARATOR . 'index.php');
+
+        $this->getResponse()
+            ->setRedirect($baseUrl, 302);
+        return;
     }
 
     public function applyPatchAction()

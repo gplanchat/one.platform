@@ -56,45 +56,63 @@ abstract class One_Core_ResourceAbstract
     implements One_Core_ResourceInterface
 {
     /**
-     * FIXME: PHPDoc
-     *
-     * @since 0.1.0
-     *
-     * @var Zend_Db_Adapter
+     * @var One_Core_Model_Database_Connection_AdapterInterface
      */
-    private $_readAdapter = NULL;
+    private $_readConnection  = null;
 
     /**
-     * FIXME: PHPDoc
-     *
-     * @since 0.1.0
-     *
-     * @var Zend_Db_Adapter
+     * @var One_Core_Model_Database_Connection_AdapterInterface
      */
-    private $_writeAdapter = NULL;
+    private $_writeConnection = null;
 
     /**
-     * FIXME: PHPDoc
-     *
-     * @since 0.1.0
-     *
-     * @return Zend_Db_Adapter
+     * @var One_Core_Model_Database_Connection_AdapterInterface
      */
-    public function getReadAdapter()
+    private $_setupConnection = null;
+
+    /**
+     * @return One_Core_Model_Database_Connection_AdapterInterface
+     */
+    public function getReadConnection($module = null)
     {
-        return $this->_readAdapter;
+        if (is_null($this->_readConnection)) {
+            if ($module === null) {
+                $module = $this->getModuleName();
+            }
+            $this->_readConnection = $this->app()->getSingleton('core/database.connection.pool')
+                ->getConnection($this->getConfig("resource.dal.database.{$module}.connection.read"));
+        }
+        return $this->_readConnection;
     }
 
     /**
-     * FIXME: PHPDoc
-     *
-     * @since 0.1.0
-     *
-     * @return Zend_Db_Adapter
+     * @return One_Core_Model_Database_Connection_AdapterInterface
      */
-    public function getWriteAdapter()
+    public function getWriteConnection($module = null)
     {
-        return $this->_writeAdapter;
+        if (is_null($this->_writeConnection)) {
+            if ($module === null) {
+                $module = $this->getModuleName();
+            }
+            $this->_writeConnection = $this->app()->getSingleton('core/database.connection.pool')
+                ->getConnection($this->getConfig("resource.dal.database.{$module}.connection.write"));
+        }
+        return $this->_writeConnection;
+    }
+
+    /**
+     * @return One_Core_Model_Database_Connection_AdapterInterface
+     */
+    public function getSetupConnection($module = null)
+    {
+        if (is_null($this->_setupConnection)) {
+            if ($module === null) {
+                $module = $this->getModuleName();
+            }
+            $this->_setupConnection = $this->app()->getSingleton('core/database.connection.pool')
+                ->getConnection($this->getConfig("resource.dal.database.{$module}.connection.setup"));
+        }
+        return $this->_setupConnection;
     }
 
     /**
@@ -103,14 +121,16 @@ abstract class One_Core_ResourceAbstract
      * @since 0.1.0
      *
      * @param string|Zend_Db_Adapter
-     * @return One_Core_ResourceInterface
+     * @return One_Core_Model_Database_Connection_AdapterInterface
      */
-    public function setReadAdapter($adapter)
+    public function setReadConnection($adapter)
     {
-        if ($adapter instanceof Zend_Db_Adapter) {
-            $this->_readAdapter = $adapter;
+        if ($adapter instanceof One_Core_Model_Database_Connection_AdapterInterface) {
+            $this->_readConnection = $adapter;
         } else {
-            $this->_readAdapter = NULL; // FIXME
+            $this->_readAdapter = $this->app()
+                ->getSingleton('core/database.connection.pool')
+                ->getConnection($adapter);
         }
         return $this;
     }
@@ -121,15 +141,49 @@ abstract class One_Core_ResourceAbstract
      * @since 0.1.0
      *
      * @param string|Zend_Db_Adapter
-     * @return One_Core_ResourceInterface
+     * @return One_Core_Model_Database_Connection_AdapterInterface
      */
-    public function setWriteAdapter($adapter)
+    public function setWriteConnection($adapter)
     {
-        if ($adapter instanceof Zend_Db_Adapter) {
-            $this->_writeAdapter = $adapter;
+        if ($adapter instanceof One_Core_Model_Database_Connection_AdapterInterface) {
+            $this->_writeConnection = $adapter;
         } else {
-            $this->_writeAdapter = NULL; // FIXME
+            $this->_writeConnection = $this->app()
+                ->getSingleton('core/database.connection.pool')
+                ->getConnection($adapter);
         }
         return $this;
+    }
+
+    /**
+     * FIXME: PHPDoc
+     *
+     * @since 0.1.0
+     *
+     * @param string|Zend_Db_Adapter
+     * @return One_Core_Model_Database_Connection_AdapterInterface
+     */
+    public function setSetupConnection($adapter)
+    {
+        if ($adapter instanceof One_Core_Model_Database_Connection_AdapterInterface) {
+            $this->_writeConnection = $adapter;
+        } else {
+            $this->_writeConnection = $this->app()
+                ->getSingleton('core/database.connection.pool')
+                ->getConnection($adapter);
+        }
+        return $this;
+    }
+
+    /**
+     * FIXME: PHPDoc
+     *
+     * @since 0.2.0
+     *
+     * @param $path
+     */
+    public function getConfig($path = null)
+    {
+        return $this->app()->getConfig($path);
     }
 }

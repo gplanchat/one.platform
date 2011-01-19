@@ -74,6 +74,14 @@ interface One_Core_ResourceInterface
      * FIXME: PHPDoc
      *
      * @since 0.1.0
+     */
+    public function getSetupConnection();
+
+    /**
+     *
+     * FIXME: PHPDoc
+     *
+     * @since 0.1.0
      *
      * @param $tableAlias
      */
@@ -87,5 +95,5 @@ interface One_Core_ResourceInterface
      *
      * @param $path
      */
-    public function getConfig($path = NULL);
+    public function getConfig($path = null);
 }

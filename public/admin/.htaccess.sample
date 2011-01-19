@@ -1,0 +1,11 @@
+
+RewriteEngine On
+
+RewriteBase /admin/
+
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-s
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.php [L,NC]
+
+RewriteRule . - [L,NC]

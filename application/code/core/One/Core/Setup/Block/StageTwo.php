@@ -19,7 +19,7 @@ $(document).ready(function(){
             if (response.status === true) {
                 alert('Connection was successful, using server version "' + response.version + '".');
             } else {
-                alert('Connection failed, please check your connection information.');
+                alert('Connection failed, the server returned the following error: "' + response.error + '".');
             }
             }, 'json');
         });

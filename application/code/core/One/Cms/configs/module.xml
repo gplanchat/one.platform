@@ -40,7 +40,8 @@
  * documentation for further information about customizing One.Platform.
  *
  */
---><config>
+-->
+<config>
   <default>
     <modules>
       <One_Cms>
@@ -72,15 +73,9 @@
           <namespace>One_Cms_Resource_Dao</namespace>
         </cms>
       </dao>
-      <orm>
-        <cms>
-          <namespace>One_Cms_Resource_Orm</namespace>
-        </cms>
-      </orm>
       <dal>
         <database>
           <cms>
-            <namespace>One_Cms_Dal_Database</namespace>
             <connection>
               <read>cms_read</read>
               <write>cms_write</write>

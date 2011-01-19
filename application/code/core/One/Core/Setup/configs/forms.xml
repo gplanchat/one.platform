@@ -220,14 +220,24 @@
                   </required>
                 </validators>
                 <multiOptions>
-                  <mysqli>
-                    <key>core/connection.adapter.mysqli</key>
-                    <value>MySQLi Driver</value>
-                  </mysqli>
-                  <pdo-mysql>
-                    <key>core/connection.adapter.pdo.mysql</key>
-                    <value>PDO MySQL Driver</value>
-                  </pdo-mysql>
+                  <mysql5>
+                    <!--
+                      <mysqli>
+                        <key>core/connection.adapter.mysqli</key>
+                        <value>MySQLi Driver</value>
+                      </mysqli>
+                      <pdo-mysql>
+                        <key>core/connection.adapter.pdo.mysql</key>
+                        <value>PDO MySQL Driver</value>
+                      </pdo-mysql>
+                    -->
+                    <mysqli>MySQLi Driver</mysqli>
+                    <pdo-mysql>PDO Mysql Driver</pdo-mysql>
+                  </mysql5>
+                  <!--postgre>
+                    <postgre>PostgreSQL Driver</postgre>
+                    <pdo-postgre>PDO PostgreSQL Driver</pdo-postgre>
+                  </postgre-->
                 </multiOptions>
               </options>
             </engine>

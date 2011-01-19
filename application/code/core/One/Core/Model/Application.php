@@ -84,7 +84,6 @@ class One_Core_Model_Application
 
     public function __construct($websiteId, $environment, Array $moreSections = array(), Array $applicationConfig = array())
     {
-
         $this->_event = new One_Core_Model_Event_Dispatcher('core');
 
         if (isset($applicationConfig['config']) && !empty($applicationConfig['config'])) {
@@ -138,10 +137,20 @@ class One_Core_Model_Application
         parent::__construct($environment, $config);
 
         $this->_website = new One_Core_Model_Website('core', array(), $this);
-        if (is_int($websiteId)) {
-            $this->_website->load($websiteId);
-        } else {
-            $this->_website->load($websiteId, 'identity_string');
+        try {
+            if (is_int($websiteId)) {
+                $this->_website->load($websiteId);
+            } else {
+                $this->_website->load($websiteId, 'identity_string');
+            }
+        } catch (Zend_Db_Exception $e) {
+            $this->_website->setId(null)
+                ->setIdentityString($websiteId)
+            ;
+        } catch (One_Core_Exception $e) {
+            $this->_website->setId(null)
+                ->setIdentityString($websiteId)
+            ;
         }
 
         $routeStack = One_Core_Model_Router_Route_Stack::getInstance(new Zend_Config(array()));
@@ -247,22 +256,28 @@ class One_Core_Model_Application
     {
         array_unshift($moreSections, $environment);
 
-        $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'system.xml'));
-        $config = new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true);
-        foreach ($moreSections as $section) {
-            try {
-                $config->merge(new Zend_Config_Xml($configFile, $section, true));
-            } catch (Zend_Config_Exception $e) {
-            }
-        }
-
-        foreach ($moreFiles as $configFile) {
-            $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
+        try {
+            $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'system.xml'));
+            $config = new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true);
             foreach ($moreSections as $section) {
                 try {
                     $config->merge(new Zend_Config_Xml($configFile, $section, true));
                 } catch (Zend_Config_Exception $e) {
                 }
+            }
+        } catch (Zend_Config_Exception $e) {
+        }
+
+        foreach ($moreFiles as $configFile) {
+            try {
+                $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
+                foreach ($moreSections as $section) {
+                    try {
+                        $config->merge(new Zend_Config_Xml($configFile, $section, true));
+                    } catch (Zend_Config_Exception $e) {
+                    }
+                }
+            } catch (Zend_Config_Exception $e) {
             }
         }
 
@@ -304,13 +319,16 @@ class One_Core_Model_Application
             $this->_addModule($moduleName, $moduleConfig);
         }
 
-        $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'local.xml'));
-        $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
-        foreach ($moreSections as $section) {
-            try {
-                $config->merge(new Zend_Config_Xml($configFile, $section, true));
-            } catch (Zend_Config_Exception $e) {
+        try {
+            $configFile = implode(self::DS, array(APPLICATION_PATH, 'configs', 'local.xml'));
+            $config->merge(new Zend_Config_Xml($configFile, self::DEFAULT_CONFIG_SECTION, true));
+            foreach ($moreSections as $section) {
+                try {
+                    $config->merge(new Zend_Config_Xml($configFile, $section, true));
+                } catch (Zend_Config_Exception $e) {
+                }
             }
+        } catch (Zend_Config_Exception $e) {
         }
 
         $this->_validateModulesActivation();
@@ -416,11 +434,11 @@ class One_Core_Model_Application
             'name'   => '',
             );
 
-        $domainXmlPath = explode('/', $domain);
-        array_push($domainXmlPath, $classData['module']);
-        $domainConfig = $this->getOption(array_shift($domainXmlPath));
-        while (count($domainXmlPath)) {
-            $key = array_shift($domainXmlPath);
+        $domainPath = explode('.', $domain);
+        array_push($domainPath, $classData['module']);
+        $domainConfig = $this->getOption(array_shift($domainPath));
+        while (count($domainPath)) {
+            $key = array_shift($domainPath);
             if (isset($domainConfig[$key])) {
                 $domainConfig = $domainConfig[$key];
             }
@@ -445,6 +463,9 @@ class One_Core_Model_Application
     public function getModel($identifier, $options = array())
     {
         $classData = $this->_inflectClassName($identifier, 'model');
+        if ($classData['alias'] === false) {
+            return null;
+        }
 
         Zend_Loader::loadClass($classData['name']);
 
@@ -475,6 +496,9 @@ class One_Core_Model_Application
     public function getResource($identifier, $type, $options = array())
     {
         $classData = $this->_inflectClassName($identifier, $type);
+        if ($classData['alias'] === false) {
+            return null;
+        }
 
         Zend_Loader::loadClass($classData['name']);
 
@@ -506,8 +530,11 @@ class One_Core_Model_Application
     public function getBlock($identifier, $options = array(), One_Core_Model_Layout $layout = null)
     {
         $classData = $this->_inflectClassName($identifier, 'block');
+        if ($classData['alias'] === false) {
+            return null;
+        }
 
-//        Zend_Loader::loadClass($classData['name']);
+        Zend_Loader::loadClass($classData['name']);
 
         try {
             $reflectionClass = new ReflectionClass($classData['name']);
@@ -531,6 +558,9 @@ class One_Core_Model_Application
     public function _getHelper($identifier, $options = array(), One_Core_Model_Layout $layout = null, One_Core_BlockAbstract $block = null)
     {
         $classData = $this->_inflectClassName($identifier, 'helper');
+        if ($classData['alias'] === false) {
+            return null;
+        }
 
         Zend_Loader::loadClass($classData['name']);
 
@@ -556,7 +586,7 @@ class One_Core_Model_Application
     {
         $classData = $this->_inflectClassName($identifier, 'exception');
 
-//        Zend_Loader::loadClass($classData['name']);
+        Zend_Loader::loadClass($classData['name']);
 
         $reflectionClass = new ReflectionClass($classData['name']);
 

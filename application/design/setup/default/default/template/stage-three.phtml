@@ -1,0 +1,20 @@
+<h1>One.Platform Setup Manager</h1>
+<h2>Stage Three : Modules</h2>
+<p>The following modules has been successfully installed :</p>
+<dl>
+<?php if (is_array($modules = $this->getModules())): ?>
+  <?php foreach ($modules as $module => $version): ?>
+  <dt><?php echo $this->escape($module) ?></dt>
+  <?php if ($version['latest'] === '0.0.0'): ?>
+  <dd>No installation needed</dd>
+  <?php elseif ($version['installed'] === $version['latest']): ?>
+  <dd>Version <?php echo $this->escape($version['latest']) ?> already installed</dd>
+  <?php elseif ($version['installed'] === '0.0.0'): ?>
+  <dd><a href="stage-three-install-module?module=<?php echo $this->escape($module) ?>">Install version <?php echo $this->escape($version['latest']) ?></a></dd>
+  <?php else: ?>
+  <dd><a href="stage-three-install-module?module=<?php echo $this->escape($module) ?>">Upgrade to version <?php echo $this->escape($version['latest']) ?></a> (currently using version <?php echo $this->escape($version['installed']) ?>)</dd>
+  <?php endif ?>
+  <?php endforeach ?>
+<?php endif ?>
+</dl>
+<a href="stage-four">Continue install</a>

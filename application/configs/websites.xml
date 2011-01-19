@@ -8,6 +8,7 @@
     </extra>
   </frontoffice>
   <setup>
+    <no-cache>1</no-cache>
     <config>websites/setup.xml</config>
     <env>production</env>
     <extra>

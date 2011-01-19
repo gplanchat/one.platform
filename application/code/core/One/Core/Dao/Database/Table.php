@@ -59,21 +59,6 @@ abstract class One_Core_Dao_Database_Table
     const DEFAULT_ID_FIELD_NAME = 'entity_id';
 
     /**
-     * @var One_Core_Model_Database_Connection_AdapterInterface
-     */
-    private $_readConnection  = NULL;
-
-    /**
-     * @var One_Core_Model_Database_Connection_AdapterInterface
-     */
-    private $_writeConnection = NULL;
-
-    /**
-     * @var One_Core_Model_Database_Connection_AdapterInterface
-     */
-    private $_setupConnection = NULL;
-
-    /**
      * Zend_Db_Table instance
      *
      * @var array
@@ -119,42 +104,6 @@ abstract class One_Core_Dao_Database_Table
         $this->setIdFieldName($idFieldName);
 
         return $this;
-    }
-
-    /**
-     * @return One_Core_Model_Database_Connection_AdapterInterface
-     */
-    public function getReadConnection()
-    {
-        if (is_null($this->_readConnection)) {
-            $this->_readConnection = $this->app()->getSingleton('core/database.connection.pool')
-                ->getConnection($this->getConfig("resource.dal.database.{$this->getModuleName()}.connection.read"));
-        }
-        return $this->_readConnection;
-    }
-
-    /**
-     * @return One_Core_Model_Database_Connection_AdapterInterface
-     */
-    public function getWriteConnection()
-    {
-        if (is_null($this->_writeConnection)) {
-            $this->_writeConnection = $this->app()->getSingleton('core/database.connection.pool')
-                ->getConnection($this->getConfig("resource.dal.database.{$this->getModuleName()}.connection.write"));
-        }
-        return $this->_writeConnection;
-    }
-
-    /**
-     * @return One_Core_Model_Database_Connection_AdapterInterface
-     */
-    public function getSetupConnection()
-    {
-        if (is_null($this->_setupConnection)) {
-            $this->_setupConnection = $this->app()->getSingleton('core/database.connection.pool')
-                ->getConnection($this->getConfig("resource.dal.database.{$this->getModuleName()}.connection.setup"));
-        }
-        return $this->_setupConnection;
     }
 
     /**
@@ -283,7 +232,7 @@ abstract class One_Core_Dao_Database_Table
     {
         $entityData = $mapper->save($model);
 
-        if (!$model->isLoaded()) {
+        if (!$model->isLoaded() || $model->getId() === null) {
             $entityData[$model->getIdFieldName()] = NULL;
 
             $id = $this->getWriteConnection()
