@@ -55,7 +55,7 @@ INSERT INTO {$this->getTableName('cms/page')} (
     (
         'homepage',
         'Home Page',
-        '<h1>One.Platform homepage</h1>\r\n<div class=\"navigation\">\r\n<ul>\r\n<li><a href=\"../../../../../account/login\">Log In</a></li>\r\n<li><a href=\"../../../../../account/logout\">Log Out</a></li>\r\n<li><a href=\"/admin/cms/page/\">CMS Page management</a></li>\r\n</ul>\r\n</div>',
+        '<h1>One.Platform homepage</h1>\r\n<div class=\"navigation\">\r\n<ul>\r\n<li><a href=\"account/login\">Log In</a></li>\r\n<li><a href=\"account/logout\">Log Out</a></li>\r\n<li><a href=\"admin/cms/page/\">CMS Page management</a></li>\r\n</ul>\r\n</div>',
         2,
         'cms,one,platform',
         'Tesing the CMS functionnalities of One.Platform',
