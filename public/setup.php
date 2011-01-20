@@ -1,5 +1,7 @@
 <?php
 
+set_time_limit(0);
+
 defined('ROOT_PATH') ||
     define('ROOT_PATH', realpath(dirname(dirname(__FILE__))));
 
