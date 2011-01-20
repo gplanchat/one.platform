@@ -12,28 +12,16 @@ $(document).ready(function(){
 </script>
 <div class="nav-bar">
   <ul id="nav">
-    <li class="level0">
-      <a href="<?php echo $this->url(array('controller' => 'dashboard')) ?>"><span>Dashboard</span></a>
-    </li>
-    <li class="level0 parent">
-      <a href="#"><span>CMS</span></a>
-      <ul>
-        <li class="level1 last">
-          <a href="<?php echo $this->url(array('controller' => 'page', 'path' => 'cms')) ?>"><span>Pages management</span></a>
-        </li>
-      </ul>
-    </li>
-    <!--li class="level0 parent last">
-      <a href="#"><span>Users</span></a>
-      <ul>
-        <li class="level1">
-          <a href="<?php echo $this->url(array('controller' => 'entity', 'path' => 'user')) ?>"><span>Users management</span></a>
-        </li>
-        <li class="level1 last">
-          <a href="<?php echo $this->url(array('controller' => 'group', 'path' => 'user')) ?>"><span>Groups management</span></a>
-        </li>
-      </ul>
-    </li-->
+  <?php if (is_array($children = $this->getAllChildNodes())): ?>
+    <?php $count = count($children); ?>
+    <?php $classes = array('level0'); ?>
+    <?php foreach ($this->getAllChildNodes() as $child): ?>
+      <?php if (--$count <= 0): ?>
+        <?php $classes[] = 'last' ?>
+      <?php endif ?>
+      <?php echo $child->setMoreClasses($classes)->render('navigation/item.phtml'); ?>
+    <?php endforeach ?>
+  <?php endif ?>
   </ul>
   <a href="http://github.com/gplanchat/one.platform/wiki" id="page-help-link" target="magento_page_help">Get help for this page</a>
   <script type="text/javascript">$('#page-help-link').target = 'magento_page_help'</script>

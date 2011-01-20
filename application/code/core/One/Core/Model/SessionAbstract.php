@@ -210,36 +210,60 @@ abstract class One_Core_Model_SessionAbstract
         return $this->_addMessage(Zend_Log::INFO, vsprintf($messagePattern, $parameters));
     }
 
-    public function getAllErrors()
+    public function getAllErrors($empty = true)
     {
         if (!isset($this->_messages[Zend_Log::ERR])) {
             return array();
         }
-        return $this->_messages[Zend_Log::ERR];
+        $messages = $this->_messages[Zend_Log::ERR];
+
+        if ($empty !== false) {
+            $this->_messages[Zend_Log::ERR] = array();
+        }
+
+        return $messages;
     }
 
-    public function getAllWarnings()
+    public function getAllWarnings($empty = true)
     {
         if (!isset($this->_messages[Zend_Log::WARN])) {
             return array();
         }
-        return $this->_messages[Zend_Log::WARN];
+        $messages = $this->_messages[Zend_Log::WARN];
+
+        if ($empty !== false) {
+            $this->_messages[Zend_Log::WARN] = array();
+        }
+
+        return $messages;
     }
 
-    public function getAllNotices()
+    public function getAllNotices($empty = true)
     {
         if (!isset($this->_messages[Zend_Log::NOTICE])) {
             return array();
         }
-        return $this->_messages[Zend_Log::NOTICE];
+        $messages = $this->_messages[Zend_Log::NOTICE];
+
+        if ($empty !== false) {
+            $this->_messages[Zend_Log::NOTICE] = array();
+        }
+
+        return $messages;
     }
 
-    public function getAllInfos()
+    public function getAllInfos($empty = true)
     {
         if (!isset($this->_messages[Zend_Log::INFO])) {
             return array();
         }
-        return $this->_messages[Zend_Log::INFO];
+        $messages = $this->_messages[Zend_Log::INFO];
+
+        if ($empty !== false) {
+            $this->_messages[Zend_Log::INFO] = array();
+        }
+
+        return $messages;
     }
 }
 

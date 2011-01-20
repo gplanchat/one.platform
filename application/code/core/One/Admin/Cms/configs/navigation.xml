@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <backoffice>
+    <general>
+      <navigation>
+        <cms>
+          <label>CMS</label>
+          <children>
+            <page>
+              <label>Page management</label>
+              <route>
+                <path>cms</path>
+                <controller>page</controller>
+              </route>
+            </page>
+          </children>
+        </cms>
+      </navigation>
+    </general>
+  </backoffice>
+</config>
