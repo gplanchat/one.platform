@@ -74,7 +74,7 @@ class One_User_Model_Entity_Authentication_Adapter_PasswordStealth
         return new Zend_Auth_Result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, $this->getIdentity());
     }
 
-    public function hash($message, $salt = '')
+    public function hash($message, $salt)
     {
         return hash(self::HASH_ALGO, ($message . $salt), true);
     }

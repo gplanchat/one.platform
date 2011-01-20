@@ -1,7 +1,7 @@
 <?php
 
 class One_Core_Setup_Model_Updater_ScriptQueue
-    extends SplQueue
+    implements Iterator, Countable, ArrayAccess
 {
     const PCRE_FILE_PATTERN = '%^(?<action>install|upgrade|uninstall|downgrade)-(?<version1>[0-9]+\.[0-9]+\.[0-9]+)(?:\.(?<stage1>[a-z]+)(?<level1>[0-9]+))?(?:-(?<version2>[0-9]+\.[0-9]+\.[0-9]+)(?:\.(?<stage2>[a-z]+)(?<level2>[0-9]+))?)?$%';
     const PCRE_VERSION_PATTERN = '%^(?<version>[0-9]+\.[0-9]+\.[0-9]+)(?:-(?<stage>[a-z]+)(?<level>[0-9]+))?$%';
@@ -24,6 +24,8 @@ class One_Core_Setup_Model_Updater_ScriptQueue
     protected $_downgradeVersions = array();
 
     protected $_finalVersion = null;
+
+    protected $_scripts = array();
 
     public function __construct($path, $fromVersion, $toVersion)
     {
@@ -238,11 +240,10 @@ class One_Core_Setup_Model_Updater_ScriptQueue
 
     protected function _analyzePath($path)
     {
-        $mask = FilesystemIterator::KEY_AS_FILENAME | FilesystemIterator::CURRENT_AS_SELF | FilesystemIterator::SKIP_DOTS | FilesystemIterator::UNIX_PATHS;
-        $iterator = new FilesystemIterator($path, $mask);
+        $iterator = new DirectoryIterator($path);
 
         foreach ($iterator as $file) {
-            if ($file->isDir()) {
+            if ($file->isDir() || $file->isDot()) {
                 continue;
             }
 
@@ -368,5 +369,65 @@ class One_Core_Setup_Model_Updater_ScriptQueue
         $this->_downgradeVersions[$upperVersion][$upperStage][$upperLevel][$lowerVersion][$lowerStage][$lowerLevel] = $file;
 
         return $this;
+    }
+
+    public function count()
+    {
+        return count($this->_scripts);
+    }
+
+    public function offsetExists($offset)
+    {
+        return array_key_exists($offset, $this->_scripts);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        $this->_scripts[(int) $offset] = $value;
+    }
+
+    public function offsetGet($offset)
+    {
+        if ($this->offsetExists($offset)) {
+            return $this->_scripts[(int) $offset];
+        }
+        return null;
+    }
+
+    public function offsetUnset($offset)
+    {
+        if ($this->offsetExists($offset)) {
+            unset($this->_scripts[(int) $offset]);
+        }
+    }
+
+    public function current()
+    {
+        return current($this->_scripts);
+    }
+
+    public function key()
+    {
+        return key($this->_scripts);
+    }
+
+    public function next()
+    {
+        next($this->_scripts);
+    }
+
+    public function rewind()
+    {
+        reset($this->_scripts);
+    }
+
+    public function valid()
+    {
+        return (bool) (key($this->_scripts) !== null);
+    }
+
+    public function enqueue($data)
+    {
+        $this->_scripts[] = $data;
     }
 }
