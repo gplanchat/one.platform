@@ -50,7 +50,7 @@
  * @subpackage  One_Admin_Core
  */
 class One_Admin_User_EntityController
-    extends One_Admin_Core_ControllerAbstract
+    extends One_Admin_Core_Controller_FormGridAbstract
 {
     public function indexAction()
     {
