@@ -2,6 +2,7 @@
 <layout>
   <admin.grid>
     <reference name="content">
+      <block type="core/html.notifications" name="notifications" template="page/notifications.phtml" session-type="admin.core/session" />
       <block type="admin.core/grid.container" name="container">
         <action method="addButtonAdd" />
         <action method="setTitle">
@@ -11,7 +12,6 @@
         </action>
         <block type="admin.core/grid" name="grid" />
       </block>
-      <block type="core/html.notifications" name="notifications" template="page/notifications.phtml" session-type="admin.core/session" />
     </reference>
   </admin.grid>
   <admin.form>

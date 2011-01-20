@@ -41,45 +41,58 @@
  */
 
 /**
- * Administration abstract controller for grids and forms management
+ * HTML navigation item block
+ *
+ * @uses        One_Core_Object
  *
  * @access      public
  * @author      gplanchat
  * @category    Core
- * @package     One_Admin_Core
- * @subpackage  One_Admin_Core
+ * @package     One_Core
+ * @subpackage  One_Core
  */
-abstract class One_Admin_Core_ControllerAbstract
-    extends One_User_Controller_AuthenticatedAbstract
+class One_Core_Block_Html_Navigation_Item
+    extends One_Core_Block_Html_Navigation
 {
-    protected $_userModel = 'admin.core/user.entity';
+    protected $_label = null;
 
-    protected $_userSessionModel = 'admin.core/session';
+    protected $_route = array();
 
-    public function preDispatch()
+    protected $_level = 0;
+
+    public function setLabel($label)
     {
-        parent::preDispatch();
+        $this->_label = $label;
 
-        $this->_redirectIfNotLoggedIn('account/login');
+        return $this;
     }
 
-    public function loadLayout($layoutName = null)
+    public function getLabel()
     {
-        $layout = parent::loadLayout($layoutName);
+        return $this->_label;
+    }
 
-        $navigationConfig = $this->app()->getConfig('general/navigation');
+    public function setRoute(Array $route)
+    {
+        $this->_route = $route;
 
-        if (is_array($navigationConfig)) {
-            $navigationBlock = $layout->getBlock('navigation');
+        return $this;
+    }
 
-            foreach ($navigationConfig as $blockName => $childBlock) {
-                $route = isset($childBlock['route']) && !empty($childBlock['route']) ? $childBlock['route'] : null;
-                $children = isset($childBlock['children']) && !empty($childBlock['children']) ? $childBlock['children'] : null;
+    public function getRoute()
+    {
+        return $this->_route;
+    }
 
-                $navigationBlock->addChild($childBlock['label'], $route, $children);
-            }
-        }
+    public function setLevel($level)
+    {
+        $this->_level = (int) $level;
 
-        return $layout;
+        return $this;
+    }
+
+    public function getLevel()
+    {
+        return $this->_level;
     }
 }

@@ -1,0 +1,22 @@
+<?php $children = $this->getAllChildNodes() ?>
+<?php $classes = implode(' ', (array) $this->getMoreClasses()) . (count($children) > 0 ? ' parent' : null) ?>
+<li<?php if (!empty($classes)):?> class="<?php echo $this->escape($classes)?>"<?php endif?>>
+  <?php if (($route = $this->getRoute()) === null): ?>
+  <a href="#" onclick="return false;"><span><?php echo $this->escape($this->getLabel())?></span></a>
+  <?php else: ?>
+  <a href="<?php echo $this->url($this->getRoute()) ?>"><span><?php echo $this->escape($this->getLabel())?></span></a>
+  <?php endif ?>
+
+  <?php if (is_array($children)): ?>
+    <ul>
+    <?php $count = count($children); ?>
+    <?php $classes = array(('level' . strval($this->getLevel() + 1))); ?>
+    <?php foreach ($this->getAllChildNodes() as $child): ?>
+      <?php if (--$count <= 0): ?>
+        <?php $classes[] = 'last' ?>
+      <?php endif ?>
+      <?php echo $child->setMoreClasses($classes)->render('navigation/item.phtml'); ?>
+    <?php endforeach ?>
+    </ul>
+  <?php endif ?>
+</li>

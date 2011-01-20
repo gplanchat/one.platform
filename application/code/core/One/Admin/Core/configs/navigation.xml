@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <backoffice>
+    <general>
+      <navigation>
+        <dashboard>
+          <label>Dashboard</label>
+          <route>
+            <controller>dashboard</controller>
+          </route>
+        </dashboard>
+      </navigation>
+    </general>
+  </backoffice>
+</config>

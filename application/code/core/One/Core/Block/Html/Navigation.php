@@ -54,27 +54,28 @@
 class One_Core_Block_Html_Navigation
     extends One_Core_Block_Html
 {
-    protected $_headBlock;
-
-    protected $_navigationHelper = null;
-
-    public function setHeadBlock($block)
+    public function addChild($label, $route = null, $children = array())
     {
-        if (is_string($block)) {
-            $this->_headBlock = $this->getLayout()->getBlock($block);
-        } else {
-            $this->_headBlock = $block;
+        if (!is_array($children) || empty($children)) {
+            $children = array();
         }
-        return $this;
-    }
 
-    public function getHeadBlock()
-    {
-        return $this->_headBlock;
-    }
+        $child = $this->app()
+            ->getBlock('core/html.navigation.item', array(), $this->getLayout())
+            ->setTemplate('navigation/item.phtml')
+            ->setLabel($label)
+        ;
 
-    public function addPage()
-    {
+        if (is_array($route) && !empty($route)) {
+            $child->setRoute($route);
+        }
+
+        foreach ($children as $childName => $childConfig) {
+            $child->addChild($childConfig['label'], $childConfig['route'], $childConfig['label']);
+        }
+
+        $this->appendChild(uniqid(), $child);
+
         return $this;
     }
 }
