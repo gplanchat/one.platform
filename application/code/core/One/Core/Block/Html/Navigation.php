@@ -77,9 +77,4 @@ class One_Core_Block_Html_Navigation
     {
         return $this;
     }
-
-    public function _call($method, $params)
-    {
-        return call_user_func(array($this->navigation, $method), $params);
-    }
 }

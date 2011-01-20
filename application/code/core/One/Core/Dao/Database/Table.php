@@ -372,7 +372,7 @@ abstract class One_Core_Dao_Database_Table
      */
     public function countItems(One_Core_Bo_CollectionInterface $collection)
     {
-        $select = $this->getSelect();
+        $select = clone $this->getSelect();
         $adapter = $select->getAdapter();
 
         $filters = $collection->getFilters();
