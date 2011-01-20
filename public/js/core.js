@@ -97,8 +97,9 @@ var $$ = function(identifier) {
 
             var match = null;
 
-            match = $('script[src$=js/core.js]').attr('src').match('^(.*)js\/core.js$');
-            this._baseUrl = (match[1] !== undefined ? match[1] : '/' ) + path;
+//            match = $('script[src$=js/core.js]').attr('src').match('^(.*)js\/core.js$');
+//            this._baseUrl = (match[1] !== undefined ? match[1] : '/' ) + path;
+            this._baseUrl = (path[path.length - 1] === '/') ? path : (path + '/');
 
             match = document.location.pathname.match('^' + this._baseUrl + '(.*)$');
             var route = match[1] || '';

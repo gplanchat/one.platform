@@ -116,7 +116,7 @@ $(document).ready(function(e){
     });
 
     $('[class^=content-header] button[name=back]').click(function(){
-        var url = new $.one.Url('admin/');
+        var url = new $.one.Url('<?php echo $this->baseUrl() ?>');
         document.location = url.toString([{name: 'action', value: 'index'}]);
     });
 
