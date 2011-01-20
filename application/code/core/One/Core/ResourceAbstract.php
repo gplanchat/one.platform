@@ -80,7 +80,7 @@ abstract class One_Core_ResourceAbstract
                 $module = $this->getModuleName();
             }
             $this->_readConnection = $this->app()->getSingleton('core/database.connection.pool')
-                ->getConnection($this->getConfig("resource.dal.database.{$module}.connection.read"));
+                ->getConnection($this->getConfig("resource/dal/database/{$module}/connection/read"));
         }
         return $this->_readConnection;
     }
@@ -95,7 +95,7 @@ abstract class One_Core_ResourceAbstract
                 $module = $this->getModuleName();
             }
             $this->_writeConnection = $this->app()->getSingleton('core/database.connection.pool')
-                ->getConnection($this->getConfig("resource.dal.database.{$module}.connection.write"));
+                ->getConnection($this->getConfig("resource/dal/database/{$module}/connection/write"));
         }
         return $this->_writeConnection;
     }
@@ -110,7 +110,7 @@ abstract class One_Core_ResourceAbstract
                 $module = $this->getModuleName();
             }
             $this->_setupConnection = $this->app()->getSingleton('core/database.connection.pool')
-                ->getConnection($this->getConfig("resource.dal.database.{$module}.connection.setup"));
+                ->getConnection($this->getConfig("resource/dal/database/{$module}/connection/setup"));
         }
         return $this->_setupConnection;
     }

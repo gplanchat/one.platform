@@ -434,7 +434,7 @@ class One_Core_Model_Application
             'name'   => '',
             );
 
-        $domainPath = explode('.', $domain);
+        $domainPath = explode('/', $domain);
         array_push($domainPath, $classData['module']);
         $domainConfig = $this->getOption(array_shift($domainPath));
         while (count($domainPath)) {
@@ -453,7 +453,7 @@ class One_Core_Model_Application
             $classData['name'] = $namespace . '_' . $this->_classInflector->filter($classData['alias']);
         } else {
             $classData['name'] = $this->_classInflector->filter('one.' . $classData['module'])
-                    . '_' . $this->_classInflector->filter($classData['domain'])
+                    . '_' . $this->_classInflector->filter(str_replace('/', '.', $classData['domain']))
                     . '_' . $this->_classInflector->filter($classData['alias']);
         }
 
@@ -649,7 +649,7 @@ class One_Core_Model_Application
             return $this->getOptions();
         }
 
-        $pathExploded = explode('.', $path);
+        $pathExploded = explode('/', $path);
         $firstChunk = array_shift($pathExploded);
 
         $config = $this->getOption($firstChunk);

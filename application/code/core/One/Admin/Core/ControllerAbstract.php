@@ -52,6 +52,8 @@
 abstract class One_Admin_Core_ControllerAbstract
     extends One_User_Controller_AuthenticatedAbstract
 {
+    protected $_userModel = 'admin.core/user.entity';
+
     protected $_userSessionModel = 'admin.core/session';
 
     public function preDispatch()

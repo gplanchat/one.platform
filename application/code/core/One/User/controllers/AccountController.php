@@ -52,6 +52,8 @@
 class One_User_AccountController
     extends One_User_Controller_AuthenticatedAbstract
 {
+    protected $_userSessionModel = 'user/session';
+
     /**
      * TODO: PHPDoc
      *
@@ -73,6 +75,18 @@ class One_User_AccountController
         $this->_redirectIfLoggedIn();
 
         $this->loadLayout();
+
+        $salt = base64_encode($this->app()->getHelper('core/security')->random(32, null, true));
+        $this->app()
+            ->getSingleton($this->_userSessionModel)
+            ->setTransferSalt($salt)
+        ;
+
+        $this->getLayout()
+            ->getBlock('login')
+            ->setTransferSalt($salt)
+        ;
+
         $this->renderLayout();
     }
 
@@ -141,7 +155,7 @@ class One_User_AccountController
             return;
         }
 
-        $user = $this->app()->getSingleton('user/entity');
+        $user = $this->_getSession()->getUserEntity();
         try {
             if (!$user->login($this->getRequest()->getPost('login'))) {
                 $returnObject['messages'] = $this->app()->getSingleton('core/session')->getMessages();

@@ -93,7 +93,7 @@ class One_Core_Model_Database_Connection_Pool
     public function getConfig($connectionName)
     {
         if ($this->_config === null) {
-            $this->_config = $this->app()->getConfig('general.database.connection');
+            $this->_config = $this->app()->getConfig('general/database/connection');
         }
         if (!isset($this->_config[$connectionName])) {
             return null;
@@ -135,7 +135,7 @@ class One_Core_Model_Database_Connection_Pool
     public function getEntitiesConfig($module = null)
     {
         if ($this->_entitiesConfig === null) {
-            $this->_entitiesConfig = $this->app()->getConfig('resource.dal.entities');
+            $this->_entitiesConfig = $this->app()->getConfig('resource/dal/entities');
         }
         if ($module === null) {
             return $this->_entitiesConfig;
@@ -160,7 +160,7 @@ class One_Core_Model_Database_Connection_Pool
         }
         if (!isset($this->_connectionList[$connectionName])) {
             $connectionConfig = $this->app()
-                ->getConfig("general.database.connection.{$connectionName}");
+                ->getConfig("general/database/connection/{$connectionName}");
             if ($connectionConfig === null) {
                 $this->app()->throwException('core/configuration-error', 'No such connection "%s"', $connectionName);
             }
@@ -169,7 +169,7 @@ class One_Core_Model_Database_Connection_Pool
                 $this->_connectionList[$connectionName] = $this->getConnection($connectionConfig['use']);
             } else {
                 $connection = $this->app()
-                    ->getResource($connectionConfig['engine'], 'dal.database', $connectionConfig['params'], $this->app());
+                    ->getResource($connectionConfig['engine'], 'dal/database', $connectionConfig['params'], $this->app());
 
                 if ($connection === null) {
                     $this->app()

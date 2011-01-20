@@ -71,11 +71,13 @@ class One_Admin_Core_Block_Grid
             $options['template'] = 'grid/layout.phtml';
         }
 
+        $config = $this->app()->getSingleton('core/config');
+
         $this->headScript()
-            ->appendFile($config->getUrl('/js/jquery.js'))
-            ->appendFile($config->getUrl('/js/core.js'))
-            ->appendFile($config->getBaseUrl('/js/core.js'))
-            ->appendFile($config->getBaseUrl('/js/grid.js'))
+            ->appendFile($config->getBaseUrl('js/jquery.js'))
+            ->appendFile($config->getBaseUrl('js/core.js'))
+            ->appendFile($config->getBaseUrl('admin/js/core.js'))
+            ->appendFile($config->getBaseUrl('admin/js/grid.js'))
         ;
 
         return parent::_construct($options);
@@ -165,9 +167,9 @@ class One_Admin_Core_Block_Grid
         return parent::render($name);
     }
 
-    public function setPage($page, $pageCount = null)
+    public function setPage($page, $pageSize = null)
     {
-        $this->_collection->setPage($page, $pageCount);
+        $this->_collection->setPage($page, $pageSize);
 
         return $this;
     }

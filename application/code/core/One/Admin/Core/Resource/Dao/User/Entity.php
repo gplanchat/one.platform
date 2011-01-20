@@ -55,7 +55,7 @@ class One_Admin_Core_Resource_Dao_User_Entity
     {
         $options = parent::_construct($options);
 
-        $this->_init('admin.core/user.entity', 'admin.core/user.entity');
+        $this->_init('admin.core/user.entity', 'user/entity');
 
         return $options;
     }

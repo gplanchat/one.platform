@@ -14,22 +14,8 @@
         var transferSalt = Bytemap.Filter.Input.base64($('.login.salt', form).val());
         var loadIdentityAction = $('input#load_identity', form).val();
 
-        var serverSalt = new Bytemap(0);
         var clientIdentity = '';
         identity.blur(function(){
-            if (clientIdentity == $(this).val()) {
-                return;
-            }
-            clientIdentity = $(this).val();
-            var result = $.post(loadIdentityAction, {identity: clientIdentity}, function(response, status, request) {
-                if (status !== 'success') {
-                    return;
-                }
-
-                if (response['exists']) {
-                    serverSalt = Bytemap.Filter.Input.base64(response['salt']);
-                }
-                }, 'json');
             });
 
         $(document).ready(function(){
@@ -39,12 +25,7 @@
             }
             });
 
-        form.submit(function(event){
-            event.preventDefault();
-
-            var form = $(event.target);
-            var values = form.serializeArray();
-
+        var login = function(form, values, serverSalt){
             $(values).each(function(index, field) {
                 switch (field['name']) {
                 case 'login[password]':
@@ -54,8 +35,8 @@
                     field['value'] = clientHash.toString();
                     break;
 
-                case 'login[stealth_salt]':
-                    field['value'] = transferSalt.toString(Bytemap.Filter.Output.base64);
+                case 'login[salt]':
+                    field['value'] = $('.login.salt', form).val();
                     break;
 
                 case 'login[identity]':
@@ -75,6 +56,26 @@
 
                 if (response.error === false) {
                     document.location = response.redirect;
+                }
+                }, 'json');
+            };
+
+        form.submit(function(event){
+            event.preventDefault();
+
+            var serverSalt = new Bytemap(0);
+            var form = $(this);
+
+            clientIdentity = $('.login.identity', $(this)).val();
+
+            $.post(loadIdentityAction, {identity: clientIdentity}, function(response, status, request) {
+                if (status !== 'success') {
+                    return;
+                }
+
+                if (response['exists']) {
+                    serverSalt = Bytemap.Filter.Input.base64(response['salt']);
+                    login(form, form.serializeArray(), serverSalt);
                 }
                 }, 'json');
             });

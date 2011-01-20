@@ -60,7 +60,7 @@ class One_Admin_Core_Model_User_Entity
     {
         One_Core_Bo_EntityAbstract::_construct($options);
 
-        $this->_init('admin.core/user.entity', 'admin.core/user.entity.data-mapper');
+        $this->_init('admin.core/user.entity', 'user/entity.data-mapper');
 
         return $this;
     }

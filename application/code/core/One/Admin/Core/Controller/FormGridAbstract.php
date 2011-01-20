@@ -69,12 +69,13 @@ abstract class One_Admin_Core_Controller_FormGridAbstract
         } else if ($this->_collectionModel === null) {
             $this->_collectionModel = $collectionModel;
         }
+        $this->_collectionModel->setPageSize(20);
 
         $grid = $this->getLayout()
             ->getBlock('grid')
             ->setCollection($this->_collectionModel)
             ->loadColumns($gridName)
-            ->setPage($this->_getParam('p'), $this->_getParam('n'))
+            ->setPage($this->_getParam('p', 1), $this->_getParam('n', 20))
             ->sort($sort)
         ;
 

@@ -53,7 +53,7 @@
  * @subpackage  One_Admin_Cms
  */
 class One_Admin_Cms_PageController
-    extends One_Admin_Core_ControllerAbstract
+    extends One_Admin_Core_Controller_FormGridAbstract
 {
     public function indexAction()
     {

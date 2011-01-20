@@ -76,7 +76,7 @@ class One_Core_Model_Config
     public function getFieldset($fieldsetName)
     {
         if ($this->_fieldsets === null) {
-            $this->_fieldsets = $this->app()->getConfig('general.fieldsets');
+            $this->_fieldsets = $this->app()->getConfig('general/fieldsets');
         }
         if (!isset($this->_fieldsets[$fieldsetName])) {
             return null;
@@ -131,7 +131,7 @@ class One_Core_Model_Config
     public function getFormDisplayGroup($groupName)
     {
         if ($this->_fieldsets === null) {
-            $this->_fieldsets = $this->app()->getConfig('general.groups');
+            $this->_fieldsets = $this->app()->getConfig('general/groups');
         }
         if (!isset($this->_fieldsets[$fieldsetName])) {
             return null;
@@ -148,7 +148,7 @@ class One_Core_Model_Config
     public function getForm($formName)
     {
         if ($this->_forms === null) {
-            $this->_forms = $this->app()->getConfig('general.forms');
+            $this->_forms = $this->app()->getConfig('general/forms');
         }
         if (!isset($this->_forms[$formName])) {
             return null;
@@ -211,7 +211,6 @@ class One_Core_Model_Config
                     $name = isset($groupConfig['name']) ? $groupConfig['name'] : uniqid('group_');
                 }
 
-//                var_dump($groupConfig);
                 $form->addDisplayGroup(array_keys($groupConfig['elements']), $name, isset($groupConfig['options']) ? $groupConfig['options'] : array());
             }
         }
@@ -222,7 +221,7 @@ class One_Core_Model_Config
     public function getUrl($path)
     {
         if ($this->_host === null) {
-            $this->_host = $this->app()->getConfig('system.hostname');
+            $this->_host = $this->app()->getConfig('system/hostname');
         }
 
         if (substr($path, 0, 1) !== '/') {
@@ -235,11 +234,7 @@ class One_Core_Model_Config
     public function getBaseUrl($path)
     {
         if ($this->_baseUrl === null) {
-            $this->_baseUrl = $this->app()->getConfig('system.base-url');
-        }
-
-        if (substr($path, 0, 1) !== '/') {
-            $path = '/' . $path;
+            $this->_baseUrl = $this->app()->getConfig('system/base-url');
         }
 
         return $this->getUrl($this->_baseUrl . $path);

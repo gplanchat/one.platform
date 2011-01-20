@@ -145,8 +145,8 @@ abstract class One_Core_Bo_EntityAbstract
             $ormDataMapperClass = self::DEFAULT_DATAMAPPER;
         }
 
-        $this->setDao($this->app()->getResource($daoHandlerClass, 'resource.dao'));
-        $this->setDataMapper($this->app()->getResourceSingleton($ormDataMapperClass, 'resource.orm'));
+        $this->setDao($this->app()->getResource($daoHandlerClass, 'resource/dao'));
+        $this->setDataMapper($this->app()->getResourceSingleton($ormDataMapperClass, 'resource/orm'));
 
         return $this;
     }

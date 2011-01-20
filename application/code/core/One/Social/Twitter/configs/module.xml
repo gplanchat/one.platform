@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+<?php
 /**
  * This file is part of One.Platform
  *
@@ -44,89 +45,52 @@
 <config>
   <default>
     <modules>
-      <One_Admin_Core>
-        <version>0.1.1</version>
-      </One_Admin_Core>
+      <One_Social_Twitter>
+        <version>0.1.0</version>
+      </One_Social_Twitter>
     </modules>
 
     <model>
-      <admin.core>
-        <namespace>One_Admin_Core_Model</namespace>
-      </admin.core>
+      <social.twitter>
+        <namespace>One_Social_Twitter_Model</namespace>
+      </social.twitter>
     </model>
 
     <exception>
-      <admin.core>
-        <namespace>One_Admin_Core_Exception</namespace>
-      </admin.core>
+      <social.twitter>
+        <namespace>One_Social_Twitter_Exception</namespace>
+      </social.twitter>
     </exception>
 
     <block>
-      <admin.core>
-        <namespace>One_Admin_Core_Block</namespace>
-      </admin.core>
+      <social.twitter>
+        <namespace>One_Social_Twitter_Block</namespace>
+      </social.twitter>
     </block>
 
     <resource>
       <dao>
-        <admin.core>
-          <namespace>One_Admin_Core_Resource_Dao</namespace>
-        </admin.core>
+        <social.twitter>
+          <namespace>One_Social_Twitter_Resource_Dao</namespace>
+        </social.twitter>
       </dao>
       <orm>
-        <admin.core>
-          <namespace>One_Admin_Core_Resource_Orm</namespace>
-        </admin.core>
+        <social.twitter>
+          <namespace>One_Social_Twitter_Resource_Orm</namespace>
+        </social.twitter>
       </orm>
       <dal>
         <database>
-          <admin.core>
-            <namespace>One_Admin_Core_Dal_Database</namespace>
+          <social.twitter>
+            <namespace>One_Social_Twitter_Dal_Database</namespace>
             <connection>
               <read>core_read</read>
               <write>core_write</write>
               <setup>core_setup</setup>
             </connection>
-          </admin.core>
+          </social.twitter>
         </database>
       </dal>
     </resource>
-
-    <general>
-      <layout>
-        <admin.core>core.xml</admin.core>
-      </layout>
-      
-      <forms>
-        <admin-user-entity>
-          <actions>
-            <submit>
-              <params>
-                <controller>grid</controller>
-                <action>form-post</action>
-              </params>
-            </submit>
-            <success>
-              <params>
-                <controller>grid</controller>
-              </params>
-            </success>
-            <error>
-              <params>
-                <controller>grid</controller>
-                <action>form</action>
-              </params>
-            </error>
-          </actions>
-          <fieldsets>
-            <login />
-          </fieldsets>
-          <params>
-            <name>login</name>
-          </params>
-        </admin-user-entity>
-      </forms>
-
-    </general>
   </default>
 </config>

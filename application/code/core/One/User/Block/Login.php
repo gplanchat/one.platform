@@ -65,10 +65,10 @@ class One_User_Block_Login
         $config = $this->app()->getModel('core/config');
 
         $this->headScript()
-            ->appendFile($config->getUrl('/js/jquery.js'))
-            ->appendFile($config->getUrl('/js/core.js'))
-            ->appendFile($config->getUrl('/js/security.js'))
-            ->appendFile($config->getUrl('/js/auth.js'))
+            ->appendFile($config->getBaseUrl('js/jquery.js'))
+            ->appendFile($config->getBaseUrl('js/core.js'))
+            ->appendFile($config->getBaseUrl('js/security.js'))
+            ->appendFile($config->getBaseUrl('js/auth.js'))
         ;
 
         $script =<<<SCRIPT_EOF
@@ -79,19 +79,6 @@ SCRIPT_EOF;
 
         $this->headScript()
             ->appendScript($script)
-        ;
-
-        $salt = base64_encode($this->app()->getHelper('core/security')->random(32, null, true));
-
-        $this->app()
-            ->getSingleton('user/session')
-            ->setTransferSalt($salt)
-        ;
-
-        $this->_form
-            ->getSubform('login')
-            ->getElement('salt')
-            ->setValue($salt)
         ;
 
         $this->_form->addElement('hidden', 'load_identity', array(
@@ -113,5 +100,25 @@ SCRIPT_EOF;
             ), 'account'));
 
         return $options;
+    }
+
+    public function setTransferSalt($salt)
+    {
+        $this->_form
+            ->getSubform('login')
+            ->getElement('salt')
+            ->setValue($salt)
+        ;
+
+        return $this;
+    }
+
+    public function getTransferSalt()
+    {
+        return $this->_form
+            ->getSubform('login')
+            ->getElement('salt')
+            ->getValue()
+        ;
     }
 }

@@ -52,6 +52,8 @@
 class One_Admin_Core_Model_Session
     extends One_User_Model_Session
 {
+    protected $_userModel = 'admin.core/user.entity';
+
     /**
      * FIXME: PHPDoc
      */

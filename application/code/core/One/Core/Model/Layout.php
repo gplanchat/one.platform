@@ -83,7 +83,7 @@ class One_Core_Model_Layout
             'class'    => 'frontoffice',
             'design'   => 'default',
             'template' => 'default'
-            ), (array) $this->app()->getConfig('system.layout'), (array) $data);
+            ), (array) $this->app()->getConfig('system/layout'), (array) $data);
 
         $this->_renderingClass = $data['class'];
 
@@ -99,7 +99,7 @@ class One_Core_Model_Layout
         $templateLayoutPath = realpath(dirname($this->_templateScriptPath) . One::DS . 'layout');
 
         $this->_layoutConfiguration = new Zend_Config(array(), true);
-        $files = $this->app()->getConfig('general.layout');
+        $files = $this->app()->getConfig('general/layout');
         foreach ($files as $module => $filename) {
             if (file_exists($baseLayoutPath . One::DS . $filename)) {
                 $this->_layoutConfiguration->merge(new Zend_Config_Xml($baseLayoutPath . One::DS . $filename, null, true));

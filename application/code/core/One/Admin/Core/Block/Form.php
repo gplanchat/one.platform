@@ -59,12 +59,12 @@ class One_Admin_Core_Block_Form
         $config = $this->app()->getModel('core/config');
 
         $this->headScript()
-            ->appendFile($config->getUrl('/js/jquery.js'))
-            ->appendFile($config->getUrl('/js/tiny_mce/tiny_mce.js'))
-            ->appendFile($config->getUrl('/js/tiny_mce/jquery.tinymce.js'))
-            ->appendFile($config->getUrl('/js/core.js'))
-            ->appendFile($config->getBaseUrl('/js/core.js'))
-            ->appendFile($config->getBaseUrl('/js/form.js'))
+            ->appendFile($config->getBaseUrl('js/jquery.js'))
+            ->appendFile($config->getBaseUrl('js/tiny_mce/tiny_mce.js'))
+            ->appendFile($config->getBaseUrl('js/tiny_mce/jquery.tinymce.js'))
+            ->appendFile($config->getBaseUrl('js/core.js'))
+            ->appendFile($config->getBaseUrl('admin/js/core.js'))
+            ->appendFile($config->getBaseUrl('admin/js/form.js'))
         ;
 
         $action = '#';

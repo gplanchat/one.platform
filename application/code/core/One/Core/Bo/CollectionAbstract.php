@@ -194,8 +194,8 @@ abstract class One_Core_Bo_CollectionAbstract
         }
 
         $this->_boEntityClass = $boEntityClass;
-        $this->setDao($this->app()->getResource($daoHandlerClass, 'resource.dao'));
-        $this->setDataMapper($this->app()->getResourceSingleton($ormDataMapperClass, 'resource.orm'));
+        $this->setDao($this->app()->getResource($daoHandlerClass, 'resource/dao'));
+        $this->setDataMapper($this->app()->getResourceSingleton($ormDataMapperClass, 'resource/orm'));
 
         return $this;
     }
@@ -673,6 +673,20 @@ abstract class One_Core_Bo_CollectionAbstract
     public function getPageSize()
     {
         return $this->_pageSize;
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.1.4
+     *
+     * @return int
+     */
+    public function setPageSize($pageSize)
+    {
+        $this->_pageSize = $pageSize;
+
+        return $this;
     }
 
     /**

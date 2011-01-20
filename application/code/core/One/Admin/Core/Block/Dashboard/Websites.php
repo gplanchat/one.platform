@@ -10,9 +10,9 @@ class One_Admin_Core_Block_Dashboard_Websites
         $config = $this->app()->getModel('core/config');
 
         $this->headScript()
-            ->appendFile($config->getUrl('/js/jquery.js'))
-            ->appendFile($config->getUrl('/js/core.js'))
-            ->appendFile($config->getUrl('/admin/js/tree.js'))
+            ->appendFile($config->getBaseUrl('js/jquery.js'))
+            ->appendFile($config->getBaseUrl('js/core.js'))
+            ->appendFile($config->getBaseUrl('admin/js/tree.js'))
         ;
     }
 }

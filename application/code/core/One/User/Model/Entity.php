@@ -164,15 +164,10 @@ class One_User_Model_Entity
 
         $stealthAdapter = $this->app()->getModel('user/entity.authentication.adapter.password-stealth');
 
-        $serverSalt = '';
-        for ($i = 0; $i < 32; $i++) {
-            $serverSalt .= chr(mt_rand(0, 255));
-        }
-
         $adapter = $this->app()
             ->getModel('user/entity.authentication')
             ->setId($this->getId())
-            ->setServerSalt($serverSalt, false)
+            ->setServerSalt($serverSalt, $this->app()->getHelper('core/security')->random(32, null, true), false)
             ->setServerHash($stealthAdapter->hash($userData['password'], $serverSalt), false)
             ->save()
         ;

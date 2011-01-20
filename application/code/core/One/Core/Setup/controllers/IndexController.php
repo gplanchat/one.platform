@@ -200,7 +200,7 @@ class One_Core_Setup_IndexController
     protected function _getDatabaseVersion($adapter, $engine, $connectionConfig)
     {
         $connection = $this->app()
-            ->getResource($adapter, 'dal.database', $connectionConfig, $this->app())
+            ->getResource($adapter, 'dal/database', $connectionConfig, $this->app())
         ;
 
         switch ($engine) {
@@ -288,6 +288,10 @@ class One_Core_Setup_IndexController
         $this->_session->setRegistrationData($this->_getParam('registration'));
 
         $config = simplexml_load_file(APPLICATION_PATH . DS. 'configs' . DS . 'local.xml.sample');
+
+        $config->default->system->hostname = $_SERVER['HTTP_HOST'];
+        $config->default->system->{'base-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/';
+
         $connections = $config->default->general->database->connection;
         foreach (array('core_setup', 'core_read', 'core_write') as $connection) {
             $connections->$connection->engine = $adapter;

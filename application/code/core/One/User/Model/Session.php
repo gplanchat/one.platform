@@ -44,7 +44,9 @@ class One_User_Model_Session
     const STORAGE_KEY = 'auth_storage';
     const TIME_KEY = 'auth_time';
 
-    protected $_userEntity = NULL;
+    protected $_userEntity = null;
+
+    protected $_userModel = 'user/entity';
 
     protected function _construct($options)
     {
@@ -59,7 +61,7 @@ class One_User_Model_Session
     {
         if (is_null($this->_userEntity)) {
             $this->_userEntity = $this->app()
-                ->getModel('user/entity')
+                ->getModel($this->_userModel)
             ;
         }
 
@@ -70,6 +72,10 @@ class One_User_Model_Session
         return $this->_userEntity;
     }
 
+    /**
+     *
+     * @param $user
+     */
     public function setUserModel(One_User_Model_Entity $user)
     {
         $this->_user = $user;
@@ -77,6 +83,9 @@ class One_User_Model_Session
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getLogonTime()
     {
         return $this->_getData(self::TIME_KEY);

@@ -71,7 +71,7 @@ class One_Admin_Core_Model_Config
     public function getGrid($gridName)
     {
         if ($this->_grids === null) {
-            $this->_grids = $this->app()->getConfig('general.grids');
+            $this->_grids = $this->app()->getConfig('general/grids');
         }
         if (!isset($this->_grids[$gridName])) {
             return null;
@@ -88,7 +88,7 @@ class One_Admin_Core_Model_Config
     public function getForm($formName)
     {
         if ($this->_forms === null) {
-            $this->_forms = $this->app()->getConfig('general.forms');
+            $this->_forms = $this->app()->getConfig('general/forms');
         }
         if (!isset($this->_forms[$formName])) {
             return null;
