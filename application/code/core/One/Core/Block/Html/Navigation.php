@@ -71,7 +71,10 @@ class One_Core_Block_Html_Navigation
         }
 
         foreach ($children as $childName => $childConfig) {
-            $child->addChild($childConfig['label'], $childConfig['route'], $childConfig['label']);
+            $route = isset($childConfig['route']) && !empty($childConfig['route']) ? $childConfig['route'] : null;
+            $children = isset($childConfig['children']) && !empty($childConfig['children']) ? $childConfig['children'] : null;
+
+            $child->addChild($childConfig['label'], $route, $children);
         }
 
         $this->appendChild(uniqid(), $child);
