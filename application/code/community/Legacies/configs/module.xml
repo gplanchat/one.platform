@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<?php
+/**
+ * This file is part of One.Platform
+ *
+ * @license Modified BSD
+ * @see https://github.com/gplanchat/one.platform
+ *
+ * Copyright (c) 2009-2010, Grégory PLANCHAT <g.planchat at gmail.com>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ *     - Redistributions of source code must retain the above copyright notice,
+ *       this list of conditions and the following disclaimer.
+ *
+ *     - Redistributions in binary form must reproduce the above copyright notice,
+ *       this list of conditions and the following disclaimer in the documentation
+ *       and/or other materials provided with the distribution.
+ *
+ *     - Neither the name of Zend Technologies USA, Inc. nor the names of its
+ *       contributors may be used to endorse or promote products derived from this
+ *       software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *                                    NOTICE
+ *  This file is part of the core development branch, changing its contents will
+ * make you unable to use the automatic updates manager. Please refer to the
+ * documentation for further information about customizing One.Platform.
+ *
+ */
+-->
+<config>
+  <default>
+    <modules>
+      <Legacies>
+        <version>2011.1.0</version>
+        <stage>alpha1</stage>
+      </Legacies>
+    </modules>
+
+    <resource>
+      <dal>
+        <database>
+          <legacies>
+            <namespace>Legacies_Dal_Database</namespace>
+            <connection>
+              <read>legacies_read</read>
+              <write>legacies_write</write>
+              <setup>legacies_setup</setup>
+            </connection>
+          </legacies>
+        </database>
+        <entities>
+          <legacies>
+            <aks>
+              <table>legacies_aks</table>
+            </aks>
+            <alliance>
+              <table>legacies_alliance</table>
+            </alliance>
+            <annonce>
+              <table>legacies_annonce</table>
+            </annonce>
+            <banned>
+              <table>legacies_banned</table>
+            </banned>
+            <buddy>
+              <table>legacies_buddy</table>
+            </buddy>
+            <chat>
+              <table>legacies_chat</table>
+            </chat>
+            <config>
+              <table>legacies_config</table>
+            </config>
+            <declared>
+              <table>legacies_declared</table>
+            </declared>
+            <errors>
+              <table>legacies_errors</table>
+            </errors>
+            <fleets>
+              <table>legacies_fleets</table>
+            </fleets>
+            <galaxy>
+              <table>legacies_galaxy</table>
+            </galaxy>
+            <iraks>
+              <table>legacies_iraks</table>
+            </iraks>
+            <lunas>
+              <table>legacies_lunas</table>
+            </lunas>
+            <messages>
+              <table>legacies_messages</table>
+            </messages>
+            <multi>
+              <table>legacies_multi</table>
+            </multi>
+            <notes>
+              <table>legacies_notes</table>
+            </notes>
+            <planets>
+              <table>legacies_planets</table>
+            </planets>
+            <rw>
+              <table>legacies_rw</table>
+            </rw>
+            <statpoints>
+              <table>legacies_statpoints</table>
+            </statpoints>
+            <users>
+              <table>legacies_users</table>
+            </users>
+          </legacies>
+        </entities>
+      </dal>
+    </resource>
+
+    <general>
+      <database>
+        <connection>
+          <legacies_setup>
+            <use>core_setup</use>
+          </legacies_setup>
+          <legacies_read>
+            <use>core_read</use>
+          </legacies_read>
+          <legacies_write>
+            <use>core_write</use>
+          </legacies_write>
+        </connection>
+      </database>
+    </general>
+  </default>
+</config>
