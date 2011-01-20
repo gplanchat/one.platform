@@ -54,6 +54,13 @@
           <One_Cms />
         </requires>
       </Legacies>
+      <Legacies_Admin_Core>
+        <codePool>community</codePool>
+        <active>1</active>
+        <require>
+          <Legacies />
+        </require>
+      </Legacies_Admin_Core>
     </modules>
   </default>
   <production>

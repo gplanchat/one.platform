@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <backoffice>
+    <general>
+      <navigation>
+        <legacies>
+          <label>Legacies</label>
+          <children>
+            <units>
+              <label>Units management</label>
+              <children>
+                <ships>
+                  <label>Ship Types</label>
+                  <route>
+                    <path>legacies</path>
+                    <controller>ships</controller>
+                  </route>
+                </ships>
+                <buildings>
+                  <label>Building Types</label>
+                  <route>
+                    <path>legacies</path>
+                    <controller>buildings</controller>
+                  </route>
+                </buildings>
+                <defenses>
+                  <label>Defense Types</label>
+                  <route>
+                    <path>legacies</path>
+                    <controller>defenses</controller>
+                  </route>
+                </defenses>
+                <research>
+                  <label>Research Types</label>
+                  <route>
+                    <path>legacies</path>
+                    <controller>research</controller>
+                  </route>
+                </research>
+              </children>
+            </units>
+          </children>
+        </legacies>
+      </navigation>
+    </general>
+  </backoffice>
+</config>
