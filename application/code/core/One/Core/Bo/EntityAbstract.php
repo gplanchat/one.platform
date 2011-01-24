@@ -374,7 +374,7 @@ abstract class One_Core_Bo_EntityAbstract
             if ($field !== null) {
                 $identifier = array($field => $identifier);
             } else {
-                $identifier = array(self::DEFAULT_ENTITY_ID_FIELD_NAME => $identifier);
+                $identifier = array($this->getIdFieldName() => $identifier);
             }
         }
 
