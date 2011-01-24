@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <local>
   <default>
+    <system>
+      <hostname>localhost</hostname>
+      <base-url>/</base-url>
+    </system>
     <general>
       <database>
         <connection>
@@ -44,6 +48,11 @@
       </database>
     </general>
   </default>
+  <backoffice>
+    <system>
+      <base-url>/admin/</base-url>
+    </system>
+  </backoffice>
   <production extends="default" />
   <preprod extends="production" />
   <testing extends="production" />
