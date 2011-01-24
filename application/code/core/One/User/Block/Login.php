@@ -65,10 +65,10 @@ class One_User_Block_Login
         $config = $this->app()->getModel('core/config');
 
         $this->headScript()
-            ->appendFile($config->getBaseUrl('js/jquery.js'))
-            ->appendFile($config->getBaseUrl('js/core.js'))
-            ->appendFile($config->getBaseUrl('js/security.js'))
-            ->appendFile($config->getBaseUrl('js/auth.js'))
+            ->appendFile($this->getScriptUrl('jquery.js'))
+            ->appendFile($this->getScriptUrl('core.js'))
+            ->appendFile($this->getScriptUrl('security.js'))
+            ->appendFile($this->getScriptUrl('auth.js'))
         ;
 
         $script =<<<SCRIPT_EOF

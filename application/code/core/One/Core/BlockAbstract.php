@@ -394,4 +394,20 @@ abstract class One_Core_BlockAbstract
             ->getBaseUrl($url)
         ;
     }
+
+    public function getScriptUrl($url = null)
+    {
+        return $this->app()
+            ->getSingleton('core/config')
+            ->getScriptUrl($url)
+        ;
+    }
+
+    public function getStyleUrl($url = null)
+    {
+        return $this->app()
+            ->getSingleton('core/config')
+            ->getStyleUrl($url)
+        ;
+    }
 }

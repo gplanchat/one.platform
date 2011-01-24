@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <local>
   <default>
+    <system>
+      <hostname>localhost</hostname>
+      <base-url>/</base-url>
+      <style-url>/design/</style-url>
+      <script-url>/js/</script-url>
+    </system>
     <general>
       <database>
         <connection>
@@ -44,6 +50,12 @@
       </database>
     </general>
   </default>
+  <backoffice>
+    <system>
+      <base-url>/admin.php/</base-url>
+      <style-url>/design/admin/</style-url>
+    </system>
+  </backoffice>
   <production extends="default" />
   <preprod extends="production" />
   <testing extends="production" />
