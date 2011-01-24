@@ -39,6 +39,20 @@
                 </research>
               </children>
             </units>
+            <mission>
+              <label>Mission Types</label>
+              <route>
+                <path>legacies</path>
+                <controller>mission</controller>
+              </route>
+            </mission>
+            <planets>
+              <label>Planet Types</label>
+              <route>
+                <path>legacies</path>
+                <controller>planet</controller>
+              </route>
+            </planets>
           </children>
         </legacies>
       </navigation>

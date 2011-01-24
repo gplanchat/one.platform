@@ -12,13 +12,6 @@
               <block>head</block>
             </params>
           </action>
-          <action method="addPage">
-            <params>
-              <name>test</name>
-              <title>Testing menu</title>
-              <href>http://one/</href>
-            </params>
-          </action>
         </block>
       </block>
       <block type="core/debug" name="debug" />
