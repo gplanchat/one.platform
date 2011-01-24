@@ -58,6 +58,10 @@ class One_Core_Model_Config
 
     protected $_baseUrl = null;
 
+    protected $_styleUrl = null;
+
+    protected $_scriptUrl = null;
+
     protected $_host = null;
 
     protected function _construct($options)
@@ -238,5 +242,23 @@ class One_Core_Model_Config
         }
 
         return $this->getUrl($this->_baseUrl . $path);
+    }
+
+    public function getScriptUrl($path)
+    {
+        if ($this->_scriptUrl === null) {
+            $this->_scriptUrl = $this->app()->getConfig('system/script-url');
+        }
+
+        return $this->getUrl($this->_scriptUrl . $path);
+    }
+
+    public function getStyleUrl($path)
+    {
+        if ($this->_styleUrl === null) {
+            $this->_styleUrl = $this->app()->getConfig('system/style-url');
+        }
+
+        return $this->getUrl($this->_styleUrl . $path);
     }
 }

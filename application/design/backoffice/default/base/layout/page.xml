@@ -11,23 +11,23 @@
         <title>One Platform - Admin Panel</title>
         <action method="addStylesheet">
           <params>
-            <stylesheet>design/reset.css</stylesheet>
+            <stylesheet>reset.css</stylesheet>
           </params>
         </action>
         <action method="addStylesheet">
           <params>
-            <stylesheet>design/boxes.css</stylesheet>
+            <stylesheet>boxes.css</stylesheet>
           </params>
         </action>
         <action method="addStylesheet">
           <params>
-            <stylesheet>design/print.css</stylesheet>
+            <stylesheet>print.css</stylesheet>
             <media>print</media>
           </params>
         </action>
         <action method="addStylesheet">
           <params>
-            <stylesheet>design/menu.css</stylesheet>
+            <stylesheet>menu.css</stylesheet>
             <media>screen,projection</media>
           </params>
         </action>

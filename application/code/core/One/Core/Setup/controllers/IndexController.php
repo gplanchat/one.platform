@@ -291,9 +291,11 @@ class One_Core_Setup_IndexController
 
         $config->default->system->hostname = $_SERVER['HTTP_HOST'];
         $config->default->system->{'base-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/';
+        $config->default->system->{'style-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/design/';
+        $config->default->system->{'script-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/js/';
 
         $config->backoffice->system->hostname = $_SERVER['HTTP_HOST'];
-        $config->backoffice->system->{'base-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/admin/';
+        $config->backoffice->system->{'base-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/admin.php/';
 
         $connections = $config->default->general->database->connection;
         foreach (array('core_setup', 'core_read', 'core_write') as $connection) {

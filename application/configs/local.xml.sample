@@ -4,6 +4,8 @@
     <system>
       <hostname>localhost</hostname>
       <base-url>/</base-url>
+      <style-url>/design/</style-url>
+      <script-url>/js/</script-url>
     </system>
     <general>
       <database>
@@ -50,7 +52,8 @@
   </default>
   <backoffice>
     <system>
-      <base-url>/admin/</base-url>
+      <base-url>/admin.php/</base-url>
+      <style-url>/design/admin/</style-url>
     </system>
   </backoffice>
   <production extends="default" />
