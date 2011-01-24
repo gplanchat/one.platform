@@ -16,6 +16,7 @@
     </extra>
   </setup>
   <backoffice>
+    <no-cache>1</no-cache>
     <config>websites/backoffice.xml</config>
     <env>production</env>
     <extra>

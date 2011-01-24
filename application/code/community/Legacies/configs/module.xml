@@ -128,7 +128,16 @@
           </legacies>
         </entities>
       </dal>
+      <dao>
+        <namespace>Legacies_Resource_Dao</namespace>
+      </dao>
     </resource>
+    
+    <model>
+      <legacies>
+        <namespace>Legacies_Model</namespace>
+      </legacies>
+    </model>
 
     <general>
       <database>
