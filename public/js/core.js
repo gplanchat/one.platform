@@ -88,6 +88,8 @@ var $$ = function(identifier) {
         __construct: function(path) {
             path = path || '';
 
+            this._host       = '';
+            this._secured    = false;
             this._baseUrl    = '';
             this._prefix     = '';
             this._module     = '';
@@ -100,6 +102,18 @@ var $$ = function(identifier) {
 //            match = $('script[src$=js/core.js]').attr('src').match('^(.*)js\/core.js$');
 //            this._baseUrl = (match[1] !== undefined ? match[1] : '/' ) + path;
             this._baseUrl = (path[path.length - 1] === '/') ? path : (path + '/');
+            if (this._baseUrl.slice(0, 7) === 'http://') {
+                var offset = this._baseUrl.indexOf('/', 7);
+
+                this._host = this._baseUrl.slice(7, offset);
+                this._baseUrl = this._baseUrl.slice(offset);
+            } else if (this._baseUrl.slice(0, 8) === 'https://') {
+                var offset = this._baseUrl.indexOf('/', 8);
+
+                this._host = this._baseUrl.slice(8, offset);
+                this._baseUrl = this._baseUrl.slice(offset);
+                this._secured = true;
+            }
 
             match = document.location.pathname.match('^' + this._baseUrl + '(.*)$');
             var route = match[1] || '';

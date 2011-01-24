@@ -5,7 +5,7 @@
 var grid = null;
 
 $(document).ready(function(){
-    grid = new $.one.Grid($$('grid:<?php echo $this->escape($this->getName()) ?>'));
+    grid = new $.one.Grid($$('grid:<?php echo $this->escape($this->getName()) ?>'), '<?php echo $this->getBaseUrl('admin/')?>');
 });
 /*]]>*/
 </script>
