@@ -91,7 +91,7 @@ class Legacies_Admin_Core_ConfigController
         $this->_buildEditForm();
 
         $entityModel = $this->app()
-            ->getModel('cms/page')
+            ->getModel('legacies/config')
             ->load($this->_getParam('id'))
         ;
 
@@ -102,36 +102,19 @@ class Legacies_Admin_Core_ConfigController
 
         $this->_form->populate(array(
             'form_key' => $formKey,
-            'general' => array(
-                'title'   => $entityModel->getTitle(),
-                'url-key' => $entityModel->getPath(),
-                'websites' => $entityModel->getWebsiteId()
-                ),
-            'content' => array(
-                'html' => $entityModel->getContent()
-                ),
-            'meta' => array(
-                'description' => $entityModel->getMetaDescription(),
-                'keywords'    => $entityModel->getMetaKeywords()
-                ),
-            'layout' => array(
-                'updates' => $entityModel->getLayoutUpdates(),
-                'active'  => $entityModel->getLayoutUpdatesActivation(),
+            'config' => array(
+                'key'   => $entityModel->getConfigName(),
+                'value' => $entityModel->getConfigValue()
                 )
             ));
-
-        $websites = $this->_form->getTab('general')
-            ->getElement('websites')
-            ->setMultiOptions($this->app()->getModel('core/website.collection')->load()->toHash('label'))
-        ;
 
         $this->getLayout()
             ->getBlock('container')
             ->addButtonDuplicate()
             ->addButtonDelete()
-            ->setTitle('CMS Page')
-            ->setEntityLabel(sprintf('Edit CMS Page "%s"', $entityModel->getTitle()))
-            ->headTitle(sprintf('Edit CMS Page "%s"', $entityModel->getTitle()))
+            ->setTitle('Configuration Options')
+            ->setEntityLabel(sprintf('Edit Option "%s"', $entityModel->getTitle()))
+            ->headTitle(sprintf('Edit option "%s"', $entityModel->getTitle()))
         ;
 
         $url = $this->app()
@@ -155,21 +138,9 @@ class Legacies_Admin_Core_ConfigController
         ;
 
         $optionGroups = array(
-            'general' => array(
-                'title'    => array($entityModel, 'setTitle'),
-                'url-key'  => array($entityModel, 'setUrlKey'),
-                'websites' => array($entityModel, 'setWebsiteId')
-                ),
-            'content' => array(
-                'html' => array($entityModel, 'setContent')
-                ),
-            'meta' => array(
-                'description' => array($entityModel, 'setMetaDescription'),
-                'keywords'    => array($entityModel, 'setMetaKeywords')
-                ),
-            'layout' => array(
-                'active'  => array($entityModel, 'setLayoutActive'),
-                'updates' => array($entityModel, 'setLayoutUpdates')
+            'config' => array(
+                'key'    => array($entityModel, 'setConfigName'),
+                'value'  => array($entityModel, 'setConfigValue')
                 )
             );
 
@@ -205,9 +176,9 @@ class Legacies_Admin_Core_ConfigController
         }
         try {
             $entityModel->save();
-            $session->addError('Page successfully updated.');
+            $session->addError('Configuration successfully updated.');
         } catch (One_Core_Exception $e) {
-            $session->addError('Could not save page updates.');
+            $session->addError('Could not save configuration updates.');
         }
 
         $this->_helper->redirector->gotoRoute(array(
@@ -223,14 +194,9 @@ class Legacies_Admin_Core_ConfigController
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle('CMS Page')
-            ->setEntityLabel('Add a new CMS Page')
-            ->headTitle('Add a new CMS Page')
-        ;
-
-        $websites = $this->_form->getTab('general')
-            ->getElement('websites')
-            ->setMultiOptions($this->app()->getModel('core/website.collection')->load()->toHash('label'))
+            ->setTitle('Configuration Options')
+            ->setEntityLabel('Add a new Option')
+            ->headTitle('Add a new Option')
         ;
 
         $url = $this->app()
@@ -249,25 +215,13 @@ class Legacies_Admin_Core_ConfigController
     public function newPostAction()
     {
         $entityModel = $this->app()
-            ->getModel('cms/page')
+            ->getModel('legacies/config')
         ;
 
         $optionGroups = array(
-            'general' => array(
-                'title'    => array($entityModel, 'setTitle'),
-                'urlkey'  => array($entityModel, 'setPath'),
-                'websites' => array($entityModel, 'setWebsiteId')
-                ),
-            'content' => array(
-                'html' => array($entityModel, 'setContent')
-                ),
-            'meta' => array(
-                'description' => array($entityModel, 'setMetaDescription'),
-                'keywords'    => array($entityModel, 'setMetaKeywords')
-                ),
-            'layout' => array(
-                'active'  => array($entityModel, 'setLayoutActive'),
-                'updates' => array($entityModel, 'setLayoutUpdates')
+            'config' => array(
+                'key'    => array($entityModel, 'setConfigName'),
+                'value'  => array($entityModel, 'setConfigValue')
                 )
             );
 
@@ -304,9 +258,9 @@ class Legacies_Admin_Core_ConfigController
 
         try {
             $entityModel->save();
-            $session->addError('Page successfully updated.');
+            $session->addError('Configuration successfully updated.');
         } catch (One_Core_Exception $e) {
-            $session->addError('Could not save page updates.');
+            $session->addError('Could not save configuration updates.');
         }
 
         $this->_helper->redirector->gotoRoute(array(
@@ -320,19 +274,19 @@ class Legacies_Admin_Core_ConfigController
     {
         try {
             $entityModel = $this->app()
-                ->getModel('cms/page')
+                ->getModel('legacies/config')
                 ->load($this->_getParam('id'))
                 ->delete()
             ;
 
             $this->app()
                 ->getModel('admin.core/session')
-                ->addInfo('The page has been successfully deleted.')
+                ->addInfo('The Option has been successfully deleted.')
             ;
         } catch (One_Core_Exception $e) {
             $this->app()
                 ->getModel('admin.core/session')
-                ->addError('An error occured while deleting the page.')
+                ->addError('An error occured while deleting the Option.')
             ;
         }
 
@@ -360,9 +314,6 @@ class Legacies_Admin_Core_ConfigController
                 ));
         $this->_form->setAction($url);
 
-        $this->addTab('cms-page-general', 'general', 'General');
-        $this->addTab('cms-page-content', 'content', 'Content');
-        $this->addTab('cms-page-meta', 'meta', 'Meta data');
-        $this->addTab('cms-page-layout', 'layout', 'Layout updates');
+        $this->addTab('legacies-config', 'config', 'Configuration');
     }
 }

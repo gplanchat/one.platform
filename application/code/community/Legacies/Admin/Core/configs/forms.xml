@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-<?php
 /**
  * This file is part of One.Platform
  *
@@ -44,31 +43,54 @@
 -->
 <config>
   <default>
-    <modules>
-      <Legacies>
-        <codePool>community</codePool>
-        <active>0</active>
-        <requires>
-          <One_Core />
-          <One_User />
-          <One_Cms />
-        </requires>
-      </Legacies>
-      <Legacies_Admin_Core>
-        <codePool>community</codePool>
-        <route type="admin.core/router.route" path="legacies" name="legacies" />
-        <active>1</active>
-        <require>
-          <Legacies />
-        </require>
-      </Legacies_Admin_Core>
-    </modules>
+    <general>
+      <forms>
+        <legacies-config>
+          <attribs>
+            <id>legacies_config</id>
+          </attribs>
+          <elements>
+            <key>
+              <type>text</type>
+              <name>key</name>
+              <options>
+                <label>Configuration Key</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>config:key</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                </validators>
+              </options>
+            </key>
+            <value>
+              <type>text</type>
+              <name>value</name>
+              <options>
+                <label>Value</label>
+                <order>2</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>config:value</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                </validators>
+              </options>
+            </value>
+          </elements>
+        </legacies-config>
+      </forms>
+    </general>
   </default>
-  <production>
-    <modules>
-      <Legacies>
-        <active>1</active>
-      </Legacies>
-    </modules>
-  </production>
 </config>

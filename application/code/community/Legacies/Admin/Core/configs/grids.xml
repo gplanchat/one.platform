@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-<?php
 /**
- * This file is part of One.Platform
+ * This file is part of XNova:Legacies
  *
- * @license Modified BSD
+ * @license GNU General Public License
  * @see https://github.com/gplanchat/one.platform
  *
  * Copyright (c) 2009-2010, Grégory PLANCHAT <g.planchat at gmail.com>
@@ -44,31 +43,41 @@
 -->
 <config>
   <default>
-    <modules>
-      <Legacies>
-        <codePool>community</codePool>
-        <active>0</active>
-        <requires>
-          <One_Core />
-          <One_User />
-          <One_Cms />
-        </requires>
-      </Legacies>
-      <Legacies_Admin_Core>
-        <codePool>community</codePool>
-        <route type="admin.core/router.route" path="legacies" name="legacies" />
-        <active>1</active>
-        <require>
-          <Legacies />
-        </require>
-      </Legacies_Admin_Core>
-    </modules>
+    <general>
+      <grids>
+        <legacies-config>
+          <index>
+            <type>admin.core/grid.column.indexer</type>
+            <params>
+              <width>50</width>
+              <align>center</align>
+            </params>
+          </index>
+          <key>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>config_name</field>
+              <label>Configuration Key</label>
+              <width>150</width>
+              <align>left</align>
+            </params>
+          </key>
+          <value>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>config_value</field>
+              <label>Value</label>
+              <align>left</align>
+            </params>
+          </value>
+          <action>
+            <type>admin.core/grid.column.action</type>
+            <params>
+              <width>50</width>
+            </params>
+          </action>
+        </legacies-config>
+      </grids>
+    </general>
   </default>
-  <production>
-    <modules>
-      <Legacies>
-        <active>1</active>
-      </Legacies>
-    </modules>
-  </production>
 </config>

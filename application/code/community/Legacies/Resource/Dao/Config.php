@@ -54,6 +54,6 @@ class Legacies_Resource_Dao_Config
 {
     public function _construct($data)
     {
-        $this->_init('legacies/config', 'legacies/config');
+        $this->_init('legacies/config', 'legacies/config', 'config_name');
     }
 }

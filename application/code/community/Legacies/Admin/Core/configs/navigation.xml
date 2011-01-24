@@ -6,6 +6,13 @@
         <legacies>
           <label>Legacies</label>
           <children>
+            <config>
+              <label>Configuration</label>
+              <route>
+                <controller>config</controller>
+                <path>legacies</path>
+              </route>
+            </config>
             <units>
               <label>Units management</label>
               <children>
