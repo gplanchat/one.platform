@@ -386,4 +386,12 @@ abstract class One_Core_BlockAbstract
 
         return $this;
     }
+
+    public function getBaseUrl($url = null)
+    {
+        return $this->app()
+            ->getSingleton('core/config')
+            ->getBaseUrl($url)
+        ;
+    }
 }

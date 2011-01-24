@@ -1,8 +1,9 @@
 
 (function(ns){
     ns.Grid = $.one.Class.create({
-        __construct: function(element) {
+        __construct: function(element, baseUrl) {
             element = $(element);
+            baseUrl = baseUrl || '';
 
             var pager    = $('.page', element);
             var limit    = $('.limit', element);
@@ -34,7 +35,7 @@
                     }
                     });
 
-                document.location = (new $.one.Url('admin/')).toString(params);
+                document.location = (new $.one.Url(baseUrl)).toString(params);
                 }
 
             pager.change(function(e){

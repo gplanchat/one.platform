@@ -2,18 +2,18 @@
   <?php echo $this->translate('Page')?>
   <?php if ($this->getCurrentPageNum() > 1): ?>
   <a href="<?php echo $this->escape($this->getPrevPageUrl()) ?>">
-    <img class="arrow next" alt="<?php echo $this->translate('Go to Previous page')?>" src="http://magento/skin/adminhtml/default/default/images/pager_arrow_left.gif">
+    <img class="arrow next" alt="<?php echo $this->translate('Go to Previous page')?>" src="<?php echo $this->getBaseUrl('admin/design/images/pager_arrow_left.gif')?>">
   </a>
   <?php else: ?>
-  <img class="arrow next" alt="<?php echo $this->translate('Go to Previous page')?>" src="http://magento/skin/adminhtml/default/default/images/pager_arrow_left_off.gif">
+  <img class="arrow next" alt="<?php echo $this->translate('Go to Previous page')?>" src="<?php echo $this->getBaseUrl('admin/design/images/pager_arrow_left_off.gif')?>">
   <?php endif ?>
   <input type="text" class="input-text page" value="<?php echo $this->escape($this->getCurrentPageNum())?>" name="page">
   <?php if ($this->getCurrentPageNum() < $this->getLastPageNum()): ?>
   <a href="<?php echo $this->escape($this->getNextPageUrl()) ?>">
-    <img class="arrow next" alt="<?php echo $this->translate('Go to Next page')?>" src="http://magento/skin/adminhtml/default/default/images/pager_arrow_right.gif">
+    <img class="arrow next" alt="<?php echo $this->translate('Go to Next page')?>" src="<?php echo $this->getBaseUrl('admin/design/images/pager_arrow_right.gif')?>">
   </a>
   <?php else: ?>
-  <img class="arrow next" alt="<?php echo $this->translate('Go to Next page')?>" src="http://magento/skin/adminhtml/default/default/images/pager_arrow_right_off.gif">
+  <img class="arrow next" alt="<?php echo $this->translate('Go to Next page')?>" src="<?php echo $this->getBaseUrl('admin/design/images/pager_arrow_right_off.gif')?>">
   <?php endif ?>
     <?php echo $this->translate('of %d pages', $this->getLastPageNum()) ?><span class="separator">|</span>
     <?php echo $this->translate('View') ?>
