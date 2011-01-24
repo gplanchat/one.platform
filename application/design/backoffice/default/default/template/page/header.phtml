@@ -1,5 +1,5 @@
 <div class="header-top">
-    <a href="http://magento/index.php/admin/index/index/key/4dbc16fc4bf8e1e3f61022d4d878cdcd/"><img src="<?php echo $this->baseUrl('design/images/logo.png') ?>" alt="One Platform - Admin Panel" class="logo" /></a>
+    <a href="<?php echo $this->getBaseUrl() ?>"><img src="<?php echo $this->getStyleUrl('images/logo.png') ?>" alt="<?php $this->translate('One Platform - Admin Panel')?>" class="logo" /></a>
     <div class="header-right">
       <?php echo $this->renderChild('status') ?>
     <!--

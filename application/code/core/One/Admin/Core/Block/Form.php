@@ -56,15 +56,13 @@ class One_Admin_Core_Block_Form
 
     protected function _construct($options)
     {
-        $config = $this->app()->getModel('core/config');
-
         $this->headScript()
-            ->appendFile($config->getBaseUrl('js/jquery.js'))
-            ->appendFile($config->getBaseUrl('js/tiny_mce/tiny_mce.js'))
-            ->appendFile($config->getBaseUrl('js/tiny_mce/jquery.tinymce.js'))
-            ->appendFile($config->getBaseUrl('js/core.js'))
-            ->appendFile($config->getBaseUrl('admin/js/core.js'))
-            ->appendFile($config->getBaseUrl('admin/js/form.js'))
+            ->appendFile($this->getScriptUrl('jquery.js'))
+            ->appendFile($this->getScriptUrl('tiny_mce/tiny_mce.js'))
+            ->appendFile($this->getScriptUrl('tiny_mce/jquery.tinymce.js'))
+            ->appendFile($this->getScriptUrl('core.js'))
+            ->appendFile($this->getScriptUrl('core.js'))
+            ->appendFile($this->getScriptUrl('form.js'))
         ;
 
         $action = '#';

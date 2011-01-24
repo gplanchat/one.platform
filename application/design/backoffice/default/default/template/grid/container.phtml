@@ -37,7 +37,7 @@ $(document).ready(function(e){
         });
 
     $('[class^=content-header] button[name=add]').click(function(){
-        var url = new $.one.Url('admin/');
+        var url = new $.one.Url('<?php echo $this->getBaseUrl()?>');
         document.location = url.toString([{name: 'action', value: 'new'}]);
         });
     });

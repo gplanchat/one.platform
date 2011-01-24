@@ -71,13 +71,11 @@ class One_Admin_Core_Block_Grid
             $options['template'] = 'grid/layout.phtml';
         }
 
-        $config = $this->app()->getSingleton('core/config');
-
         $this->headScript()
-            ->appendFile($config->getBaseUrl('js/jquery.js'))
-            ->appendFile($config->getBaseUrl('js/core.js'))
-            ->appendFile($config->getBaseUrl('admin/js/core.js'))
-            ->appendFile($config->getBaseUrl('admin/js/grid.js'))
+            ->appendFile($this->getScriptUrl('jquery.js'))
+            ->appendFile($this->getScriptUrl('core.js'))
+            ->appendFile($this->getScriptUrl('core.js'))
+            ->appendFile($this->getScriptUrl('grid.js'))
         ;
 
         return parent::_construct($options);
