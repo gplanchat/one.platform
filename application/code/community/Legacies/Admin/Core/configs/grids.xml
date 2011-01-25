@@ -77,6 +77,78 @@
             </params>
           </action>
         </legacies-config>
+        <legacies-planets>
+          <index>
+            <type>admin.core/grid.column.indexer</type>
+            <params>
+              <width>50</width>
+              <align>center</align>
+            </params>
+          </index>
+          <galaxy>
+            <type>admin.core/grid.column.integer</type>
+            <params>
+              <field>galaxy</field>
+              <label>Galaxy</label>
+              <width>20</width>
+              <align>right</align>
+            </params>
+          </galaxy>
+          <system>
+            <type>admin.core/grid.column.integer</type>
+            <params>
+              <field>system</field>
+              <label>System</label>
+              <width>20</width>
+              <align>right</align>
+            </params>
+          </system>
+          <position>
+            <type>admin.core/grid.column.integer</type>
+            <params>
+              <field>planet</field>
+              <label>Position</label>
+              <width>20</width>
+              <align>right</align>
+            </params>
+          </position>
+          <name>
+            <type>admin.core/grid.column.string</type>
+            <params>
+              <field>name</field>
+              <label>Name</label>
+              <align>left</align>
+            </params>
+          </name>
+          <owner>
+            <type>admin.core/grid.column.select</type>
+            <params>
+              <field>id_owner</field>
+              <label>Owner</label>
+              <width>200</width>
+              <align>left</align>
+              <collection>
+                <model>legacies/user.collection</model>
+                <label>username</label>
+              </collection>
+            </params>
+          </owner>
+          <last-update>
+            <type>admin.core/grid.column.date-time</type>
+            <params>
+              <field>last_update</field>
+              <label>Last update</label>
+              <width>150</width>
+              <align>left</align>
+            </params>
+          </last-update>
+          <action>
+            <type>admin.core/grid.column.action</type>
+            <params>
+              <width>50</width>
+            </params>
+          </action>
+        </legacies-planets>
       </grids>
     </general>
   </default>

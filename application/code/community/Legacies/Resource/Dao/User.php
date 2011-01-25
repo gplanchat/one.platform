@@ -54,6 +54,6 @@ class Legacies_Resource_Dao_User
 {
     public function _construct($data)
     {
-        $this->_init('legacies/user', 'legacies/user', 'id');
+        $this->_init('legacies/user', 'legacies/users', 'id');
     }
 }

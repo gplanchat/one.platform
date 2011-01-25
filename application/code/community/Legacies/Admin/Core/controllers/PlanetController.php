@@ -59,7 +59,7 @@ class Legacies_Admin_Core_PlanetController
     {
         $this->loadLayout('admin.grid');
 
-        $this->_prepareGrid('legacies-planet', 'legacies/planet.collection', $this->_getParam('sort'));
+        $this->_prepareGrid('legacies-planets', 'legacies/planet.collection', $this->_getParam('sort'));
 
         $this->_collectionModel
             ->addAttributeFilter('planet_type', Legacies_Model_Planet::TYPE_PLANET)
