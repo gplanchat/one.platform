@@ -8,40 +8,46 @@
       <block name="body" type="core/text.concat"></block>
     </block>
   </default>
-  <setup.stage-one>
+  <setup.home>
+    <reference name="body">
+      <block name="content" type="core/html" template="home.phtml">
+      </block>
+    </reference>
+  </setup.home>
+  <setup.git>
     <reference name="head">
       <action method="headTitle">
         <params>
-          <headTitle>Stage One</headTitle>
+          <headTitle>Git</headTitle>
         </params>
       </action>
     </reference>
     <reference name="body">
       <block name="content" type="core/text.concat">
-        <block name="stage-one" type="core.setup/stage-one" template="stage-one.phtml">
+        <block name="git" type="core.setup/git" template="git.phtml">
           <block name="form" type="core/html.form">
-            <form>stage-one</form>
+            <form>git</form>
           </block>
         </block>
       </block>
     </reference>
-  </setup.stage-one>
-  <setup.stage-two>
+  </setup.git>
+  <setup.setup>
     <reference name="head">
       <action method="headTitle">
         <params>
-          <headTitle>Stage Two</headTitle>
+          <headTitle>Setup</headTitle>
         </params>
       </action>
     </reference>
     <reference name="body">
-      <block name="database" type="core.setup/stage-two" template="stage-two.phtml">
+      <block name="database" type="core.setup/setup" template="setup.phtml">
           <block name="form" type="core/html.form">
-            <form>stage-two</form>
+            <form>setup</form>
           </block>
       </block>
     </reference>
-  </setup.stage-two>
+  </setup.setup>
   <setup.updates>
     <reference name="head">
       <action method="headTitle">

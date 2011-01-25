@@ -56,14 +56,16 @@ class One_Core_Setup_IndexController
 {
     private $_session = null;
 
-    public function indexAction()
-    {
-        $this->_forward('stage-one');
-    }
-
     public function preDispatch()
     {
         $this->_session = $this->app()->getModel('core/session');
+    }
+
+    public function indexAction()
+    {
+        $this->loadLayout('setup.home');
+
+        $this->renderLayout();
     }
 
     protected function _git()
@@ -104,20 +106,13 @@ class One_Core_Setup_IndexController
         return $options;
     }
 
-    public function stageOneAction()
+    public function gitAction()
     {
-        $this->_session->setStageOnePassed(true);
-
-        $baseUrl = $this->getFrontController()->getBaseUrl();
-        $this->getResponse()
-            ->setRedirect($baseUrl . '/stage-two', 302);
-        return;
-
-        $this->loadLayout('setup.stage-one');
+        $this->loadLayout('setup.git');
 
         $repository = $this->getLayout()
             ->getBlock('form')
-            ->getSubForm('stage-one-repository')
+            ->getSubForm('git-repository')
         ;
         if (($url = $this->_session->getRepositoryUrl()) === null) {
             $url = $repository->getElement('repository')->getValue();
@@ -133,7 +128,7 @@ class One_Core_Setup_IndexController
         $this->renderLayout();
     }
 
-    public function stageOneAjaxAction()
+    public function gitAjaxAction()
     {
         $repository = $this->_getParam('repository');
 
@@ -151,9 +146,9 @@ class One_Core_Setup_IndexController
         ;
     }
 
-    public function stageOnePostAction()
+    public function gitPostAction()
     {
-        $datas = $this->_getParam('stageonerepository');
+        $datas = $this->_getParam('gitrepository');
 
         try {
             if (realpath(dirname($datas['destination'])) === false) {
@@ -177,22 +172,18 @@ class One_Core_Setup_IndexController
             $this->_session->setRepositoryUrl($datas['repository']);
         } catch (One_Core_Exception_CommandError $e) {
             $this->_session->addError($e->getMessage());
-            $this->_redirectError('stage-one');
+            $this->_redirectError('git');
         }
         $this->_session->setStageOnePassed(true);
 
         $baseUrl = $this->getFrontController()->getBaseUrl();
         $this->getResponse()
-            ->setRedirect($baseUrl . '/stage-two', 302);
+            ->setRedirect($baseUrl . '/git', 302);
     }
 
-    public function stageTwoAction()
+    public function setupAction()
     {
-        if ($this->_session->getStageOnePassed() !== true) {
-            $this->_redirectError('stage-one');
-        }
-
-        $this->loadLayout('setup.stage-two');
+        $this->loadLayout('setup.setup');
 
         $this->renderLayout();
     }
@@ -215,9 +206,9 @@ class One_Core_Setup_IndexController
         return false;
     }
 
-    public function stageTwoRdbmsTestAjaxAction()
+    public function setupRdbmsTestAjaxAction()
     {
-        $connectionConfig = $this->_getParam('stagetwordbms');
+        $connectionConfig = $this->_getParam('setuprdbms');
         $engine = $connectionConfig['engine'];
         unset($connectionConfig['engine']);
 
@@ -239,12 +230,8 @@ class One_Core_Setup_IndexController
         ;
     }
 
-    public function stageTwoPostAction()
+    public function setupPostAction()
     {
-        if ($this->_session->getStageOnePassed() !== true) {
-            $this->_redirectError('stage-one');
-        }
-
         $adapters = array(
             'mysqli' => array(
                 'adapter' => 'core/connection.adapter.mysqli',
@@ -264,20 +251,20 @@ class One_Core_Setup_IndexController
                 )
             );
 
-        $connectionConfig = $this->_getParam('stagetwordbms');
+        $connectionConfig = $this->_getParam('setuprdbms');
         if (isset($adapters[$connectionConfig['engine']])) {
             $adapter = $adapters[$connectionConfig['engine']]['adapter'];
             $engine  = $adapters[$connectionConfig['engine']]['engine'];
         }
         unset($connectionConfig['engine']);
-        $prefixConfig = $this->_getParam('stagetwodatabase');
+        $prefixConfig = $this->_getParam('setupdatabase');
         $prefixConfig = isset($prefixConfig['prefix']) ? $prefixConfig['prefix'] : 'platform_';
 
         try {
             $this->_getDatabaseVersion($adapter, $engine, $connectionConfig);
         } catch (One_Core_Exception $e) {
             $this->_session->addError($e->getMessage());
-            $this->_redirectError('stage-two');
+            $this->_redirectError('stage-one');
         }
 
         $this->_session->setDatabaseEngine($engine);
@@ -296,7 +283,7 @@ class One_Core_Setup_IndexController
 
         $config->backoffice->system->hostname = $_SERVER['HTTP_HOST'];
         $config->backoffice->system->{'base-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/admin.php/';
-        $config->default->system->{'style-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/design/admin/';
+        $config->backoffice->system->{'style-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/design/admin/';
 
         $connections = $config->default->general->database->connection;
         foreach (array('core_setup', 'core_read', 'core_write') as $connection) {
@@ -316,17 +303,33 @@ class One_Core_Setup_IndexController
 
         $config->asXml(APPLICATION_PATH . DS. 'configs' . DS . 'local.xml');
 
+        $path = dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR;
+        $baseUrl = dirname($this->getFrontController()->getBaseUrl());
+
+        $htaccess =<<<HTACCESS_EOF
+RewriteEngine On
+
+RewriteBase {$baseUrl}/
+
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L,NC]
+
+RewriteRule . index.php [L,NC]
+
+SetEnv APPLICATION_ENV production
+HTACCESS_EOF;
+        file_put_contents($path . '.htaccess', $htaccess);
+        copy($path . 'index.php.sample', $path . 'index.php');
+
         $baseUrl = $this->getFrontController()->getBaseUrl();
         $this->getResponse()
-            ->setRedirect($baseUrl . '/stage-two-setup-database', 302);
+            ->setRedirect($baseUrl . '/setup-database', 302);
     }
 
-    public function stageTwoSetupDatabaseAction()
+    public function setupDatabaseAction()
     {
-        if ($this->_session->getStageOnePassed() !== true) {
-            $this->_redirectError('stage-one');
-        }
-
         $updater = $this->app()->getModel('setup/updater');
 
         try {
@@ -355,35 +358,7 @@ class One_Core_Setup_IndexController
 
         $baseUrl = $this->getFrontController()->getBaseUrl();
         $this->getResponse()
-            ->setRedirect($baseUrl . '/stage-three', 302);
-    }
-
-    public function stageThreeAction()
-    {
-        $path = dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR;
-        $baseUrl = dirname($this->getFrontController()->getBaseUrl());
-
-        $htaccess =<<<HTACCESS_EOF
-RewriteEngine On
-
-RewriteBase {$baseUrl}/
-
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -s [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule . - [L,NC]
-
-RewriteRule . index.php [L,NC]
-
-SetEnv APPLICATION_ENV production
-HTACCESS_EOF;
-        file_put_contents($path . '.htaccess', $htaccess);
-        copy($path . 'index.php.sample', $path . 'index.php');
-
-        $baseUrl = $this->getFrontController()->getBaseUrl();
-        $this->getResponse()
             ->setRedirect($baseUrl . '/updates', 302);
-        return;
     }
 
     public function updatesAction()
