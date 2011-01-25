@@ -42,21 +42,16 @@
       </block>
     </reference>
   </setup.stage-two>
-  <setup.stage-three>
+  <setup.updates>
     <reference name="head">
       <action method="headTitle">
         <params>
-          <headTitle>Stage Three</headTitle>
+          <headTitle>Updates Manager</headTitle>
         </params>
       </action>
     </reference>
     <reference name="body">
-      <block name="status" type="core.setup/stage-three" template="stage-three.phtml"></block>
+      <block name="status" type="core.setup/updates" template="updates.phtml"></block>
     </reference>
-  </setup.stage-three>
-  <setup.stage-four>
-    <reference name="body">
-      <block name="scm" type="core.setup/stage-four"></block>
-    </reference>
-  </setup.stage-four>
+  </setup.updates>
 </layout>

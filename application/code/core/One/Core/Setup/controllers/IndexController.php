@@ -359,6 +359,34 @@ class One_Core_Setup_IndexController
 
     public function stageThreeAction()
     {
+        $path = dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR;
+        $baseUrl = dirname($this->getFrontController()->getBaseUrl());
+
+        $htaccess =<<<HTACCESS_EOF
+RewriteEngine On
+
+RewriteBase {$baseUrl}/
+
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule . - [L,NC]
+
+RewriteRule . index.php [L,NC]
+
+SetEnv APPLICATION_ENV production
+HTACCESS_EOF;
+        file_put_contents($path . '.htaccess', $htaccess);
+        copy($path . 'index.php.sample', $path . 'index.php');
+
+        $baseUrl = $this->getFrontController()->getBaseUrl();
+        $this->getResponse()
+            ->setRedirect($baseUrl . '/updates', 302);
+        return;
+    }
+
+    public function updatesAction()
+    {
         $updater = $this->app()->getModel('setup/updater');
 
         $modules = array();
@@ -382,7 +410,7 @@ class One_Core_Setup_IndexController
             }
         }
 
-        $this->loadLayout('setup.stage-three')
+        $this->loadLayout('setup.updates')
             ->getBlock('status')
             ->setModules($modules)
         ;
@@ -390,7 +418,7 @@ class One_Core_Setup_IndexController
         $this->renderLayout();
     }
 
-    public function stageThreeInstallModuleAction()
+    public function installModuleAction()
     {
         $module = $this->getRequest()->getQuery('module');
 
@@ -404,58 +432,14 @@ class One_Core_Setup_IndexController
 
         $baseUrl = $this->getFrontController()->getBaseUrl();
         $this->getResponse()
-            ->setRedirect($baseUrl . '/stage-three', 302);
+            ->setRedirect($baseUrl . '/updates', 302);
     }
 
-    public function stageThreePostAction()
+    public function jumpAction()
     {
-        $baseUrl = $this->getFrontController()->getBaseUrl();
-        $this->getResponse()
-            ->setRedirect($baseUrl . '/stage-four', 302);
-    }
-
-    public function stageFourAction()
-    {
-        $path = dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR;
         $baseUrl = dirname($this->getFrontController()->getBaseUrl());
-
-        $htaccess =<<<HTACCESS_EOF
-RewriteEngine On
-
-RewriteBase {$baseUrl}/
-
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -s [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule . - [L,NC]
-
-RewriteRule . index.php [L,NC]
-
-SetEnv APPLICATION_ENV production
-HTACCESS_EOF;
-        file_put_contents($path . '.htaccess', $htaccess);
-        copy($path . 'index.php.sample', $path . 'index.php');
-
-        $htaccess =<<<HTACCESS_EOF
-RewriteEngine On
-
-RewriteBase {$baseUrl}/admin/
-
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -s [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule . - [L,NC]
-
-RewriteRule . index.php [L,NC]
-
-SetEnv APPLICATION_ENV production
-HTACCESS_EOF;
-        file_put_contents($path . 'admin' . DIRECTORY_SEPARATOR . '.htaccess', $htaccess);
-        copy($path . 'admin' . DIRECTORY_SEPARATOR . 'index.php.sample', $path . 'admin' . DIRECTORY_SEPARATOR . 'index.php');
-
         $this->getResponse()
             ->setRedirect($baseUrl, 302);
-        return;
     }
 
     public function applyPatchAction()
