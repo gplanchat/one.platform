@@ -52,18 +52,18 @@
  * @package     One_Admin_Cms
  * @subpackage  One_Admin_Cms
  */
-class Legacies_Admin_Core_ConfigController
+class Legacies_Admin_Core_UserController
     extends One_Admin_Core_Controller_FormGridAbstract
 {
     public function indexAction()
     {
         $this->loadLayout('admin.grid');
 
-        $this->_prepareGrid('legacies-config', 'legacies/config.collection', $this->_getParam('sort'));
+        $this->_prepareGrid('legacies-user', 'legacies/user.collection', $this->_getParam('sort'));
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle('Configuration management')
+            ->setTitle('User management')
         ;
 
         $this->renderLayout();
@@ -72,7 +72,7 @@ class Legacies_Admin_Core_ConfigController
     public function gridAjaxAction()
     {
         $collection = $this->app()
-            ->getModel('legacies/config.collection')
+            ->getModel('legacies/user.collection')
             ->setPage($this->_getParam('p'), $this->_getParam('n'));
 
         $this->getResponse()
@@ -91,7 +91,7 @@ class Legacies_Admin_Core_ConfigController
         $this->_buildEditForm();
 
         $entityModel = $this->app()
-            ->getModel('legacies/config')
+            ->getModel('legacies/user')
             ->load($this->_getParam('id'))
         ;
 
@@ -102,19 +102,19 @@ class Legacies_Admin_Core_ConfigController
 
         $this->_form->populate(array(
             'form_key' => $formKey,
-            'config' => array(
-                'key'   => $entityModel->getConfigName(),
-                'value' => $entityModel->getConfigValue()
-                )
+//            'config' => array(
+//                'key'   => $entityModel->getConfigName(),
+//                'value' => $entityModel->getConfigValue()
+//                )
             ));
 
         $this->getLayout()
             ->getBlock('container')
             ->addButtonDuplicate()
             ->addButtonDelete()
-            ->setTitle('Configuration Options')
-            ->setEntityLabel(sprintf('Edit Option "%s"', $entityModel->getTitle()))
-            ->headTitle(sprintf('Edit option "%s"', $entityModel->getTitle()))
+            ->setTitle('User management')
+            ->setEntityLabel(sprintf('Edit User "%s"', $entityModel->getUsername()))
+            ->headTitle(sprintf('Edit User "%s"', $entityModel->getUsername()))
         ;
 
         $url = $this->app()

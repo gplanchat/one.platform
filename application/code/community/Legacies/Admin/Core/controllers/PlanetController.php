@@ -52,18 +52,22 @@
  * @package     One_Admin_Cms
  * @subpackage  One_Admin_Cms
  */
-class Legacies_Admin_Core_ConfigController
+class Legacies_Admin_Core_PlanetController
     extends One_Admin_Core_Controller_FormGridAbstract
 {
     public function indexAction()
     {
         $this->loadLayout('admin.grid');
 
-        $this->_prepareGrid('legacies-config', 'legacies/config.collection', $this->_getParam('sort'));
+        $this->_prepareGrid('legacies-planet', 'legacies/planet.collection', $this->_getParam('sort'));
+
+        $this->_collectionModel
+            ->addAttributeFilter('planet_type', Legacies_Model_Planet::TYPE_PLANET)
+        ;
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle('Configuration management')
+            ->setTitle('Planet management')
         ;
 
         $this->renderLayout();
@@ -72,7 +76,7 @@ class Legacies_Admin_Core_ConfigController
     public function gridAjaxAction()
     {
         $collection = $this->app()
-            ->getModel('legacies/config.collection')
+            ->getModel('legacies/planet.collection')
             ->setPage($this->_getParam('p'), $this->_getParam('n'));
 
         $this->getResponse()
@@ -91,7 +95,7 @@ class Legacies_Admin_Core_ConfigController
         $this->_buildEditForm();
 
         $entityModel = $this->app()
-            ->getModel('legacies/config')
+            ->getModel('legacies/planet')
             ->load($this->_getParam('id'))
         ;
 
@@ -102,19 +106,19 @@ class Legacies_Admin_Core_ConfigController
 
         $this->_form->populate(array(
             'form_key' => $formKey,
-            'config' => array(
-                'key'   => $entityModel->getConfigName(),
-                'value' => $entityModel->getConfigValue()
-                )
+//            'config' => array(
+//                'key'   => $entityModel->getConfigName(),
+//                'value' => $entityModel->getConfigValue()
+//                )
             ));
 
         $this->getLayout()
             ->getBlock('container')
             ->addButtonDuplicate()
             ->addButtonDelete()
-            ->setTitle('Configuration Options')
-            ->setEntityLabel(sprintf('Edit Option "%s"', $entityModel->getTitle()))
-            ->headTitle(sprintf('Edit option "%s"', $entityModel->getTitle()))
+            ->setTitle('Planet management')
+            ->setEntityLabel(sprintf('Edit Planet "%s"', $entityModel->getUsername()))
+            ->headTitle(sprintf('Edit Planet "%s"', $entityModel->getUsername()))
         ;
 
         $url = $this->app()
@@ -194,9 +198,9 @@ class Legacies_Admin_Core_ConfigController
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle('Configuration Options')
-            ->setEntityLabel('Add a new Option')
-            ->headTitle('Add a new Option')
+            ->setTitle('Planet management')
+            ->setEntityLabel('Add a new Planet')
+            ->headTitle('Add a new Planet')
         ;
 
         $url = $this->app()
@@ -220,8 +224,8 @@ class Legacies_Admin_Core_ConfigController
 
         $optionGroups = array(
             'config' => array(
-                'key'    => array($entityModel, 'setConfigName'),
-                'value'  => array($entityModel, 'setConfigValue')
+//                'key'    => array($entityModel, 'setConfigName'),
+//                'value'  => array($entityModel, 'setConfigValue')
                 )
             );
 
@@ -314,6 +318,12 @@ class Legacies_Admin_Core_ConfigController
                 ));
         $this->_form->setAction($url);
 
-        $this->addTab('legacies-config', 'config', 'Configuration');
+        $this->addTab('legacies-planet-general', 'general', 'General');
+        $this->addTab('legacies-planet-production', 'production', 'Production');
+        $this->addTab('legacies-planet-buildings-resources', 'resource-buildings', 'Resources Buildings');
+        $this->addTab('legacies-planet-buildings-military', 'military-buildings', 'Military Buildings');
+        $this->addTab('legacies-planet-buildings-special', 'special-buildings', 'Special Buildings');
+        $this->addTab('legacies-planet-defenses', 'defenses', 'Defenses');
+        $this->addTab('legacies-planet-ballistic', 'ballistic', 'Ballistics');
     }
 }

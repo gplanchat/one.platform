@@ -13,7 +13,7 @@
                 <path>legacies</path>
               </route>
             </config>
-            <units>
+            <!--units>
               <label>Units management</label>
               <children>
                 <ships>
@@ -52,14 +52,21 @@
                 <path>legacies</path>
                 <controller>mission</controller>
               </route>
-            </mission>
+            </mission-->
             <planets>
-              <label>Planet Types</label>
+              <label>Planets management</label>
               <route>
                 <path>legacies</path>
                 <controller>planet</controller>
               </route>
             </planets>
+            <moons>
+              <label>Moons management</label>
+              <route>
+                <path>legacies</path>
+                <controller>moon</controller>
+              </route>
+            </moons>
           </children>
         </legacies>
       </navigation>
