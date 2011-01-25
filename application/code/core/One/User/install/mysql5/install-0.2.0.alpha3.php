@@ -107,20 +107,3 @@ ALTER TABLE {$this->getTableName('user/authentication')}
       ON UPDATE CASCADE;
 SQL_EOF;
 
-//$sql = <<<SQL_EOF
-//INSERT INTO `legacies_user_entity` (`entity_id`, `website_id`, `username`, `realname`, `email`, `primary_group_id`, `created_at`, `updated_at`) VALUES
-//('1', '2', 'gplanchat', 'Grégory PLANCHAT', 'g.planchat@gmail.com', '1', '2010-06-16 22:49:26', '2010-06-16 22:49:26');
-//SQL_EOF;
-//
-//$this->query($sql);
-
-//$sql = <<<SQL_EOF
-//INSERT INTO `legacies_user_group` (`group_id`, `website_id`, `label`) VALUES
-//('1', '1', 'Super Administrators'),
-//('2', '1', 'Super Moderator'),
-//('3', '2', 'Administrators (frontoffice)'),
-//('4', '2', 'Moderators (frontoffice)');
-//SQL_EOF;
-//
-//$this->query($sql);
-
