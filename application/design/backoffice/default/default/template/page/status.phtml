@@ -1,7 +1,6 @@
-<?php if (!$this->getSession()->isEmpty()): ?>
+<?php if (!$this->getSession()->isEmpty() && $this->getUser()->getId()): ?>
 <p class="super">
-  <?php //echo $this->translate('Logged in as %s', $this->getUser()->getUsername()) ?>
-  <?php echo sprintf('Logged in as %s since %s', $this->getUser()->getUsername(), date('D d, M - H:i:s', $this->getLogonTime())) ?>
+  <?php echo $this->translate('Logged in as %s since %s', $this->getUser()->getUsername(), date('D d, M - H:i:s', $this->getLogonTime())) ?>
   <span class="separator">|</span>
   <?php echo date('D d, M - H:i:s', time()) ?>
   <span class="separator">|</span>
