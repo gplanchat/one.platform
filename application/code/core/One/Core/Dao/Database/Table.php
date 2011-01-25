@@ -298,7 +298,12 @@ abstract class One_Core_Dao_Database_Table
         return $this;
     }
 
-    private function _buildFilter(Zend_Db_Select $select, $filters)
+    /**
+     *
+     * @param Zend_Db_Select $select
+     * @param array $filters
+     */
+    private function _buildFilter(Zend_Db_Select $select, Array $filters)
     {
         foreach ($filters as $attribute => $expression) {
 
@@ -385,7 +390,7 @@ abstract class One_Core_Dao_Database_Table
         $select->reset(Zend_Db_Select::LIMIT_OFFSET);
         $groupParts = $select->getPart(Zend_Db_Select::GROUP);
         if (!empty($groupParts)) {
-            //FIXME: avoid grouping by entity_id while it is counted
+            //FIXME: avoid grouping by entity_id when it is counted
         }
 
         $select->columns(new Zend_Db_Expr($adapter->quoteInto('COUNT(?)', $this->getIdFieldName())));

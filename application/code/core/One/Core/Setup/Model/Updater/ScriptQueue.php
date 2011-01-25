@@ -4,7 +4,7 @@ class One_Core_Setup_Model_Updater_ScriptQueue
     implements Iterator, Countable, ArrayAccess
 {
     const PCRE_FILE_PATTERN = '%^(?<action>install|upgrade|uninstall|downgrade)-(?<version1>[0-9]+\.[0-9]+\.[0-9]+)(?:\.(?<stage1>[a-z]+)(?<level1>[0-9]+))?(?:-(?<version2>[0-9]+\.[0-9]+\.[0-9]+)(?:\.(?<stage2>[a-z]+)(?<level2>[0-9]+))?)?$%';
-    const PCRE_VERSION_PATTERN = '%^(?<version>[0-9]+\.[0-9]+\.[0-9]+)(?:-(?<stage>[a-z]+)(?<level>[0-9]+))?$%';
+    const PCRE_VERSION_PATTERN = '%^(?<version>[0-9]+\.[0-9]+\.[0-9]+)(?:-(?<stage>[a-z]+)(?<level>[0-9]+)?)?$%';
 
     const STAGE_ALPHA  = 'alpha';
     const STAGE_BETA   = 'beta';
@@ -41,13 +41,13 @@ class One_Core_Setup_Model_Updater_ScriptQueue
 
         preg_match(self::PCRE_VERSION_PATTERN, $fromVersion, $matches);
         $fromVersion = array(
-            'version' => $matches['version'],
+            'version' => isset($matches['version']) ? $matches['version'] : self::VERSION_NULL,
             'stage'   => isset($matches['stage']) && !empty($matches['stage']) ? $matches['stage'] : self::STAGE_STABLE,
             'level'   => isset($matches['level']) && !empty($matches['level']) ? (int) $matches['level'] : 0,
             );
         preg_match(self::PCRE_VERSION_PATTERN, $toVersion, $matches);
         $toVersion = array(
-            'version' => $matches['version'],
+            'version' => isset($matches['version']) ? $matches['version'] : self::VERSION_NULL,
             'stage'   => isset($matches['stage']) && !empty($matches['stage']) ? $matches['stage'] : self::STAGE_STABLE,
             'level'   => isset($matches['level']) && !empty($matches['level']) ? (int) $matches['level'] : 0,
             );
