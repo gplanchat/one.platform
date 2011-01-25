@@ -167,9 +167,7 @@ class One_Core_Object
             return $camelizeCache[$key];
         }
 
-        //Nova::profilerStart(__METHOD__);
         $camelizeCache[$key] = str_replace(' ', '', ucwords(str_replace('_', ' ', $value)));
-        //Nova::profilerStop(__METHOD__);
 
         return $camelizeCache[$key];
     }
@@ -190,13 +188,9 @@ class One_Core_Object
             return $underscoreCache[(string) $key];
         }
 
-        //Nova::profilerStart(__METHOD__);
-//        $underscoreCache[(string) $key] = strtolower(preg_replace('#([A-Z])#', '_$1', lcfirst($key)));
-
         $underscoreCache[(string) $key] = self::getInflector()->filter(array(
             'index' => $key
             ));
-        //Nova::profilerStop(__METHOD__);
 
         return $underscoreCache[(string) $key];
     }
@@ -513,7 +507,6 @@ class One_Core_Object
      */
     final public function __call($method, $params)
     {
-        //Nova::profilerStart(__METHOD__);
         $dataIndex = self::_underscore(substr($method, 3));
         switch (substr($method, 0, 3)) {
         case 'get':
@@ -534,8 +527,6 @@ class One_Core_Object
         }
 
         return $this->_call($method, $params);
-
-        //Nova::profilerStop(__METHOD__);
     }
 
     protected function _call($method, $params)

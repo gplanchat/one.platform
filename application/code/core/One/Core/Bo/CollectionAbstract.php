@@ -362,7 +362,7 @@ abstract class One_Core_Bo_CollectionAbstract
     {
         $this->getDao()
             ->setLimit($this->_pageSize)
-            ->setOffset($this->_pageSize * ($this->_page - 1))
+            ->setOffset($this->_pageSize * max($this->_page - 1, 0))
             ->loadCollection($this, $this->getDataMapper(), $identifiers, $this->getFilters());
 
         return $this;
