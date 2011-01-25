@@ -1,6 +1,6 @@
 <?php
 
-class One_Core_Setup_Block_StageTwo
+class One_Core_Setup_Block_Setup
     extends One_Core_Block_Html
 {
     public function _construct($options)

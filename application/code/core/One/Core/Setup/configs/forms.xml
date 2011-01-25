@@ -46,40 +46,40 @@
   <default>
     <general>
       <forms>
-        <stage-one>
+        <git>
           <actions>
             <submit>
               <name>setup</name>
               <params>
-                <action>stage-one-post</action>
+                <action>git-post</action>
               </params>
             </submit>
             <success>
               <name>setup</name>
               <params>
-                <action>stage-two</action>
+                <action>setup</action>
               </params>
             </success>
             <error>
               <name>setup</name>
               <params>
-                <action>stage-one</action>
+                <action>git</action>
               </params>
             </error>
           </actions>
           <fieldsets>
-            <stage-one-repository />
+            <git-repository />
           </fieldsets>
           <params>
-            <name>stage-one</name>
+            <name>git</name>
           </params>
-        </stage-one>
-        <stage-two>
+        </git>
+        <setup>
           <actions>
             <submit>
               <name>setup</name>
               <params>
-                <action>stage-two-post</action>
+                <action>setup-post</action>
               </params>
             </submit>
             <success>
@@ -91,22 +91,22 @@
             <error>
               <name>setup</name>
               <params>
-                <action>stage-two</action>
+                <action>setup</action>
               </params>
             </error>
           </actions>
           <fieldsets>
-            <stage-two-rdbms />
-            <stage-two-database />
+            <setup-rdbms />
+            <setup-database />
             <registration />
           </fieldsets>
           <params>
-            <name>stage-two</name>
+            <name>setup</name>
           </params>
-        </stage-two>
+        </setup>
       </forms>
       <fieldsets>
-        <stage-one-repository>
+        <git-repository>
           <name>repository</name>
           <legend>Select your source repository</legend>
           <elements>
@@ -114,7 +114,7 @@
               <type>select</type>
               <name>repository</name>
               <options>
-                <value>git://github.com/maeno/one.platform.git</value>
+                <value>git://github.com/gplanchat/one.platform.git</value>
                 <label>Repository:</label>
                 <order>1</order>
                 <required>1</required>
@@ -133,14 +133,10 @@
                   </required>
                 </validators>
                 <multiOptions>
-                  <core>
-                    <key>git://github.com/maeno/one.platform.git</key>
-                    <value>One.Platform Core</value>
-                  </core>
-                  <gplanchat>
+                  <mainstream>
                     <key>git://github.com/gplanchat/one.platform.git</key>
-                    <value>One.Platform Development</value>
-                  </gplanchat>
+                    <value>One.Platform Mainstream</value>
+                  </mainstream>
                 </multiOptions>
               </options>
             </repository>
@@ -193,8 +189,8 @@
               </options>
             </destination>
           </elements>
-        </stage-one-repository>
-        <stage-two-rdbms>
+        </git-repository>
+        <setup-rdbms>
           <name>rdbms</name>
           <legend>Configure the Database server access</legend>
           <elements>
@@ -353,8 +349,8 @@
               </options>
             </test>
           </elements>
-        </stage-two-rdbms>
-        <stage-two-database>
+        </setup-rdbms>
+        <setup-database>
           <name>database</name>
           <legend>Configure your database structure</legend>
           <elements>
@@ -383,7 +379,7 @@
               </options>
             </prefix>
           </elements>
-        </stage-two-database>
+        </setup-database>
       </fieldsets>
     </general>
   </default>
