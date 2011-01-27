@@ -5,7 +5,9 @@
   </user.account.index>
   <account.login>
     <reference name="body">
-      <block type="user/login" name="login"></block>
+      <block type="core/html" name="login-layout" template="user/login.phtml">
+        <block type="user/login" name="login"></block>
+      </block>
     </reference>
   </account.login>
 </layout>

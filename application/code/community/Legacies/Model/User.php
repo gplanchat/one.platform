@@ -58,4 +58,16 @@ class Legacies_Model_User
 
         return parent::_construct($options);
     }
+
+    public function getCurrentPlanet()
+    {
+        if ($this->hasData('current_planet')) {
+            $planet = $this->app()
+                ->getModel('legacies/planet')
+                ->load($this->getcurrentPlanet());
+
+            $this->setData('current_planet', $planet);
+        }
+        return $this->getData('current_planet');
+    }
 }

@@ -154,4 +154,15 @@
       </database>
     </general>
   </default>
+
+  <frontoffice>
+    <system>
+      <default-module>Legacies</default-module>
+      <layout>
+        <class>frontoffice</class>
+        <design>legacies</design>
+        <template>default</template>
+      </layout>
+    </system>
+  </frontoffice>
 </config>

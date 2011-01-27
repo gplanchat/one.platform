@@ -2,6 +2,15 @@
 <html>
   <head><?php echo $this->renderChild('head')?></head>
   <body<?php if (count($this->getBodyClasses()) > 0):?> class="<?php echo $this->renderBodyClasses() ?>"<?php endif?>>
-    <?php echo $this->renderChild('body') ?>
+    <div class="main">
+      <?php echo $this->renderChild('body') ?>
+    </div>
+    <div class="column-left">
+      <?php echo $this->renderChild('column-left') ?>
+    </div>
+    <div class="column-right">
+      <?php echo $this->renderChild('column-right') ?>
+    </div>
+    <div class="copyright">Powered by XNova:Legacies and One.Platform</div>
   </body>
 </html>

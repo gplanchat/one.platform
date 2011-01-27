@@ -1,0 +1,20 @@
+body {margin:0;padding:0;}
+
+.layout {width:1000px;margin:0 auto 0 auto;padding:0;}
+
+.layout .main {position:relative;padding:10px 50px 100px;width:300px;height:200px;background:#EFEFEF;margin:200px auto 0;border:5px solid #033;}
+.layout .main {-moz-border-radius-topleft:200px;-gecko-border-top-left-radius:200px;border-top-left-radius:200px;-moz-border-radius-bottomright:200px;-gecko-border-bottom-right-radius:200px;border-bottom-right-radius:200px;}
+.layout .main {-moz-box-shadow:0 0 40px #6BD;-gecko-box-shadow:0 0 40px #6BD;box-shadow:0 0 40px #6BD;}
+
+.layout .main h1 {width:300px;margin:30px 0pt 0pt 50px;font-family:sans-serif;font-size: 2em;}
+.layout .main #login dl,.layout .main #login dt,.layout .main #login dd {margin:0;border:0;padding:0;}
+.layout .main #login .subform {position:relative;margin:auto;width:250px;}
+.layout .main #login fieldset {border:none;}
+.layout .main #login .subform div {width:300px;height:30px;}
+.layout .main #login .subform label {display:block;width:300px;margin:20px 0 10px;height:15px;}
+.layout .main #login .subform input {display:block;width:200px;margin:10px 0 20px;height:15px;}
+.layout .main #login .subform .salt {display:block;width:0;margin:0;height:0;}
+.layout .main #login #submit-label {display:block;width:0;margin:0;height:0;}
+.layout .main #login #submit {position:relative;margin:0 0 0 200px;width:70px;}
+
+.copyright {position:fixed;bottom:0pt;color:#FFF;width:100%;text-align:center;font-family:sans-serif;font-size: 0.5em;}

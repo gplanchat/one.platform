@@ -2,6 +2,9 @@
 <html>
   <head><?php echo $this->renderChild('head')?></head>
   <body<?php if (count($this->getBodyClasses()) > 0):?> class="<?php echo $this->renderBodyClasses() ?>"<?php endif?>>
-    <?php echo $this->renderChild('body') ?>
+    <div class="main">
+      <?php echo $this->renderChild('body') ?>
+    </div>
+    <div class="copyright">Powered by XNova:Legacies and One.Platform</div>
   </body>
 </html>
