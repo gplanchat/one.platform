@@ -29,7 +29,7 @@
  */
 
 define('INSIDE' , true);
-require_once dirname(__FILE__) .'/common.php';
+require_once dirname(__FILE__) . '/common.php';
 
 $lunarow = doquery("SELECT * FROM {{table}} WHERE `id_owner` = '" . $planetrow['id_owner'] . "' AND `galaxy` = '" . $planetrow['galaxy'] . "' AND `system` = '" . $planetrow['system'] . "' AND `lunapos` = '" . $planetrow['planet'] . "';", 'lunas', true);
 
@@ -322,8 +322,8 @@ switch ($mode) {
             // Banner ADS Google (meme si je suis contre cela)
 
             $parse['gameClose'] = ($game_config['game_disable'] == 0) ?
-            	'<tr><th colspan="5">'.$lang['Overview_GameClose'].$game_config['close_reason'].'</th></tr>' : ''; 
-            
+            	'<tr><th colspan="5">'.$lang['Overview_GameClose'].$game_config['close_reason'].'</th></tr>' : '';
+
             if ($game_config['OverviewNewsFrame'] == '1') {
                 $parse['NewsFrame'] = "<tr><th>" . $lang['ov_news_title'] . "</th><th colspan=\"3\">" . stripslashes($game_config['OverviewNewsText']) . "</th></tr>";
             }

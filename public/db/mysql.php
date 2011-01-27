@@ -28,10 +28,16 @@
  *
  */
 
-require_once 'Legacies/Database.php';
-
+/**
+ * @deprecated
+ * @param unknown_type $query
+ * @param unknown_type $table
+ * @param unknown_type $fetch
+ */
 function doquery($query, $table, $fetch = false)
 {
+    static $instance = null;
+
     /*
      * Throw notices on doquery() calls.
      */
@@ -42,28 +48,34 @@ function doquery($query, $table, $fetch = false)
             $fetch ? E_USER_NOTICE : E_USER_WARNING);
     }
 
-    /**
-     * @var Zend_Db_Adapter_Abstract
-     */
-    $instance = Legacies_Database::getInstance();
-
-    $sql = str_replace('{{table}}', Legacies_Database::getDeprecatedTable($table), $query);
-
-    if($fetch) {
-        try {
-            /**
-             * @var Zend_Db_Statement_Abstract
-             */
-            $statement = $instance->query($sql);
-        } catch (Zend_Db_Exception $e) {
-            trigger_error($e->getMessage() . PHP_EOL . "<br /><pre></code>$sql<code></pre><br />" . PHP_EOL, E_USER_WARNING);
-        }
-
-        return $statement->fetch(Zend_Db::FETCH_BOTH);
-    } else {
-        if (($statement = mysql_query($sql, $instance->getConnection())) === false) {
-            trigger_error(mysql_error($instance->getConnection()) . PHP_EOL . "<br /><pre></code>$sql<code></pre><br />" . PHP_EOL, E_USER_WARNING);
-        }
-        return $statement;
+    if ($instance === null) {
+        /**
+         * @var Zend_Db_Adapter_Abstract
+         */
+        $instance = One::app()
+            ->getSingleton('core/database.connection.pool')
+            ->getConnection('legacies_setup')
+        ;
     }
+
+    $sql = str_replace('{{table}}', $instance->getTable("legacies/{$table}"), $query);
+
+    if ($fetch === false) {
+        $backtrace = debug_backtrace();
+        $message = "Function doquery() called from file '%s', line %d, with 3rd parameter not false.";
+
+        trigger_error(sprintf($message, $backtrace[0]['file'], $backtrace[0]['line']),
+            $fetch ? E_USER_NOTICE : E_USER_WARNING);
+    }
+
+    try {
+        /**
+         * @var Zend_Db_Statement_Abstract
+         */
+        $statement = $instance->query($sql);
+    } catch (Zend_Db_Exception $e) {
+        trigger_error($e->getMessage() . PHP_EOL . "<br /><pre></code>$sql<code></pre><br />" . PHP_EOL, E_USER_WARNING);
+    }
+
+    return $statement->fetch(Zend_Db::FETCH_BOTH);
 }

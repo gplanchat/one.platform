@@ -128,6 +128,7 @@ define('DEFAULT_LANG', 'fr_FR');
 
 $debug = One::app()->getSingleton('legacies/debug');
 
+require dirname(__FILE__) . DS . 'db/mysql.php';
 require dirname(__FILE__) . DS . 'includes/constants.php';
 require dirname(__FILE__) . DS . 'includes/functions.php';
 require dirname(__FILE__) . DS . 'includes/unlocalised.php';
@@ -136,17 +137,24 @@ require dirname(__FILE__) . DS . 'language' . DS . DEFAULT_LANG . DS . 'lang_inf
 require dirname(__FILE__) . DS . 'includes/vars.php';
 require dirname(__FILE__) . DS . 'includes/strings.php';
 
+// {{{
+if (!$user->getId()) {
+    $user->load(1);
+}
+// }}}
+
 if (!defined('DISABLE_IDENTITY_CHECK')) {
     if ($game_config->getGameDisable() && $user->getAuthlevel() < 2) {
         message(stripslashes($game_config->getCloseReason()), $game_config->getGameName());
+        exit(0);
+    }
+
+    if (!$user->getId()) {
+        header('HTTP/1.1 401 Unauthorized');
+        header('Location: account/login');
+        exit(0);
     }
 }
-
-//if (!$user->getId() && !defined('DISABLE_IDENTITY_CHECK')) {
-//    header('HTTP/1.1 401 Unauthorized');
-//    header('Location: account/login');
-//    exit(0);
-//}
 
 includeLang('system');
 includeLang('tech');
@@ -155,27 +163,29 @@ $fleets = One::app()
     ->getSingleton('legacies/fleet.collection')
     ->addFilters(array(
         One_Core_Bo_CollectionAbstract::FILTER_OR => array(
-            One_Core_Bo_CollectionAbstract::FILTER_LOWER_THAN_OR_EQUAL => array(
-                'fleet_start_time' => time()
+            array(
+                One_Core_Bo_CollectionAbstract::FILTER_GREATER_THAN_OR_EQUAL => array(
+                    'fleet_start_time' => time()
+                    )
                 ),
-            One_Core_Bo_CollectionAbstract::FILTER_LOWER_THAN_OR_EQUAL => array(
-                'fleet_end_time' => time()
+            array(
+                One_Core_Bo_CollectionAbstract::FILTER_LOWER_THAN_OR_EQUAL => array(
+                    'fleet_end_time' => time()
+                    )
                 )
             )
         ))
     ->load()
 ;
 
-var_dump($fleets->toArray());
-die();
-
 //require dirname(__FILE__) . DS . 'rak.php');
 
 if ($user->getId()) {
-    foreach ($fleets as $fleet) {
-        FlyingFleetHandler($fleet);
-    }
+//    foreach ($fleets as $fleet) {
+//        FlyingFleetHandler($fleet);
+//    }
 
+    // FIXME: use the application configuration
     if (!defined('IN_ADMIN')) {
         $dpath = (isset($user['dpath']) && !empty($user['dpath'])) ? $user['dpath'] : DEFAULT_SKINPATH;
     } else {
@@ -183,19 +193,21 @@ if ($user->getId()) {
     }
 
     SetSelectedPlanet($user);
-/*
-    $planetrow = $readConnection->select()
-        ->from($readConnection->getDeprecatedTable('planets'))
-        ->where('id=?', $user['current_planet'])
-        ->query()
-        ->fetch()*/
-    ;
-/*
-    $galaxyrow = $readConnection->select()
-        ->from($readConnection->getDeprecatedTable('planets'))
-        ->where('id=?', $planetrow['id'])
-        ->query()
-        ->fetch()*/
-    ;
+
+    $planetrow = $user->getCurrentPlanet();
+
+//    $planetrow = $readConnection->select()
+//        ->from($readConnection->getDeprecatedTable('planets'))
+//        ->where('id=?', $user['current_planet'])
+//        ->query()
+//        ->fetch()
+//    ;
+
+//    $galaxyrow = $readConnection->select()
+//        ->from($readConnection->getDeprecatedTable('planets'))
+//        ->where('id=?', $planetrow['id'])
+//        ->query()
+//        ->fetch()
+//    ;
 }
 
