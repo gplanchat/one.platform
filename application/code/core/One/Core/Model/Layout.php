@@ -101,14 +101,12 @@ class One_Core_Model_Layout
         $this->_layoutConfiguration = new Zend_Config(array(), true);
         $files = $this->app()->getConfig('general/layout');
         foreach ($files as $module => $filename) {
-            if (file_exists($baseLayoutPath . One::DS . $filename)) {
-                $this->_layoutConfiguration->merge(new Zend_Config_Xml($baseLayoutPath . One::DS . $filename, null, true));
-            }
-            if (file_exists($defaultLayoutPath . One::DS . $filename)) {
-                $this->_layoutConfiguration->merge(new Zend_Config_Xml($defaultLayoutPath . One::DS . $filename, null, true));
-            }
             if (file_exists($templateLayoutPath . One::DS . $filename)) {
                 $this->_layoutConfiguration->merge(new Zend_Config_Xml($templateLayoutPath . One::DS . $filename, null, true));
+            } else if (file_exists($defaultLayoutPath . One::DS . $filename)) {
+                $this->_layoutConfiguration->merge(new Zend_Config_Xml($defaultLayoutPath . One::DS . $filename, null, true));
+            } else if (file_exists($baseLayoutPath . One::DS . $filename)) {
+                $this->_layoutConfiguration->merge(new Zend_Config_Xml($baseLayoutPath . One::DS . $filename, null, true));
             }
         }
 
@@ -202,14 +200,14 @@ class One_Core_Model_Layout
             $path = $request->getParam('path');
             if (empty($path)) {
                 $layoutName = implode('.', array(
-                    $request->getParam('controller', 'default'),
-                    $request->getParam('action', 'default')
+                    $request->getParam('controller', 'index'),
+                    $request->getParam('action', 'index')
                     ));
             } else {
                 $layoutName = implode('.', array(
                     $path,
-                    $request->getParam('controller'),
-                    $request->getParam('action')
+                    $request->getParam('controller', 'index'),
+                    $request->getParam('action', 'index')
                     ));
             }
         }

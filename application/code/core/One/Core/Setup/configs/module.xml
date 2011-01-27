@@ -96,5 +96,13 @@
         </connection>
       </database>
     </general>
+
+    <system>
+      <layout>
+        <class>setup</class>
+        <design>default</design>
+        <template>default</template>
+      </layout>
+    </system>
   </default>
 </config>

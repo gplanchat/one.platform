@@ -45,8 +45,9 @@
   <frontoffice>
     <system>
       <routes>
-        <cms-no-route>
+        <no-route>
           <type value="cms/router.route" />
+          <route value="" />
           <defaults>
             <module value="One_Cms" />
             <controller value="display" />
@@ -54,10 +55,10 @@
             <page-id value="no-route" />
             <layout>cms.page</layout>
           </defaults>
-        </cms-no-route>
+        </no-route>
         <cms>
           <type value="Zend_Controller_Router_Route_Static" />
-          <route value="" />
+          <route value=":page-id" />
           <defaults>
             <module value="One_Cms" />
             <controller value="display" />

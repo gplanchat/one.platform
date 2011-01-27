@@ -85,11 +85,13 @@
         </database>
       </dal>
     </resource>
+  </default>
 
+  <backoffice>
     <general>
       <layout>
         <admin.cms>cms.xml</admin.cms>
       </layout>
     </general>
-  </default>
+  </backoffice>
 </config>

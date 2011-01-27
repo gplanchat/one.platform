@@ -257,6 +257,9 @@ class One_Core_Model_Config
     {
         if ($this->_styleUrl === null) {
             $this->_styleUrl = $this->app()->getConfig('system/style-url');
+            $layoutConfig = $this->app()->getConfig('system/layout');
+
+            $this->_styleUrl .= "{$layoutConfig['class']}/{$layoutConfig['design']}/{$layoutConfig['template']}/";
         }
 
         return $this->getUrl($this->_styleUrl . $path);
