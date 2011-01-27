@@ -120,9 +120,14 @@
           </user_write>
         </connection>
       </database>
+    </general>
+  </default>
+  
+  <frontoffice>
+    <general>
       <layout>
         <user>user.xml</user>
       </layout>
     </general>
-  </default>
+  </frontoffice>
 </config>

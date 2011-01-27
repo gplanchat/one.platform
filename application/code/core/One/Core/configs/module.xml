@@ -93,11 +93,13 @@
         </database>
       </dal>
     </resource>
-
+  </default>
+  
+  <frontoffice>
     <general>
       <layout>
         <core>core.xml</core>
       </layout>
     </general>
-  </default>
+  </frontoffice>
 </config>

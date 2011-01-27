@@ -173,7 +173,7 @@ class One_User_AccountController
             ;
 
             $returnObject['error'] = false;
-            $returnObject['redirect'] = $this->_getRedirectLoginSuccessUrl();
+            $returnObject['redirect'] = $this->_getRedirectLoginSuccessUrl($user);
 
             $this->getResponse()
                 ->setBody(Zend_Json::encode($returnObject))
@@ -190,7 +190,7 @@ class One_User_AccountController
         }
     }
 
-    protected function _getRedirectLoginSuccessUrl()
+    protected function _getRedirectLoginSuccessUrl($user)
     {
         return $this->app()->getRouter()->assemble(array(
             'controller' => 'account',

@@ -108,9 +108,13 @@
           </cms_write>
         </connection>
       </database>
+    </general>
+  </default>
+  <frontoffice>
+    <general>
       <layout>
         <cms>cms.xml</cms>
       </layout>
     </general>
-  </default>
+  </frontoffice>
 </config>

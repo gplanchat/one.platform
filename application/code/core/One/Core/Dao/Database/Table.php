@@ -306,15 +306,16 @@ abstract class One_Core_Dao_Database_Table
     private function _buildFilter(Zend_Db_Select $select, Array $filters)
     {
         foreach ($filters as $attribute => $expression) {
-
             if ($attribute === One_Core_Bo_CollectionInterface::FILTER_OR) {
-                $subSelect = $this->getReadConnection()->select();
-                $this->_buildFilter($subSelect, $expression);
-                $select->orWhere($subSelect);
+                foreach ($expression as $clause) {
+                    $subSelect = $this->_buildFilter($this->getReadConnection()->select(), $clause);
+                    $select->orWhere(current($subSelect->getPart(Zend_Db_Select::WHERE)));
+                }
             } else if ($attribute === One_Core_Bo_CollectionInterface::FILTER_AND) {
-                $subSelect = $this->getReadConnection()->select();
-                $this->_buildFilter($subSelect, $expression);
-                $select->where($subSelect);
+                foreach ($expression as $clause) {
+                    $subSelect = $this->_buildFilter($this->getReadConnection()->select(), $clause);
+                    $select->where(current($subSelect->getPart(Zend_Db_Select::WHERE)));
+                }
             } else {
                 $keyword = $attribute;
                 if (is_array($expression)) {
@@ -323,7 +324,7 @@ abstract class One_Core_Dao_Database_Table
 
                     switch ($keyword) {
                     case One_Core_Bo_CollectionInterface::FILTER_NOT_LIKE:
-                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} LIKE ?", $expression);
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} NOT LIKE ?", $expression);
                         break;
 
                     case One_Core_Bo_CollectionInterface::FILTER_LIKE:
@@ -365,6 +366,7 @@ abstract class One_Core_Dao_Database_Table
                 }
             }
         }
+        return $select;
     }
 
     /**
