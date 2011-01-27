@@ -56,7 +56,7 @@
       </Legacies>
       <Legacies_Admin_Core>
         <codePool>community</codePool>
-        <route type="admin.core/router.route" path="legacies" name="legacies" />
+        <route type="admin.core/router.route" path="game" name="game" />
         <active>1</active>
         <require>
           <Legacies />
