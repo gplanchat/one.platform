@@ -86,7 +86,7 @@ class One_Admin_Core_AccountController
      * TODO: PHPDoc
      *
      */
-    protected function _getRedirectLoginSuccessUrl()
+    protected function _getRedirectLoginSuccessUrl($user)
     {
         return $this->app()->getRouter()->assemble(array(
             'controller' => 'dashboard',

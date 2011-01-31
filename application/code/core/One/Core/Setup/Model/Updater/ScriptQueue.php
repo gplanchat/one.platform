@@ -45,6 +45,7 @@ class One_Core_Setup_Model_Updater_ScriptQueue
             'stage'   => isset($matches['stage']) && !empty($matches['stage']) ? $matches['stage'] : self::STAGE_STABLE,
             'level'   => isset($matches['level']) && !empty($matches['level']) ? (int) $matches['level'] : 0,
             );
+
         preg_match(self::PCRE_VERSION_PATTERN, $toVersion, $matches);
         $toVersion = array(
             'version' => isset($matches['version']) ? $matches['version'] : self::VERSION_NULL,
