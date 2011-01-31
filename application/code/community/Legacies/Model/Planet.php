@@ -61,4 +61,27 @@ class Legacies_Model_Planet
 
         return parent::_construct($options);
     }
+
+    public function checkPlanetUsedFields()
+    {
+        // {{{
+        // FIXME: Delete gloval variables
+        global $resource, $reslist;
+        // }}}
+
+        /**
+         * @var int Case used on planet
+         */
+        $usedFields = 0;
+
+        foreach ($reslist[Legacies_Empire::TYPE_BUILDING] as $id) {
+            $usedFields += $this->getData($resource[$id]);
+        }
+
+        if ($this->getFieldCurrent() != $usedFields) {
+            $clone = clone $this;
+            $clone->resetData()->setFieldCurrent($usedFields)->save();
+            unset($clone);
+        }
+    }
 }

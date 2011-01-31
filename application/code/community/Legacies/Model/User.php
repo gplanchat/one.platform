@@ -52,6 +52,8 @@
 class Legacies_Model_User
     extends One_Core_Bo_EntityAbstract
 {
+    protected $_currentPlanet = null;
+
     protected function _construct($options)
     {
         $this->_init('legacies/user');
@@ -59,15 +61,50 @@ class Legacies_Model_User
         return parent::_construct($options);
     }
 
-    public function getCurrentPlanet()
+    public function getCurrentPlanetInstance()
     {
-        if ($this->hasData('current_planet')) {
-            $planet = $this->app()
+        if (!$this->_currentPlanet) {
+            $this->_currentPlanet = $this->app()
                 ->getModel('legacies/planet')
-                ->load($this->getcurrentPlanet());
-
-            $this->setData('current_planet', $planet);
+                ->load($this->getData('current_planet'));
         }
-        return $this->getData('current_planet');
+        return $this->_currentPlanet;
+    }
+
+    public function setCurrentPlanetInstance(Legacies_Model_Planet $planet)
+    {
+        $this->_currentPlanet = $planet;
+        $this->setCurrentPlanet($planet->getId());
+
+        return $this;
+    }
+
+    public function updateCurrentPlanet()
+    {
+        $request = Zend_Registry::get('request');
+
+        if (($planetId = $request->getQuery('cp')) === null) {
+            return $this;
+        }
+
+        $planet = One::app()
+            ->getModel('legacies/planet')
+            ->load(intval($planetId))
+        ;
+
+        if (!$planet->getId() || $planet->getIdOwner() !== $this->getId()) {
+            $this->app()
+                ->throwException('core/invalid-method-call',
+                    'Planet not found or planet not attached to the current user.')
+            ;
+        }
+
+        $clone = clone $this;
+        $clone->resetData()->setCurrentPlanet($planet->getId())->save();
+        unset($clone);
+
+        $this->setCurrentPlanetInstance($planet);
+
+        return $this;
     }
 }
