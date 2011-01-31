@@ -198,31 +198,37 @@ abstract class One_Core_Dao_Database_Table
 
     public function loadEntity(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper, Array $attributes)
     {
-        if (is_int(key($attributes))) {
-            $newAttributes = array();
-            $i = 0;
-            foreach ($this->getIdFieldName() as $fieldNames) {
-                if (!isset($attributes[$i])) {
-                    continue;
+        try {
+            if (is_int(key($attributes))) {
+                $newAttributes = array();
+                $i = 0;
+                foreach ($this->getIdFieldName() as $fieldNames) {
+                    if (!isset($attributes[$i])) {
+                        continue;
+                    }
+                    $newAttributes[$fieldNames] = $attributes[$i++];
                 }
-                $newAttributes[$fieldNames] = $attributes[$i++];
+                $attributes = $newAttributes;
+                unset($newAttributes);
             }
-            $attributes = $newAttributes;
-            unset($newAttributes);
-        }
 
-        foreach ($attributes as $field => $identity){
-            $this->getSelect()
-                ->where("{$this->getReadConnection()->quoteIdentifier($field)} = ?", $identity)
+            foreach ($attributes as $field => $identity){
+                $this->getSelect()
+                    ->where("{$this->getReadConnection()->quoteIdentifier($field)} = ?", $identity)
+                ;
+            }
+            $statement = $this->getSelect()
+                ->limit(1)
+                ->query(Zend_Db::FETCH_ASSOC)
             ;
-        }
-        $statement = $this->getSelect()
-            ->limit(1)
-            ->query(Zend_Db::FETCH_ASSOC)
-        ;
 
-        if (($tableData = $statement->fetch()) !== false) {
-            $mapper->load($model, $tableData);
+            if (($tableData = $statement->fetch()) !== false) {
+                $mapper->load($model, $tableData);
+            }
+        } catch (Zend_Db_Exception $e) {
+            $this->app()
+                ->throwException('core/dao.read-error', $e, 'Could not load entity: %s', $e->getMessage())
+            ;
         }
 
         return $this;
@@ -232,33 +238,45 @@ abstract class One_Core_Dao_Database_Table
     {
         $entityData = $mapper->save($model);
 
-        if (!$model->isLoaded() || $model->getId() === null) {
-            $id = $this->getWriteConnection()
-                ->insert($this->getTableName($this->getEntityTable()), $entityData);
+        try {
+            if (!$model->isLoaded() || $model->getId() === null) {
+                $id = $this->getWriteConnection()
+                    ->insert($this->getTableName($this->getEntityTable()), $entityData);
 
-            $model->setId($id);
-        } else {
-            $whereCondition = $this->getWriteConnection()->quoteInto(
-                "{$this->getWriteConnection()->quoteIdentifier($model->getIdFieldName())}=?",
-                $model->getId()
-                );
+                $model->setId($id);
+            } else {
+                $whereCondition = $this->getWriteConnection()->quoteInto(
+                    "{$this->getWriteConnection()->quoteIdentifier($model->getIdFieldName())}=?",
+                    $model->getId()
+                    );
 
-            $this->getWriteConnection()
-                ->update($this->getTableName($this->getEntityTable()), $entityData, $whereCondition);
+                $this->getWriteConnection()
+                    ->update($this->getTableName($this->getEntityTable()), $entityData, $whereCondition);
+            }
+        } catch (Zend_Db_Exception $e) {
+            $this->app()
+                ->throwException('core/dao.write-error', $e, 'Could not save entity: %s', $e->getMessage())
+            ;
         }
         return $this;
     }
 
     public function deleteEntity(One_Core_Bo_EntityInterface $model, One_Core_Orm_DataMapperAbstract $mapper)
     {
-        if ($model->isLoaded()) {
-            $whereCondition = $this->getWriteConnection()->quoteInto(
-                "{$this->getWriteConnection()->quoteIdentifier($model->getIdFieldName())}=?",
-                $model->getId()
-                );
+        try {
+            if ($model->isLoaded()) {
+                $whereCondition = $this->getWriteConnection()->quoteInto(
+                    "{$this->getWriteConnection()->quoteIdentifier($model->getIdFieldName())}=?",
+                    $model->getId()
+                    );
 
-            $this->getWriteConnection()
-                ->delete($this->getTableName($this->getEntityTable()), $whereCondition);
+                $this->getWriteConnection()
+                    ->delete($this->getTableName($this->getEntityTable()), $whereCondition);
+            }
+        } catch (Zend_Db_Exception $e) {
+            $this->app()
+                ->throwException('core/dao.write-error', $e, 'Could not delete entity: %s', $e->getMessage())
+            ;
         }
         return $this;
     }
@@ -273,26 +291,32 @@ abstract class One_Core_Dao_Database_Table
      */
     public function loadCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper, Array $ids)
     {
-        $select = $this->getSelect();
+        try {
+            $select = $this->getSelect();
 
-        if (!empty($ids)) {
-            $selectString = "{$this->getReadConnection()->quoteIdentifier($this->getIdFieldName())} IN(?)";
-            $select->where($selectString, array_values($ids));
-        }
+            if (!empty($ids)) {
+                $selectString = "{$this->getReadConnection()->quoteIdentifier($this->getIdFieldName())} IN(?)";
+                $select->where($selectString, array_values($ids));
+            }
 
-        $filters = $collection->getFilters();
-        if (!empty($filters)) {
-            $this->_buildFilter($select, $filters);
-        }
+            $filters = $collection->getFilters();
+            if (!empty($filters)) {
+                $this->_buildFilter($select, $filters);
+            }
 
-        if ($this->_limit !== null) {
-            $select->limit($this->_limit, $this->_offset);
-        }
-        $statement = $select->query(Zend_Db::FETCH_ASSOC);
+            if ($this->_limit !== null) {
+                $select->limit($this->_limit, $this->_offset);
+            }
+            $statement = $select->query(Zend_Db::FETCH_ASSOC);
 
-        foreach ($statement->fetchAll() as $row) {
-            $item = $collection->newItem(array());
-            $mapper->load($item, $row);
+            foreach ($statement->fetchAll() as $row) {
+                $item = $collection->newItem(array());
+                $mapper->load($item, $row);
+            }
+        } catch (Zend_Db_Exception $e) {
+            $this->app()
+                ->throwException('core/dao.read-error', $e, 'Could not load colection: %s', $e->getMessage())
+            ;
         }
 
         return $this;
@@ -379,25 +403,32 @@ abstract class One_Core_Dao_Database_Table
      */
     public function countItems(One_Core_Bo_CollectionInterface $collection)
     {
-        $select = clone $this->getSelect();
-        $adapter = $select->getAdapter();
+        try {
+            $select = clone $this->getSelect();
+            $adapter = $select->getAdapter();
 
-        $filters = $collection->getFilters();
-        if (!empty($filters)) {
-            $this->_buildFilter($select, $filters);
+            $filters = $collection->getFilters();
+            if (!empty($filters)) {
+                $this->_buildFilter($select, $filters);
+            }
+
+            $select->reset(Zend_Db_Select::COLUMNS);
+            $select->reset(Zend_Db_Select::LIMIT_COUNT);
+            $select->reset(Zend_Db_Select::LIMIT_OFFSET);
+            $groupParts = $select->getPart(Zend_Db_Select::GROUP);
+            if (!empty($groupParts)) {
+                //FIXME: avoid grouping by entity_id when it is counted
+            }
+
+            $select->columns(new Zend_Db_Expr($adapter->quoteInto('COUNT(?)', $this->getIdFieldName())));
+
+            return $select->query()->fetchColumn(0);
+        } catch (Zend_Db_Exception $e) {
+            $this->app()
+                ->throwException('core/dao.read-error', $e, 'Could not count colection: %s', $e->getMessage())
+            ;
         }
-
-        $select->reset(Zend_Db_Select::COLUMNS);
-        $select->reset(Zend_Db_Select::LIMIT_COUNT);
-        $select->reset(Zend_Db_Select::LIMIT_OFFSET);
-        $groupParts = $select->getPart(Zend_Db_Select::GROUP);
-        if (!empty($groupParts)) {
-            //FIXME: avoid grouping by entity_id when it is counted
-        }
-
-        $select->columns(new Zend_Db_Expr($adapter->quoteInto('COUNT(?)', $this->getIdFieldName())));
-
-        return $select->query()->fetchColumn(0);
+        return false;
     }
 
     /**
@@ -409,8 +440,14 @@ abstract class One_Core_Dao_Database_Table
      */
     public function saveCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper)
     {
-        foreach ($collection as $item) {
-            $this->saveEntity($item, $mapper);
+        try {
+            foreach ($collection as $item) {
+                $this->saveEntity($item, $mapper);
+            }
+        } catch (One_Core_Exception_Dao_Exception $e) {
+            $this->app()
+                ->throwException('core/dao.read-error', $e, 'Could not save colection: %s', $e->getMessage())
+            ;
         }
 
         return $this;
@@ -425,8 +462,14 @@ abstract class One_Core_Dao_Database_Table
      */
     public function deleteCollection(One_Core_Bo_CollectionInterface $collection, One_Core_Orm_DataMapperAbstract $mapper)
     {
-        foreach ($collection as $item) {
-            $this->deleteEntity($item, $mapper);
+        try {
+            foreach ($collection as $item) {
+                $this->deleteEntity($item, $mapper);
+            }
+        } catch (One_Core_Exception_Dao_Exception $e) {
+            $this->app()
+                ->throwException('core/dao.read-error', $e, 'Could not delete colection: %s', $e->getMessage())
+            ;
         }
 
         return $this;
