@@ -234,27 +234,30 @@ class One_Core_Setup_IndexController
     {
         $adapters = array(
             'mysqli' => array(
-                'adapter' => 'core/connection.adapter.mysqli',
-                'engine'  => 'mysql5'
+                'engine'  => 'core/connection.adapter.mysqli',
+                'dialect' => 'mysql5'
                 ),
             'pdo-mysql' => array(
-                'adapter' => 'core/connection.adapter.pdo.mysql',
-                'engine'  => 'mysql5'
+                'engine'  => 'core/connection.adapter.pdo.mysql',
+                'dialect' => 'mysql5'
                 ),
-            'postgre' => array(
-                'adapter' => 'core/connection.adapter.postgre',
-                'engine'  => 'postgre4'
-                ),
-            'pdo-postgre' => array(
-                'adapter' => 'core/connection.adapter.pdo.postgre',
-                'engine'  => 'postgre4'
-                )
+//            'postgre' => array(
+//                'engine'  => 'core/connection.adapter.postgre',
+//                'dialect' => 'postgre9'
+//                ),
+//            'pdo-postgre' => array(
+//                'engine'  => 'core/connection.adapter.pdo.postgre',
+//                'dialect' => 'postgre9'
+//                )
             );
 
         $connectionConfig = $this->_getParam('setuprdbms');
         if (isset($adapters[$connectionConfig['engine']])) {
-            $adapter = $adapters[$connectionConfig['engine']]['adapter'];
-            $engine  = $adapters[$connectionConfig['engine']]['engine'];
+            $engine = $adapters[$connectionConfig['engine']]['engine'];
+            $dialect = $adapters[$connectionConfig['engine']]['dialect'];
+        } else {
+            $engine = 'core/connection.adapter.mysqli';
+            $dialect = 'mysql5';
         }
         unset($connectionConfig['engine']);
         $prefixConfig = $this->_getParam('setupdatabase');
@@ -268,7 +271,7 @@ class One_Core_Setup_IndexController
         }
 
         $this->_session->setDatabaseEngine($engine);
-        $this->_session->setDatabaseAdapter($engine);
+        $this->_session->setDatabaseDialect($dialect);
         $this->_session->setDatabaseConfig($connectionConfig);
         $this->_session->setDatabaseTablePrefix($prefixConfig);
 
@@ -288,6 +291,7 @@ class One_Core_Setup_IndexController
         $connections = $config->default->general->database->connection;
         foreach (array('core_setup', 'core_read', 'core_write') as $connection) {
             $connections->$connection->engine = $adapter;
+            $connections->$connection->dialect = $adapter;
             $connections->$connection->params->{'table-prefix'} = $prefixConfig;
             $connections->$connection->params->host = $connectionConfig['host'];
             $connections->$connection->params->username = $connectionConfig['username'];
@@ -354,8 +358,6 @@ HTACCESS_EOF;
         } catch (Exception $e) {
         }
 
-        $this->_session->setStagetwoPassed(true);
-
         $baseUrl = $this->getFrontController()->getBaseUrl();
         $this->getResponse()
             ->setRedirect($baseUrl . '/updates', 302);
@@ -400,7 +402,12 @@ HTACCESS_EOF;
 
         $updater = $this->app()->getModel('setup/updater');
         try {
-            $updater->setup($module, $this->_session->getDatabaseEngine());
+            $config = $this->app()
+                ->getSingleton('core/database.connection.pool')
+                ->getConfig('core_setup')
+            ;
+
+            $updater->setup($module, $config['dialect']);
         } catch (Exception $e) {
             var_dump($e);
             die();

@@ -63,7 +63,7 @@ class One_Core_Setup_Model_Updater
 
     private $_currentModule = null;
 
-    public function setup($module, $engine = 'mysql5')
+    public function setup($module, $dialect = 'mysql5')
     {
         $this->_currentModule = $module;
 
@@ -97,7 +97,7 @@ class One_Core_Setup_Model_Updater
             $toVersion .= '-' . $modulesConfig[$module]['stage'];
         }
 
-        $path = implode(DS, array(APPLICATION_PATH, 'code', $codePool, str_replace('_', DS, $module), 'install', $engine));
+        $path = implode(DS, array(APPLICATION_PATH, 'code', $codePool, str_replace('_', DS, $module), 'install', $dialect));
 
         $scriptQueue = $this->app()
             ->getModel('setup/updater.script-queue', $path, $fromVersion, $toVersion)

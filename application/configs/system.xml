@@ -19,6 +19,7 @@
         <connection>
           <core_setup>
             <engine></engine>
+            <dialect></dialect>
             <params>
               <host></host>
               <username></username>
@@ -28,6 +29,7 @@
           </core_setup>
           <core_read>
             <engine></engine>
+            <dialect></dialect>
             <params>
               <host></host>
               <username></username>
@@ -37,6 +39,7 @@
           </core_read>
           <core_write>
             <engine></engine>
+            <dialect></dialect>
             <params>
               <host></host>
               <username></username>

@@ -207,6 +207,24 @@ class One_Core_Object
     public function updateOriginalData()
     {
         $this->_originalData = $this->_data;
+
+        return $this;
+    }
+
+    /**
+     * Place the 'orignal data' into the 'data' handle.
+     *
+     * @since 0.1.0
+     *
+     * @param string|array $key
+     * @param mixed $value
+     * @return One_Core_ObjectInterface
+     */
+    public function resetData()
+    {
+        $this->_data = $this->_originalData;
+
+        return $this;
     }
 
     /**
