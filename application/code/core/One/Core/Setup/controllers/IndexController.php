@@ -286,7 +286,6 @@ class One_Core_Setup_IndexController
 
         $config->backoffice->system->hostname = $_SERVER['HTTP_HOST'];
         $config->backoffice->system->{'base-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/admin.php/';
-        $config->backoffice->system->{'style-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/design/admin/';
 
         $connections = $config->default->general->database->connection;
         foreach (array('core_setup', 'core_read', 'core_write') as $connection) {

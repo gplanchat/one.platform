@@ -53,7 +53,6 @@
   <backoffice>
     <system>
       <base-url>/admin.php/</base-url>
-      <style-url>/design/admin/</style-url>
     </system>
   </backoffice>
   <production extends="default" />
