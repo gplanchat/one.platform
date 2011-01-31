@@ -106,10 +106,53 @@ class Legacies_Admin_Core_PlanetController
 
         $this->_form->populate(array(
             'form_key' => $formKey,
-//            'config' => array(
-//                'key'   => $entityModel->getConfigName(),
-//                'value' => $entityModel->getConfigValue()
-//                )
+            'general' => array(
+                'name'     => $entityModel->getName(),
+                'position' => $entityModel->getPosition()
+                ),
+            'production' => array(
+                'metal_mine_porcent'           => $entityModel->getMetalMinePorcent(),
+                'crystal_mine_porcent'         => $entityModel->getCrystalMinePorcent(),
+                'deuterium_sintetizer_porcent' => $entityModel->getDeuteriumSintetizerPorcent(),
+                'solar_plant_porcent'          => $entityModel->getSolarPlantPorcent(),
+                'fusion_plant_porcent'         => $entityModel->getFusionPlantPorcent(),
+                'solar_satelit_porcent'        => $entityModel->getSolarSatelitPorcent()
+                ),
+            'resource' => array(
+                'metal_mine'           => $entityModel->getMetalMine(),
+                'crystal_mine'         => $entityModel->getCrystalMine(),
+                'deuterium_sintetizer' => $entityModel->getDeuteriumSintetizer(),
+                'solar_plant'          => $entityModel->getSolarPlant(),
+                'fusion_plant'         => $entityModel->getFusionPlant(),
+                'metal_store'          => $entityModel->getMetalStore(),
+                'crystal_store'        => $entityModel->getCrystalStore(),
+                'deuterium_store'      => $entityModel->getDeuteriumStore()
+                ),
+            'military' => array(
+                'hangar'       => $entityModel->getHangar(),
+                'ally_deposit' => $entityModel->getAllyDeposit(),
+                'silo'         => $entityModel->getSilo()
+                ),
+            'special' => array(
+                'robot_factory' => $entityModel->getRobotFactory(),
+                'nano_factory'  => $entityModel->getNanoFactory(),
+                'laboratory'    => $entityModel->getLaboratory(),
+                'terraformer'   => $entityModel->getTerraformer()
+                ),
+            'defenses' => array(
+                'misil_launcher'          => $entityModel->getMisilLauncher(),
+                'small_laser'             => $entityModel->getSmallLaser(),
+                'big_laser'               => $entityModel->getBigLaser(),
+                'gauss_canyon'            => $entityModel->getGaussCanyon(),
+                'ionic_canyon'            => $entityModel->getIonicCanyon(),
+                'buster_canyon'           => $entityModel->getBusterCanyon(),
+                'small_protection_shield' => $entityModel->getSmallProtectionShield(),
+                'big_protection_shield'   => $entityModel->getBigProtectionShield()
+                ),
+            'ballistic' => array(
+                'interceptor_misil'    => $entityModel->getInterceptorMisil(),
+                'interplanetary_misil' => $entityModel->getInterplanetaryMisil()
+                )
             ));
 
         $this->getLayout()
@@ -137,14 +180,57 @@ class Legacies_Admin_Core_PlanetController
     public function editPostAction()
     {
         $entityModel = $this->app()
-            ->getModel('cms/page')
+            ->getModel('legacies/planet')
             ->load($this->_getParam('id'))
         ;
 
         $optionGroups = array(
-            'config' => array(
-                'key'    => array($entityModel, 'setConfigName'),
-                'value'  => array($entityModel, 'setConfigValue')
+            'general' => array(
+                'name'     => array($entityModel, 'setName'),
+                'position' => array($entityModel, 'setPosition')
+                ),
+            'production' => array(
+                'metal_mine_porcent'           => array($entityModel, 'setMetalMinePorcent'),
+                'crystal_mine_porcent'         => array($entityModel, 'setCrystalMinePorcent'),
+                'deuterium_sintetizer_porcent' => array($entityModel, 'setDeuteriumSintetizerPorcent'),
+                'solar_plant_porcent'          => array($entityModel, 'setSolarPlantPorcent'),
+                'fusion_plant_porcent'         => array($entityModel, 'setFusionPlantPorcent'),
+                'solar_satelit_porcent'        => array($entityModel, 'setSolarSatelitPorcent')
+                ),
+            'resource' => array(
+                'metal_mine'           => array($entityModel, 'setMetalMine'),
+                'crystal_mine'         => array($entityModel, 'setCrystalMine'),
+                'deuterium_sintetizer' => array($entityModel, 'setDeuteriumSintetizer'),
+                'solar_plant'          => array($entityModel, 'setSolarPlant'),
+                'fusion_plant'         => array($entityModel, 'setFusionPlant'),
+                'metal_store'          => array($entityModel, 'setMetalStore'),
+                'crystal_store'        => array($entityModel, 'setCrystalStore'),
+                'deuterium_store'      => array($entityModel, 'setDeuteriumStore')
+                ),
+            'military' => array(
+                'hangar'       => array($entityModel, 'setHangar'),
+                'ally_deposit' => array($entityModel, 'setAllyDeposit'),
+                'silo'         => array($entityModel, 'setSilo')
+                ),
+            'special' => array(
+                'robot_factory' => array($entityModel, 'setRobotFactory'),
+                'nano_factory'  => array($entityModel, 'setNanoFactory'),
+                'laboratory'    => array($entityModel, 'setLaboratory'),
+                'terraformer'   => array($entityModel, 'setTerraformer')
+                ),
+            'defenses' => array(
+                'misil_launcher'          => array($entityModel, 'setMisilLauncher'),
+                'small_laser'             => array($entityModel, 'setSmallLaser'),
+                'big_laser'               => array($entityModel, 'setBigLaser'),
+                'gauss_canyon'            => array($entityModel, 'setGaussCanyon'),
+                'ionic_canyon'            => array($entityModel, 'setIonicCanyon'),
+                'buster_canyon'           => array($entityModel, 'setBusterCanyon'),
+                'small_protection_shield' => array($entityModel, 'setSmallProtectionShield'),
+                'big_protection_shield'   => array($entityModel, 'setBigProtectionShield')
+                ),
+            'ballistic' => array(
+                'interceptor_misil'    => array($entityModel, 'setInterceptorMisil'),
+                'interplanetary_misil' => array($entityModel, 'setInterplanetaryMisil')
                 )
             );
 
@@ -153,7 +239,7 @@ class Legacies_Admin_Core_PlanetController
 
         $request = $this->getRequest();
 
-        if ($request->getPost('form_key') === $session->getFormKey()) {
+        if ($request->getPost('form_key') !== $session->getFormKey()) {
             $session->addError('Invalid form data.');
 
             $this->_helper->redirector->gotoRoute(array(
@@ -180,8 +266,10 @@ class Legacies_Admin_Core_PlanetController
         }
         try {
             $entityModel->save();
-            $session->addError('Configuration successfully updated.');
-        } catch (One_Core_Exception $e) {
+            $session->addInfo('Configuration successfully updated.');
+        } catch (One_Core_Exception_DaoError $e) {
+            var_dump($e);
+            die();
             $session->addError('Could not save configuration updates.');
         }
 
@@ -320,9 +408,9 @@ class Legacies_Admin_Core_PlanetController
 
         $this->addTab('legacies-planet-general', 'general', 'General');
         $this->addTab('legacies-planet-production', 'production', 'Production');
-        $this->addTab('legacies-planet-buildings-resources', 'resource-buildings', 'Resources Buildings');
-        $this->addTab('legacies-planet-buildings-military', 'military-buildings', 'Military Buildings');
-        $this->addTab('legacies-planet-buildings-special', 'special-buildings', 'Special Buildings');
+        $this->addTab('legacies-planet-buildings-resources', 'resource', 'Resources Buildings');
+        $this->addTab('legacies-planet-buildings-military', 'military', 'Military Buildings');
+        $this->addTab('legacies-planet-buildings-special', 'special', 'Special Buildings');
         $this->addTab('legacies-planet-defenses', 'defenses', 'Defenses');
         $this->addTab('legacies-planet-ballistic', 'ballistic', 'Ballistics');
     }

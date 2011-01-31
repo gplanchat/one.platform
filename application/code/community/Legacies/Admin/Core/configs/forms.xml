@@ -116,7 +116,7 @@
             </name>
             <position>
               <type>text</type>
-              <name>value</name>
+              <name>position</name>
               <options>
                 <label>Position</label>
                 <order>2</order>
@@ -508,7 +508,7 @@
           <elements>
             <missile-launcher>
               <type>text</type>
-              <name>missile-launcher</name>
+              <name>misil_launcher</name>
               <options>
                 <label>Missile Launcher</label>
                 <value>0</value>
@@ -516,7 +516,7 @@
                 <required>1</required>
                 <allowEmpty>1</allowEmpty>
                 <attribs>
-                  <id>config:key</id>
+                  <id>planet-defenses:missile-launcher</id>
                 </attribs>
                 <disableTranslator>0</disableTranslator>
                 <validators>
@@ -531,7 +531,7 @@
             </missile-launcher>
             <light-laser>
               <type>text</type>
-              <name>value</name>
+              <name>small_laser</name>
               <options>
                 <label>Light Laser</label>
                 <value>0</value>
@@ -539,7 +539,7 @@
                 <required>1</required>
                 <allowEmpty>1</allowEmpty>
                 <attribs>
-                  <id>config:value</id>
+                  <id>planet-defenses:light-laser</id>
                 </attribs>
                 <disableTranslator>0</disableTranslator>
                 <validators>
@@ -552,6 +552,152 @@
                 </validators>
               </options>
             </light-laser>
+            <heavy-laser>
+              <type>text</type>
+              <name>big_laser</name>
+              <options>
+                <label>Heavy Laser</label>
+                <value>0</value>
+                <order>3</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>planet-defenses:heavy-laser</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                  <numeric>
+                    <validator>Int</validator>
+                  </numeric>
+                </validators>
+              </options>
+            </heavy-laser>
+            <gauss>
+              <type>text</type>
+              <name>gauss_canyon</name>
+              <options>
+                <label>Gauss Cannon</label>
+                <value>0</value>
+                <order>4</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>planet-defenses:gauss</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                  <numeric>
+                    <validator>Int</validator>
+                  </numeric>
+                </validators>
+              </options>
+            </gauss>
+            <ion-cannon>
+              <type>text</type>
+              <name>ionic_canyon</name>
+              <options>
+                <label>Ion Cannon</label>
+                <value>0</value>
+                <order>5</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>planet-defenses:ion-cannon</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                  <numeric>
+                    <validator>Int</validator>
+                  </numeric>
+                </validators>
+              </options>
+            </ion-cannon>
+            <plasma-cannon>
+              <type>text</type>
+              <name>buster_canyon</name>
+              <options>
+                <label>Plasma Cannon</label>
+                <value>0</value>
+                <order>6</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>planet-defenses:plasma-cannon</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                  <numeric>
+                    <validator>Int</validator>
+                  </numeric>
+                </validators>
+              </options>
+            </plasma-cannon>
+            <small-shield>
+              <type>text</type>
+              <name>small_protection_shield</name>
+              <options>
+                <label>Small Shield</label>
+                <value>0</value>
+                <order>7</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>planet-defenses:small-shield</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                  <numeric>
+                    <validator>InArray</validator>
+                    <options>
+                      <haystack value="0" />
+                      <haystack value="1" />
+                    </options>
+                  </numeric>
+                </validators>
+              </options>
+            </small-shield>
+            <heavy-shield>
+              <type>text</type>
+              <name>big_protection_shield</name>
+              <options>
+                <label>Heavy Shield</label>
+                <value>0</value>
+                <order>8</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>planet-defenses:heavy-shield</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                  <numeric>
+                    <validator>InArray</validator>
+                    <options>
+                      <haystack value="0" />
+                      <haystack value="1" />
+                    </options>
+                  </numeric>
+                </validators>
+              </options>
+            </heavy-shield>
           </elements>
         </legacies-planet-defenses>
         <legacies-planet-ballistic>
@@ -561,7 +707,7 @@
           <elements>
             <counter-missile>
               <type>text</type>
-              <name>missile-launcher</name>
+              <name>interceptor_misil</name>
               <options>
                 <label>Counter Missile</label>
                 <value>0</value>
@@ -569,7 +715,7 @@
                 <required>1</required>
                 <allowEmpty>1</allowEmpty>
                 <attribs>
-                  <id>config:key</id>
+                  <id>ballistic:counter-missile</id>
                 </attribs>
                 <disableTranslator>0</disableTranslator>
                 <validators>
@@ -584,7 +730,7 @@
             </counter-missile>
             <interplanetary-missile>
               <type>text</type>
-              <name>value</name>
+              <name>interplanetary_misil</name>
               <options>
                 <label>Interplanetary Missile</label>
                 <value>0</value>
@@ -592,7 +738,7 @@
                 <required>1</required>
                 <allowEmpty>1</allowEmpty>
                 <attribs>
-                  <id>config:value</id>
+                  <id>ballistic:interplanetary-missile</id>
                 </attribs>
                 <disableTranslator>0</disableTranslator>
                 <validators>
@@ -690,7 +836,7 @@
             </metal>
             <cristal>
               <type>select</type>
-              <name>cristal_mine_porcent</name>
+              <name>crystal_mine_porcent</name>
               <options>
                 <label>Cristal Mine production ratio</label>
                 <value>10</value>

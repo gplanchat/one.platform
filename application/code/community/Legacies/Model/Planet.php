@@ -84,4 +84,23 @@ class Legacies_Model_Planet
             unset($clone);
         }
     }
+
+    public function getPosition()
+    {
+        return sprintf('%d:%d:%d',
+            $this->getGalaxy(),
+            $this->getSystem(),
+            $this->getPlanet()
+            );
+    }
+
+    public function setPosition($position)
+    {
+        if (preg_match('#(\d):(\d):(\d)#', $position, $matches)) {
+            $this->setGalaxy($matches[1]);
+            $this->setSystem($matches[2]);
+            $this->setPlanet($matches[3]);
+        }
+        return $this;
+    }
 }

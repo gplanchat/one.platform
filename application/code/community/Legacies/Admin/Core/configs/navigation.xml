@@ -51,8 +51,8 @@
             <config>
               <label>Configuration</label>
               <route>
+                <path>game</path>
                 <controller>config</controller>
-                <path>legacies</path>
               </route>
             </config>
             <!--units>
@@ -98,14 +98,14 @@
             <planets>
               <label>Planets management</label>
               <route>
-                <path>legacies</path>
+                <path>game</path>
                 <controller>planet</controller>
               </route>
             </planets>
             <moons>
               <label>Moons management</label>
               <route>
-                <path>legacies</path>
+                <path>game</path>
                 <controller>moon</controller>
               </route>
             </moons>
