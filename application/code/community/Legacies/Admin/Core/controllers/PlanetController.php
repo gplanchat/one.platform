@@ -104,11 +104,18 @@ class Legacies_Admin_Core_PlanetController
             ->getSingleton('admin.core/session')
             ->setFormKey($formKey);
 
+        $this->_form
+            ->getTab('general')
+            ->getElement('id_owner')
+            ->setMultiOptions($this->app()->getModel('legacies/user.collection')->load()->toHash('username'))
+        ;
+
         $this->_form->populate(array(
             'form_key' => $formKey,
             'general' => array(
                 'name'     => $entityModel->getName(),
-                'position' => $entityModel->getPosition()
+                'position' => $entityModel->getPosition(),
+                'owner'    => $entityModel->getIdOwner()
                 ),
             'production' => array(
                 'metal_mine_porcent'           => $entityModel->getMetalMinePorcent(),
@@ -187,7 +194,8 @@ class Legacies_Admin_Core_PlanetController
         $optionGroups = array(
             'general' => array(
                 'name'     => array($entityModel, 'setName'),
-                'position' => array($entityModel, 'setPosition')
+                'position' => array($entityModel, 'setPosition'),
+                'owner'    => array($entityModel, 'setIdOwner')
                 ),
             'production' => array(
                 'metal_mine_porcent'           => array($entityModel, 'setMetalMinePorcent'),
@@ -266,11 +274,9 @@ class Legacies_Admin_Core_PlanetController
         }
         try {
             $entityModel->save();
-            $session->addInfo('Configuration successfully updated.');
+            $session->addInfo('Planet successfully updated.');
         } catch (One_Core_Exception_DaoError $e) {
-            var_dump($e);
-            die();
-            $session->addError('Could not save configuration updates.');
+            $session->addError('Could not save Planet updates.');
         }
 
         $this->_helper->redirector->gotoRoute(array(
@@ -311,9 +317,52 @@ class Legacies_Admin_Core_PlanetController
         ;
 
         $optionGroups = array(
-            'config' => array(
-//                'key'    => array($entityModel, 'setConfigName'),
-//                'value'  => array($entityModel, 'setConfigValue')
+            'general' => array(
+                'name'     => array($entityModel, 'setName'),
+                'position' => array($entityModel, 'setPosition')
+                ),
+            'production' => array(
+                'metal_mine_porcent'           => array($entityModel, 'setMetalMinePorcent'),
+                'crystal_mine_porcent'         => array($entityModel, 'setCrystalMinePorcent'),
+                'deuterium_sintetizer_porcent' => array($entityModel, 'setDeuteriumSintetizerPorcent'),
+                'solar_plant_porcent'          => array($entityModel, 'setSolarPlantPorcent'),
+                'fusion_plant_porcent'         => array($entityModel, 'setFusionPlantPorcent'),
+                'solar_satelit_porcent'        => array($entityModel, 'setSolarSatelitPorcent')
+                ),
+            'resource' => array(
+                'metal_mine'           => array($entityModel, 'setMetalMine'),
+                'crystal_mine'         => array($entityModel, 'setCrystalMine'),
+                'deuterium_sintetizer' => array($entityModel, 'setDeuteriumSintetizer'),
+                'solar_plant'          => array($entityModel, 'setSolarPlant'),
+                'fusion_plant'         => array($entityModel, 'setFusionPlant'),
+                'metal_store'          => array($entityModel, 'setMetalStore'),
+                'crystal_store'        => array($entityModel, 'setCrystalStore'),
+                'deuterium_store'      => array($entityModel, 'setDeuteriumStore')
+                ),
+            'military' => array(
+                'hangar'       => array($entityModel, 'setHangar'),
+                'ally_deposit' => array($entityModel, 'setAllyDeposit'),
+                'silo'         => array($entityModel, 'setSilo')
+                ),
+            'special' => array(
+                'robot_factory' => array($entityModel, 'setRobotFactory'),
+                'nano_factory'  => array($entityModel, 'setNanoFactory'),
+                'laboratory'    => array($entityModel, 'setLaboratory'),
+                'terraformer'   => array($entityModel, 'setTerraformer')
+                ),
+            'defenses' => array(
+                'misil_launcher'          => array($entityModel, 'setMisilLauncher'),
+                'small_laser'             => array($entityModel, 'setSmallLaser'),
+                'big_laser'               => array($entityModel, 'setBigLaser'),
+                'gauss_canyon'            => array($entityModel, 'setGaussCanyon'),
+                'ionic_canyon'            => array($entityModel, 'setIonicCanyon'),
+                'buster_canyon'           => array($entityModel, 'setBusterCanyon'),
+                'small_protection_shield' => array($entityModel, 'setSmallProtectionShield'),
+                'big_protection_shield'   => array($entityModel, 'setBigProtectionShield')
+                ),
+            'ballistic' => array(
+                'interceptor_misil'    => array($entityModel, 'setInterceptorMisil'),
+                'interplanetary_misil' => array($entityModel, 'setInterplanetaryMisil')
                 )
             );
 
@@ -347,12 +396,13 @@ class Legacies_Admin_Core_PlanetController
                 call_user_func($callback, $groupData[$element]);
             }
         }
+        $entityModel->setPlanetType(Legacies_Model_Planet::TYPE_MOON);
 
         try {
             $entityModel->save();
-            $session->addError('Configuration successfully updated.');
+            $session->addError('Planet successfully updated.');
         } catch (One_Core_Exception $e) {
-            $session->addError('Could not save configuration updates.');
+            $session->addError('Could not save Planet updates.');
         }
 
         $this->_helper->redirector->gotoRoute(array(

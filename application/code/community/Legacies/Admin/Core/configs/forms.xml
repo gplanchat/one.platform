@@ -133,6 +133,25 @@
                 </validators>
               </options>
             </position>
+            <owner>
+              <type>select</type>
+              <name>id_owner</name>
+              <options>
+                <label>Owner</label>
+                <order>3</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>general:owner</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                </validators>
+              </options>
+            </owner>
           </elements>
         </legacies-planet-general>
         <legacies-planet-buildings-resources>

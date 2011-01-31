@@ -1,16 +1,16 @@
 <div id="messages">
   <ul class="messages">
   <?php foreach ($this->getAllErrors() as $message): ?>
-    <li class="msg-error"><?php echo $this->escape($message)?></li>
+    <li class="error-msg"><?php echo $this->escape($message)?></li>
   <?php endforeach ?>
   <?php foreach ($this->getAllWarnings() as $message): ?>
-    <li class="msg-warning"><?php echo $this->escape($message)?></li>
+    <li class="warning-msg"><?php echo $this->escape($message)?></li>
   <?php endforeach ?>
   <?php foreach ($this->getAllNotices() as $message): ?>
-    <li class="msg-notice"><?php echo $this->escape($message)?></li>
+    <li class="notice-msg"><?php echo $this->escape($message)?></li>
   <?php endforeach ?>
   <?php foreach ($this->getAllInfos() as $message): ?>
-    <li class="msg-success"><?php echo $this->escape($message)?></li>
+    <li class="success-msg"><?php echo $this->escape($message)?></li>
   <?php endforeach ?>
   </ul>
 </div>
