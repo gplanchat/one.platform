@@ -91,7 +91,7 @@ function f(target_url,win_name) {
 </tr>
 	{server_info}
 <tr>
-	<td colspan="2"><div><center><a href="credit.php" accesskey="T" target="{mf}">XNova:Legacies</a><br>&copy; Copyright (c) 2009-2010</center></div></td>
+	<td colspan="2"><div><center><a href="credit.php" accesskey="T" target="{mf}">XNova Team</a><br>&copy; Copyright 2008</center></div></td>
 </tr>
 </table>
 </div>

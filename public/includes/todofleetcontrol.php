@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Publiqdsdqc License for more details.
+ * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
@@ -28,85 +28,85 @@
  *
  */
 
-require dirname(__FILE__) . DS . 'functions/FlyingFleetHandler.php';
-require dirname(__FILE__) . DS . 'functions/MissionCaseAttack.php';
-require dirname(__FILE__) . DS . 'functions/MissionCaseStay.php';
-require dirname(__FILE__) . DS . 'functions/MissionCaseStayAlly.php';
-require dirname(__FILE__) . DS . 'functions/MissionCaseTransport.php';
-require dirname(__FILE__) . DS . 'functions/MissionCaseSpy.php';
-require dirname(__FILE__) . DS . 'functions/MissionCaseRecycling.php';
-require dirname(__FILE__) . DS . 'functions/MissionCaseDestruction.php';
-require dirname(__FILE__) . DS . 'functions/MissionCaseColonisation.php';
-require dirname(__FILE__) . DS . 'functions/MissionCaseExpedition.php';
-require dirname(__FILE__) . DS . 'functions/SendSimpleMessage.php';
-require dirname(__FILE__) . DS . 'functions/SpyTarget.php';
-require dirname(__FILE__) . DS . 'functions/RestoreFleetToPlanet.php';
-require dirname(__FILE__) . DS . 'functions/StoreGoodsToPlanet.php';
-require dirname(__FILE__) . DS . 'functions/CheckPlanetBuildingQueue.php';
-require dirname(__FILE__) . DS . 'functions/CheckPlanetUsedFields.php';
-require dirname(__FILE__) . DS . 'functions/CreateOneMoonRecord.php';
-require dirname(__FILE__) . DS . 'functions/CreateOnePlanetRecord.php';
-require dirname(__FILE__) . DS . 'functions/InsertJavaScriptChronoApplet.php';
-require dirname(__FILE__) . DS . 'functions/IsTechnologieAccessible.php';
-require dirname(__FILE__) . DS . 'functions/GetBuildingTime.php';
-require dirname(__FILE__) . DS . 'functions/GetBuildingTimeLevel.php';
-require dirname(__FILE__) . DS . 'functions/GetRestPrice.php';
-require dirname(__FILE__) . DS . 'functions/GetElementPrice.php';
-require dirname(__FILE__) . DS . 'functions/GetBuildingPrice.php';
-require dirname(__FILE__) . DS . 'functions/IsElementBuyable.php';
-require dirname(__FILE__) . DS . 'functions/CheckCookies.php';
-require dirname(__FILE__) . DS . 'functions/ChekUser.php';
-require dirname(__FILE__) . DS . 'functions/InsertGalaxyScripts.php';
-require dirname(__FILE__) . DS . 'functions/GalaxyCheckFunctions.php';
-require dirname(__FILE__) . DS . 'functions/ShowGalaxyRows.php';
-require dirname(__FILE__) . DS . 'functions/GetPhalanxRange.php';
-require dirname(__FILE__) . DS . 'functions/GetMissileRange.php';
-require dirname(__FILE__) . DS . 'functions/GalaxyRowPos.php';
-require dirname(__FILE__) . DS . 'functions/GalaxyRowPlanet.php';
-require dirname(__FILE__) . DS . 'functions/GalaxyRowPlanetName.php';
-require dirname(__FILE__) . DS . 'functions/GalaxyRowMoon.php';
-require dirname(__FILE__) . DS . 'functions/GalaxyRowDebris.php';
-require dirname(__FILE__) . DS . 'functions/GalaxyRowUser.php';
-require dirname(__FILE__) . DS . 'functions/GalaxyRowAlly.php';
-require dirname(__FILE__) . DS . 'functions/GalaxyRowActions.php';
-require dirname(__FILE__) . DS . 'functions/ShowGalaxySelector.php';
-require dirname(__FILE__) . DS . 'functions/ShowGalaxyMISelector.php';
-require dirname(__FILE__) . DS . 'functions/ShowGalaxyTitles.php';
-require dirname(__FILE__) . DS . 'functions/GalaxyLegendPopup.php';
-require dirname(__FILE__) . DS . 'functions/ShowGalaxyFooter.php';
-require dirname(__FILE__) . DS . 'functions/GetMaxConstructibleElements.php';
-require dirname(__FILE__) . DS . 'functions/GetElementRessources.php';
-require dirname(__FILE__) . DS . 'functions/ElementBuildListBox.php';
-require dirname(__FILE__) . DS . 'functions/ElementBuildListQueue.php';
-require dirname(__FILE__) . DS . 'functions/FleetBuildingPage.php';
-require dirname(__FILE__) . DS . 'functions/DefensesBuildingPage.php';
-require dirname(__FILE__) . DS . 'functions/ResearchBuildingPage.php';
-require dirname(__FILE__) . DS . 'functions/BatimentBuildingPage.php';
-require dirname(__FILE__) . DS . 'functions/CheckLabSettingsInQueue.php';
-require dirname(__FILE__) . DS . 'functions/InsertBuildListScript.php';
-require dirname(__FILE__) . DS . 'functions/AddBuildingToQueue.php';
-require dirname(__FILE__) . DS . 'functions/ShowBuildingQueue.php';
-require dirname(__FILE__) . DS . 'functions/HandleTechnologieBuild.php';
-require dirname(__FILE__) . DS . 'functions/BuildingSavePlanetRecord.php';
-require dirname(__FILE__) . DS . 'functions/BuildingSaveUserRecord.php';
-require dirname(__FILE__) . DS . 'functions/RemoveBuildingFromQueue.php';
-require dirname(__FILE__) . DS . 'functions/CancelBuildingFromQueue.php';
-require dirname(__FILE__) . DS . 'functions/SetNextQueueElementOnTop.php';
-require dirname(__FILE__) . DS . 'functions/ShowTopNavigationBar.php';
-require dirname(__FILE__) . DS . 'functions/SetSelectedPlanet.php';
-require dirname(__FILE__) . DS . 'functions/MessageForm.php';
-require dirname(__FILE__) . DS . 'functions/PlanetResourceUpdate.php';
-require dirname(__FILE__) . DS . 'functions/BuildFlyingFleetTable.php';
-require dirname(__FILE__) . DS . 'functions/SendNewPassword.php';
-require dirname(__FILE__) . DS . 'functions/HandleElementBuildingQueue.php';
-require dirname(__FILE__) . DS . 'functions/UpdatePlanetBatimentQueueList.php';
-require dirname(__FILE__) . DS . 'functions/IsOfficierAccessible.php';
-require dirname(__FILE__) . DS . 'functions/CheckInputStrings.php';
-require dirname(__FILE__) . DS . 'functions/MipCombatEngine.php';
-require dirname(__FILE__) . DS . 'functions/DeleteSelectedUser.php';
-require dirname(__FILE__) . DS . 'functions/SortUserPlanets.php';
-require dirname(__FILE__) . DS . 'functions/BuildFleetEventTable.php';
-require dirname(__FILE__) . DS . 'functions/ResetThisFuckingCheater.php';
-require dirname(__FILE__) . DS . 'functions/IsVacationMode.php';
-require dirname(__FILE__) . DS . 'functions/BBcodeFunction.php';
+include(ROOT_PATH . 'includes/functions/FlyingFleetHandler.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MissionCaseAttack.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MissionCaseStay.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MissionCaseStayAlly.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MissionCaseTransport.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MissionCaseSpy.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MissionCaseRecycling.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MissionCaseDestruction.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MissionCaseColonisation.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MissionCaseExpedition.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/SendSimpleMessage.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/SpyTarget.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/RestoreFleetToPlanet.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/StoreGoodsToPlanet.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/CheckPlanetBuildingQueue.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/CheckPlanetUsedFields.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/CreateOneMoonRecord.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/CreateOnePlanetRecord.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/InsertJavaScriptChronoApplet.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/IsTechnologieAccessible.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GetBuildingTime.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GetBuildingTimeLevel.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GetRestPrice.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GetElementPrice.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GetBuildingPrice.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/IsElementBuyable.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/CheckCookies.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ChekUser.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/InsertGalaxyScripts.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GalaxyCheckFunctions.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ShowGalaxyRows.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GetPhalanxRange.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GetMissileRange.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GalaxyRowPos.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GalaxyRowPlanet.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GalaxyRowPlanetName.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GalaxyRowMoon.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GalaxyRowDebris.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GalaxyRowUser.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GalaxyRowAlly.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GalaxyRowActions.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ShowGalaxySelector.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ShowGalaxyMISelector.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ShowGalaxyTitles.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GalaxyLegendPopup.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ShowGalaxyFooter.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GetMaxConstructibleElements.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/GetElementRessources.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ElementBuildListBox.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ElementBuildListQueue.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/FleetBuildingPage.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/DefensesBuildingPage.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ResearchBuildingPage.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/BatimentBuildingPage.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/CheckLabSettingsInQueue.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/InsertBuildListScript.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/AddBuildingToQueue.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ShowBuildingQueue.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/HandleTechnologieBuild.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/BuildingSavePlanetRecord.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/BuildingSaveUserRecord.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/RemoveBuildingFromQueue.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/CancelBuildingFromQueue.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/SetNextQueueElementOnTop.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ShowTopNavigationBar.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/SetSelectedPlanet.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MessageForm.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/PlanetResourceUpdate.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/BuildFlyingFleetTable.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/SendNewPassword.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/HandleElementBuildingQueue.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/UpdatePlanetBatimentQueueList.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/IsOfficierAccessible.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/CheckInputStrings.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/MipCombatEngine.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/DeleteSelectedUser.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/SortUserPlanets.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/BuildFleetEventTable.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/ResetThisFuckingCheater.'.PHPEXT);
+include(ROOT_PATH . 'includes/functions/IsVacationMode.'.PHPEXT);
 
+?>

@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ function ShowTopNavigationBar ( $CurrentUser, $CurrentPlanet ) {
 		// Genearation de la combo des planetes du joueur
 		$parse['planetlist'] = '';
 		$ThisUsersPlanets    = SortUserPlanets ( $CurrentUser );
-		while ($CurPlanet = mysql_fetch_assoc($ThisUsersPlanets)) {
+		while ($CurPlanet = mysql_fetch_array($ThisUsersPlanets)) {
 			if ($CurPlanet["destruyed"] == 0) {
 				$parse['planetlist'] .= "\n<option ";
 				if ($CurPlanet['id'] == $CurrentUser['current_planet']) {

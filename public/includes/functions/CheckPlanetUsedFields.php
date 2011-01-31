@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,26 +28,26 @@
  *
  */
 
-/**
- * Count used field in a planet
- * 
- * @param array $planet
- * @return void
- */
 function CheckPlanetUsedFields ( &$planet ) {
-	global $resource, $reslist;
-	
-	/**
-	 * @var int Case used on planet
-	 */
-	$usedCase = 0;
-	
-	foreach ($reslist[Legacies_Empire::TYPE_BUILDING] as $id) {
-		$usedCase += $planet[$resource[$id]];
+	global $resource;
+
+	// Tous les batiments
+	$cfc  = $planet[$resource[1]]  + $planet[$resource[2]]  + $planet[$resource[3]] ;
+	$cfc += $planet[$resource[4]]  + $planet[$resource[12]] + $planet[$resource[14]];
+	$cfc += $planet[$resource[15]] + $planet[$resource[21]] + $planet[$resource[22]];
+	$cfc += $planet[$resource[23]] + $planet[$resource[24]] + $planet[$resource[31]];
+	$cfc += $planet[$resource[33]] + $planet[$resource[34]] + $planet[$resource[44]];
+
+	// Si on se trouve sur une lune ... Y a des choses a ajouter aussi
+	if ($planet['planet_type'] == '3') {
+		$cfc += $planet[$resource[41]] + $planet[$resource[42]] + $planet[$resource[43]];
 	}
 
-	if ($planet['field_current'] != $usedCase) {
-		$planet['field_current'] = $usedCase;
-		doquery("UPDATE {{table}} SET field_current= '{$usedCase}' WHERE id = '{$planet['id']}'", 'planets');
+	// Mise a jour du nombre de case dans la BDD si incorrect
+	if ($planet['field_current'] != $cfc) {
+		$planet['field_current'] = $cfc;
+		doquery("UPDATE {{table}} SET field_current=$cfc WHERE id={$planet['id']}", 'planets');
 	}
 }
+
+?>

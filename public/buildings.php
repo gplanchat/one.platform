@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -38,8 +38,7 @@ require_once dirname(__FILE__) .'/common.php';
 	UpdatePlanetBatimentQueueList ( $planetrow, $user );
 	$IsWorking = HandleTechnologieBuild ( $planetrow, $user );
 
-        $mode = (isset($_GET['mode'])) ? $_GET['mode'] : false;
-	switch ($mode) {
+	switch ($_GET['mode']) {
 		case 'fleet':
 			// --------------------------------------------------------------------------------------------------
 			FleetBuildingPage ( $planetrow, $user );

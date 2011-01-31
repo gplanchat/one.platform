@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -91,7 +91,7 @@ function ShowLeftMenu ( $Level , $Template = 'left_menu') {
 	if ($game_config['enable_notes'] == 1) {
 		$parse['notes_link']  = "
 		<tr>
-			<td colspan=\"2\"><div><a href=\"#\" onClick=\"f('notes.php', 'Report');\" accesskey=\"n\">Notes</a></div></td>
+			<td colspan=\"2\"><div><a href=\"#\" onClick=\"f(\'notes.php\', \'Report\');\" accesskey=\"n\">Notes</a></div></td>
 		</tr>";
 	} else {
 		$parse['notes_link']  = "";

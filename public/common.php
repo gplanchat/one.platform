@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,186 +28,87 @@
  *
  */
 
-if (version_compare(phpversion(), '5.2.0', '<') === true) {
-    echo  <<<EOF
-<html>
-  <head>
-    <title>XNova:Legacies - PHP version</title>
-  </head>
-  <body>
-  <div style="font: 12px/1.35em arial, helvetica, sans-serif;">
-    <div style="margin: 0 0 25px 0; border-bottom: 1px solid #CCCCCC;">
-      <h3 style="margin: 0; font-size: 1.7em; font-weight: normal; text-transform:none; text-align: left; color: #2f2f2f;">
-      Whoops, it looks like you have an invalid PHP version
-      </h3>
-    </div>
-    <p>XNova:Legacies supports PHP 5.2.0 or newer. Please update your PHP version.</p>
-  </div>
-  </body>
-</html>
-EOF;
+session_start();
+ini_set('display_errors', false);
+
+define('ROOT_PATH', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
+define('PHPEXT', require 'extension.inc');
+
+define('VERSION', '2011.1');
+
+if (0 === filesize(ROOT_PATH . 'config.php')) {
+    header('Location: setup.php/');
     exit(0);
 }
 
-defined('ROOT_PATH') ||
-    define('ROOT_PATH', realpath(dirname(dirname(__FILE__))));
-
-defined('DS') || define('DS', DIRECTORY_SEPARATOR);
-defined('PS') || define('PS', PATH_SEPARATOR);
-
-require_once ROOT_PATH . DS . 'application' . DS . 'One.php';
-
-defined('APPLICATION_PATH') ||
-    define('APPLICATION_PATH', ROOT_PATH . DS . 'application');
-
-defined('APPLICATION_ENV') ||
-    ($env = getenv('APPLICATION_ENV')) ? define('APPLICATION_ENV', $env) :
-        define('APPLICATION_ENV', null);
-
-set_include_path(implode(PS, array(
-    realpath(ROOT_PATH . DS . 'externals' . DS . 'libraries'),
-    realpath(APPLICATION_PATH . DS . 'code' . DS . 'core'),
-    realpath(APPLICATION_PATH . DS . 'code' . DS . 'community'),
-    realpath(APPLICATION_PATH . DS . 'code' . DS . 'local')
-    )));
-
-require_once 'Zend/Loader/Autoloader.php';
-Zend_Loader_Autoloader::getInstance()
-    ->registerNamespace('One_Core')
-;
-
-date_default_timezone_set('Europe/Paris');
-
-/**
- * Set up environment
- */
-defined('DEBUG') || define('DEBUG',
-    ($env = strtolower(getenv('DEBUG'))) === '1' || $env === 'true' || $env === 'on');
-defined('DEPRECATION') || define('DEPRECATION',
-    ($env = strtolower(getenv('DEPRECATION'))) === '1' || $env === 'true' || $env === 'on');
-
-try {
-    One::setDefaultWebsiteId('frontoffice');
-    One::app(null, APPLICATION_ENV);
-} catch (Zend_Exception $e) {
-    echo $e->getMessage();
-    die();
-}
-
-/**
- * Mute the legacy coding errors reporting
- * @deprecated
- */
-if (!defined('DEBUG')) {
-//    @ini_set('display_errors', false);
-} else {
-//    @ini_set('display_errors', true);
-}
-
-/**
- * @var string the php extension used for the files
- * @deprecated
- */
-define('PHPEXT', require 'extension.inc');
-
-/**
- * @var the current game version.
- * @deprecated
- */
-define('VERSION', One::app()->getConfig('modules/Legacies/version'));
-
-$game_config    = One::app()->getSingleton('legacies/config');
-$user           = One::app()->getSingleton('user/session')->getUserEntity();
-$lang           = array();
-$IsUserChecked  = false;
+$game_config   = array();
+$user          = array();
+$lang          = array();
+$IsUserChecked = false;
 
 define('DEFAULT_SKINPATH', 'skins/xnova/');
-define('TEMPLATE_DIR', realpath(ROOT_PATH . DS . 'templates' . DS));
+define('TEMPLATE_DIR', realpath(ROOT_PATH . '/templates/'));
 define('TEMPLATE_NAME', 'OpenGame');
-define('DEFAULT_LANG', 'fr_FR');
+define('DEFAULT_LANG', 'fr');
 
-$debug = One::app()->getSingleton('legacies/debug');
+include(ROOT_PATH . 'includes/debug.class.'.PHPEXT);
+$debug = new Debug();
 
-require dirname(__FILE__) . DS . 'db/mysql.php';
-require dirname(__FILE__) . DS . 'includes/constants.php';
-require dirname(__FILE__) . DS . 'includes/functions.php';
-require dirname(__FILE__) . DS . 'includes/unlocalised.php';
-require dirname(__FILE__) . DS . 'includes/todofleetcontrol.php';
-require dirname(__FILE__) . DS . 'language' . DS . DEFAULT_LANG . DS . 'lang_info.cfg';
-require dirname(__FILE__) . DS . 'includes/vars.php';
-require dirname(__FILE__) . DS . 'includes/strings.php';
+include(ROOT_PATH . 'includes/constants.' . PHPEXT);
+include(ROOT_PATH . 'includes/functions.' . PHPEXT);
+include(ROOT_PATH . 'includes/unlocalised.' . PHPEXT);
+include(ROOT_PATH . 'includes/todofleetcontrol.' . PHPEXT);
+include(ROOT_PATH . 'language/' . DEFAULT_LANG . '/lang_info.cfg');
+include(ROOT_PATH . 'includes/vars.' . PHPEXT);
+include(ROOT_PATH . 'includes/db.' . PHPEXT);
+include(ROOT_PATH . 'includes/strings.' . PHPEXT);
 
-// {{{
-if (!$user->getId()) {
-    $user->load(1);
+$query = doquery('SELECT * FROM {{table}}', 'config');
+while($row = mysql_fetch_assoc($query)) {
+    $game_config[$row['config_name']] = $row['config_value'];
 }
-// }}}
 
 if (!defined('DISABLE_IDENTITY_CHECK')) {
-    if ($game_config->getGameDisable() && $user->getAuthlevel() < 2) {
-        message(stripslashes($game_config->getCloseReason()), $game_config->getGameName());
-        exit(0);
-    }
-
-    if (!$user->getId()) {
-        header('HTTP/1.1 401 Unauthorized');
-        header('Location: account/login');
-        exit(0);
-    }
+    $Result        = CheckTheUser ( $IsUserChecked );
+    $IsUserChecked = $Result['state'];
+    $user          = $Result['record'];
+} else if (!defined('DISABLE_IDENTITY_CHECK') && $game_config['game_disable'] && $user['authlevel'] < 1) {
+    message(stripslashes($game_config['close_reason']), $game_config['game_name']);
 }
 
 includeLang('system');
 includeLang('tech');
 
-$fleets = One::app()
-    ->getSingleton('legacies/fleet.collection')
-    ->addFilters(array(
-        One_Core_Bo_CollectionAbstract::FILTER_OR => array(
-            array(
-                One_Core_Bo_CollectionAbstract::FILTER_GREATER_THAN_OR_EQUAL => array(
-                    'fleet_start_time' => time()
-                    )
-                ),
-            array(
-                One_Core_Bo_CollectionAbstract::FILTER_LOWER_THAN_OR_EQUAL => array(
-                    'fleet_end_time' => time()
-                    )
-                )
-            )
-        ))
-    ->load()
-;
-
-//require dirname(__FILE__) . DS . 'rak.php');
-
-if ($user->getId()) {
-//    foreach ($fleets as $fleet) {
-//        FlyingFleetHandler($fleet);
-//    }
-
-    // FIXME: use the application configuration
-    if (!defined('IN_ADMIN')) {
-        $dpath = (isset($user['dpath']) && !empty($user['dpath'])) ? $user['dpath'] : DEFAULT_SKINPATH;
-    } else {
-        $dpath = '../' . DEFAULT_SKINPATH;
-    }
-
-    SetSelectedPlanet($user);
-
-    $planetrow = $user->getCurrentPlanet();
-
-//    $planetrow = $readConnection->select()
-//        ->from($readConnection->getDeprecatedTable('planets'))
-//        ->where('id=?', $user['current_planet'])
-//        ->query()
-//        ->fetch()
-//    ;
-
-//    $galaxyrow = $readConnection->select()
-//        ->from($readConnection->getDeprecatedTable('planets'))
-//        ->where('id=?', $planetrow['id'])
-//        ->query()
-//        ->fetch()
-//    ;
+if (empty($user) && !defined('DISABLE_IDENTITY_CHECK')) {
+    header('Location: login.php');
+    exit(0);
 }
 
+$_fleets = doquery('SELECT * FROM {{table}} WHERE `fleet_start_time` <= UNIX_TIMESTAMP() OR  `fleet_end_time` <= UNIX_TIMESTAMP()', 'fleets'); //  OR fleet_end_time <= ".time()
+while ($row = mysql_fetch_array($_fleets)) {
+    $array                = array();
+    $array['galaxy']      = $row['fleet_start_galaxy'];
+    $array['system']      = $row['fleet_start_system'];
+    $array['planet']      = $row['fleet_start_planet'];
+    $array['planet_type'] = $row['fleet_start_type'];
+
+    $temp = FlyingFleetHandler($array);
+}
+
+unset($_fleets);
+
+include(ROOT_PATH . 'rak.'.PHPEXT);
+if (!defined('IN_ADMIN')) {
+    $dpath = (isset($user['dpath']) && !empty($user["dpath"])) ? $user['dpath'] : DEFAULT_SKINPATH;
+} else {
+    $dpath = '../' . DEFAULT_SKINPATH;
+}
+
+if (!empty($user)) {
+    SetSelectedPlanet($user);
+
+    $planetrow = doquery("SELECT * FROM {{table}} WHERE `id` = '".$user['current_planet']."';", 'planets', true);
+    $galaxyrow = doquery("SELECT * FROM {{table}} WHERE `id_planet` = '".$planetrow['id']."';", 'galaxy', true);
+
+    CheckPlanetUsedFields($planetrow);
+}

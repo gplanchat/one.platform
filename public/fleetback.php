@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ require_once dirname(__FILE__) .'/common.php';
 			if ($FleetRow['fleet_mess'] == 0) {
 				if ($FleetRow['fleet_end_stay'] != 0) {
 					// Faut calculer le temps reel de retour
-					if ($FleetRow['fleet_start_time'] >= time()) {
+					if ($FleetRow['fleet_start_time'] < time()) {
 						// On a pas encore entamé le stationnement
 						// Il faut calculer la parcelle de temps ecoulée depuis le lancement de la flotte
 						$CurrentFlyingTime = time() - $FleetRow['start_time'];

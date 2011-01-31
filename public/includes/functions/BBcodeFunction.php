@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@
  * documentation for further information about customizing XNova.
  *
  */
+
 function bbcode($string) {
     $pattern = array(
         '/\\n/',
@@ -64,20 +65,20 @@ function bbcode($string) {
         'sCode(\'\1\')'
     );
 
-    return preg_replace($pattern, $replace, nl2br(htmlspecialchars($string)));
+    return preg_replace($pattern, $replace, nl2br(htmlspecialchars(stripslashes($string))));
 }
 
 
 
 function image($string)
         {
-        //On va pas se casser le fion a lire les accents quand meme !!!!!!!
+		//On va pas se casser le fion a lire les accents quand meme !!!!!!!
         $string = str_replace("&#39;", "'", $string);
 
 
-        //Emoticones.... COPIEZ COLLEZ CES LIGNES POUR RAJOUTER LES VOTRES !
+		//Emoticones.... COPIEZ COLLEZ CES LIGNES POUR RAJOUTER LES VOTRES !
         $string = str_replace("Smile", "[img]../emoticones/Smile.png[/img]", $string);
-        $string = str_replace("cool", "[img]../emoticones/cool.png[/img]", $string);
+		$string = str_replace("cool", "[img]../emoticones/cool.png[/img]", $string);
         $string = str_replace("grrr", "[img]../emoticones/grrr.png[/img]", $string);
         $string = str_replace("love", "[img]../emoticones/love.png[/img]", $string);
         $string = str_replace("msn", "[img]../emoticones/msn.png[/img]", $string);

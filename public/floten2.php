@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ require_once dirname(__FILE__) .'/common.php';
 	$UsedPlanet = false;
 	$select       = doquery("SELECT * FROM {{table}}", "planets");
 
-	while ($row = mysql_fetch_assoc($select)) {
+	while ($row = mysql_fetch_array($select)) {
 		if ($galaxy     == $row['galaxy'] &&
 			$system     == $row['system'] &&
 			$planet     == $row['planet'] &&

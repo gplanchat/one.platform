@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTYqsdqd; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -28,95 +28,134 @@
  *
  */
 
-/**
- * Missile combat engine
- *
- * @param int $defenderTech Level of the defence tech for the defender.
- * @param int $attackerTech Level of the weapeon tech for attacker.
- * @param int $nbMissile Number of missile send.
- * @param array $targetDef Defense on the target planet.
- * @param int $firstTarget First choice on attack.
- *
- * @return array $return
- */
+function raketenangriff($verteidiger_panzerung, $angreifer_waffen, $iraks, $def, $primaerziel = '0') {
+	// Variablen initialisieren
+	$temp = '';
+	$temp2 = '';
 
-function raketenangriff($defenderTech, $attackerTech, $nbMissile, $targetDef, $firstTarget) {
-	global $reslist, $pricelist;
+	$def[10] = $iraks;
 
-	/**
-	 * @var array Defense on the planet after the attack.
-	 */
-	$stayingDefense	= array();
+	$metall     = Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	$kristall   = Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	$deut       = Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	$verblieben = Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-	/**
-	 * @var array Defense destroyed durring the attack
-	 */
-	$destroyDefense = array();
+	for($temp = 0; $temp < 11; $temp++) {
+		$verblieben[$temp] = $def[$temp];
+	}
 
-	/**
-	 * Check if there are Antiballistic Missile on the planet
-	 */
-	if ($targetDef[Legacies_Empire::ID_SPECIAL_ANTIBALLISTIC_MISSILE] > 0) {
-		if (($x = $targetDef[Legacies_Empire::ID_SPECIAL_ANTIBALLISTIC_MISSILE] - $nbMissile) > 0) {
-            $stayingDefense[Legacies_Empire::ID_SPECIAL_ANTIBALLISTIC_MISSILE] = $x;
-            $destroyDefense[Legacies_Empire::ID_SPECIAL_ANTIBALLISTIC_MISSILE] = $nbMissile;
-		    $nbMissile = 0;
+	$kaputt = Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+	$hull = Array();
+
+	$hull[0] = 200 * (1 + $verteidiger_panzerung / 10);
+	$hull[1] = $hull[0];
+	$hull[2] = 800 * (1 + ($verteidiger_panzerung / 10));
+	$hull[3] = 3500 * (1 + ($verteidiger_panzerung / 10));
+	$hull[4] = $hull[2];
+	$hull[5] = 10000 * (1 + ($verteidiger_panzerung / 10));
+	$hull[6] = 2000 * (1 + ($verteidiger_panzerung / 10));
+	$hull[7] = $hull[5];
+	$hull[8] = 1500 * (1 + ($verteidiger_panzerung / 10));
+
+	$metall_cost_tab   = Array( 2, 1.5, 6, 20, 2, 50, 10, 50, 12.5, 8);
+	$kristall_cost_tab = Array( 0, 0.5, 2, 15, 6, 50, 10, 50,  2.5, 0);
+	$deut_cost_tab     = Array( 0,   0, 0,  2, 0, 30,  0,  0, 10.0, 2);
+
+	$schaden = floor(($def[10] - $def[9]) * (12000 * (1 + ($angreifer_waffen / 10))));
+	if ($schaden < 0)
+		$schaden = 0;
+
+	switch ($primaerziel) {
+		case 0:
+			$beschussreihenfolge = Array(0, 1, 2, 3, 4, 5, 6, 7, 8);
+			break;
+		case 1:
+			$beschussreihenfolge = Array(1, 0, 2, 3, 4, 5, 6, 7, 8);
+			break;
+		case 2:
+			$beschussreihenfolge = Array(2, 0, 1, 3, 4, 5, 6, 7, 8);
+			break;
+		case 3:
+			$beschussreihenfolge = Array(3, 0, 1, 2, 4, 5, 6, 7, 8);
+			break;
+		case 4:
+			$beschussreihenfolge = Array(4, 0, 1, 2, 3, 5, 6, 7, 8);
+			break;
+		case 5:
+			$beschussreihenfolge = Array(5, 0, 1, 2, 3, 4, 6, 7, 8);
+			break;
+		case 6:
+			$beschussreihenfolge = Array(6, 0, 1, 2, 3, 4, 5, 7, 8);
+			break;
+		case 7:
+			$beschussreihenfolge = Array(7, 0, 1, 2, 3, 4, 5, 6, 8);
+			break;
+		case 8:
+			$beschussreihenfolge = Array(0, 1, 2, 3, 4, 5, 6, 7, 8);
+			break;
+	}
+	// Simulation
+	// das Einfachste: I-Raks und Abfangraks ausrechnen...
+	$verblieben[10] = 0;
+	$kaputt[10] += $def[10];
+	$metall[10] += $kaputt[10] * $metall_cost_tab[8];
+	$kristall[10] += $kaputt[10] * $kristall_cost_tab[8];
+	$deut[10] += $kaputt[10] * $deut_cost_tab[8];
+
+	$verblieben[9] = ($def[9] - $def[10]);
+	if ($verblieben[9] < 0)
+		$verblieben[9] = 0;
+
+	$kaputt[11] = $def[9] - $verblieben[9];
+	$kaputt[9] += ($def[9] - $verblieben[9]);
+	$metall[9] += $kaputt[9] * $metall_cost_tab[9];
+	$kristall[9] += $kaputt[9] * $kristall_cost_tab[9];
+	$deut[9] += $kaputt[9] * $deut_cost_tab[9];
+	$metall[11] += $metall[9];
+	$kristall[11] += $kristall[9];
+	$deut[11] += $deut[9];
+	// und jetzt der Reihe nach alles ABKNALLEN!!!
+	for($temp = 0; $temp < 9; $temp++) {
+		if ($schaden >= ($hull[$beschussreihenfolge[$temp]] * $def[$beschussreihenfolge[$temp]])) {
+			$kaputt[$beschussreihenfolge[$temp]] += $def[$beschussreihenfolge[$temp]];
+
+			$verblieben[$beschussreihenfolge[$temp]] = 0;
+
+			$schaden -= ($hull[$beschussreihenfolge[$temp]] * $kaputt[$beschussreihenfolge[$temp]]);
 		} else {
-			$nbMissile -= $targetDef[Legacies_Empire::ID_SPECIAL_ANTIBALLISTIC_MISSILE];
-			$stayingDefense[Legacies_Empire::ID_SPECIAL_ANTIBALLISTIC_MISSILE] = 0;
-			$destroyDefense[Legacies_Empire::ID_SPECIAL_ANTIBALLISTIC_MISSILE] = abs($x);
+			$kaputt[$beschussreihenfolge[$temp]] += floor($schaden / $hull[$beschussreihenfolge[$temp]]);
+
+			$schaden -= $kaputt[$beschussreihenfolge[$temp]] * $hull[$beschussreihenfolge[$temp]];
+
+			$verblieben[$beschussreihenfolge[$temp]] = ($def[$beschussreihenfolge[$temp]] - $kaputt[$beschussreihenfolge[$temp]]);
 		}
-	}
 
-	/**
-	 * @var array Met la d�fense prioritaire en premier dans l'ordre des destructions //LANG
-	 */
-	$attackOrder = array(0 => $firstTarget);
-	foreach ($reslist[Legacies_Empire::TYPE_DEFENSE] as $id) {
-		if ($id != $firstTarget)
-			$attackOrder[] = $id;
-	}
+		$metall[$beschussreihenfolge[$temp]] += $kaputt[$beschussreihenfolge[$temp]] * $metall_cost_tab[$beschussreihenfolge[$temp]];
+		$kristall[$beschussreihenfolge[$temp]] += $kaputt[$beschussreihenfolge[$temp]] * $kristall_cost_tab[$beschussreihenfolge[$temp]];
+		$deut[$beschussreihenfolge[$temp]] += $kaputt[$beschussreihenfolge[$temp]] * $deut_cost_tab[$beschussreihenfolge[$temp]];
 
-	/**
-	 * @var int Number of attack point.
-	 */
-	$attackPoints = $nbMissile * 120;
-	$techDifference = $attackerTech - $defenderTech;
-	$attackPoints = ($techDifference > 0) ? $attackPoints + $techDifference * 8 : $attackPoints + $techDifference * 6;
-
-
-	foreach ($attackOrder as $value => $id) {
-	    if ($targetDef[$id] > 0 && $attackPoints > 0) {
-
-	        /**
-	         * @var int Number of structure point ( Resource / 1000)
-	         */
-		    $currentDefensePoint = ($pricelist[$id][Legacies_Empire::RESOURCE_METAL] + $pricelist[$id][Legacies_Empire::RESOURCE_CRISTAL]
-				+ $pricelist[$id][Legacies_Empire::RESOURCE_DEUTERIUM]) / 1000;
-
-		    /**
-		     * @var int Total of structure point for the current defense
-		     */
-		    $defensePoint = $targetDef[$id] * $currentDefensePoint;
-
-		    /**
-		     * @var int Destroyed point for the current defense
-		     */
-		    $destroyPoint = ($attackPoints > $defensePoint) ? $defensePoint : $attackPoints;
-
-		    $attackPoints = ($attackPoints > $defensePoint) ? $attackPoints - $defensePoint : 0;
-            $destroyDefense[$id] = floor($destroyPoint / $currentDefensePoint);
-		    $stayingDefense[$id] = $targetDef[$id] - $destroyDefense[$id];
-
-	    } else {
-	        $stayingDefense[$id] = $targetDef[$id];
-	    }
+		$verblieben[11] += $verblieben[$beschussreihenfolge[$temp]];
+		$kaputt[11] += $kaputt[$beschussreihenfolge[$temp]];
+		$metall[11] += $metall[$beschussreihenfolge[$temp]];
+		$kristall[11] += $kristall[$beschussreihenfolge[$temp]];
+		$deut[11] += $deut[$beschussreihenfolge[$temp]];
 	}
 
 	$return = array();
-	    $return['stayingDefense'] = $stayingDefense;
-	    $return['destroyDefense'] = $destroyDefense;
 
-	    return $return;
+	$return['verbleibt'] = $verblieben; // �brige Def
+	$return['zerstoert'] = $kaputt; // Zerst�rte Def
+	$return['verluste_metall'] = $metall; // Gesamtverluste Metall
+	$return['verluste_kristall'] = $kristall; // Gesamtverluste Kristall
+	$return['verluste_deuterium'] = $deut; // Gesamtverluste Deuterium
 
+	return $return;
 }
+
+// 11 => Immer gesamt
+// Copyright (c) 2007 by -= MoF =- for Deutsches UGamela Forum
+// Date N/A
+// Open Source
+
+?>

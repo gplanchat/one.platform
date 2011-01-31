@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  *
  */
 
-$v = '0.6c';
+$v = '0.6c'; /* Version de la Calculadora */
 
 $edff = array();
 $invv = array();
@@ -178,90 +178,109 @@ function setcoookie($a, $b, $c = '') {
 
 ?>
 <html>
+
     <head>
-        <title>XNova:Legacies</title>
+        <title>OGame Clone</title>
         <link rel="stylesheet" type="text/css" href="<?php echo $dpath?>formate.css">
     </head>
+
+    <center>
+
+
         <body>
-          <center>
             <form method="POST" action="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']?>">
 <?php
 
 $tot = SumaTodo();
 $to = array_fill(0, 4, 0);
 
-for ($a = 0; $a < 4; $a++):
-    switch ($a):
-    case 0:
-        $titulo = 'Geb&auml;de';
-        $loc = true;
+for ($a = 0; $a < 4; $a++) {
+    switch ($a) {
+        case 0:
+            $titulo = 'Geb&auml;de';
+            $loc = true;
 
-        $c = 'edf'; $d = 'edff';
-        $t = $edf;
-        $t_v = $edf_v;
+            $c = 'edf'; $d = 'edff';
+            $t = $edf;
+            $t_v = $edf_v;
 
-        break;
-    case 1:
-        $titulo = 'Forschung';
-        $loc = true;
+            break;
+        case 1:
+            $titulo = 'Forschung';
+            $loc = true;
 
-        $c = 'inv'; $d = 'invv';
-        $t = $inv;
-        $t_v = $inv_v;
+            $c = 'inv'; $d = 'invv';
+            $t = $inv;
+            $t_v = $inv_v;
 
-        break;
-    case 2:
-        $titulo = 'Flotte';
-        $loc = false;
+            break;
+        case 2:
+            $titulo = 'Flotte';
+            $loc = false;
 
-        $c = 'han'; $d = 'hann';
-        $t = $han;
-        $t_v = $han_v;
+            $c = 'han'; $d = 'hann';
+            $t = $han;
+            $t_v = $han_v;
 
-        break;
-    case 3:
-        $titulo = 'Flotte';
-        $loc = false;
+            break;
+        case 3:
+            $titulo = 'Flotte';
+            $loc = false;
 
-        $c = 'def'; $d = 'deff';
-        $t = $def;
-        $t_v = $def_v;
+            $c = 'def'; $d = 'deff';
+            $t = $def;
+            $t_v = $def_v;
 
-        break;
-    endswitch
+            break;
+    }
+
 ?>
                 <table border="0" cellpadding="2" cellspacing="1" width="90%">
                     <tr>
-                        <td class="c" style="width: 30%"><b><?php echo $titulo?></b></td>
-                        <td class="c" style="width: 10%"><b><?php echo $loc == true ? 'Stufe' : 'Anzahl'?></b></td>
+                        <td class="c" style="width: 30%"><b><?=$titulo?></b></td>
+                        <td class="c" style="width: 10%"><b><?=$loc == true ? 'Stufe' : 'Anzahl'?></b></td>
                         <td class="c" style="width: 15%"><b><span style="color: green">Metall</span></b></td>
                         <td class="c" style="width: 15%"><b><span style="color: blue">Kristall</span></b></td>
                         <td class="c" style="width: 15%"><b><span style="color: darkred">Deuterium</span></b></td>
                         <td class="c" style="width: 10%"><b>Punkte</b></td>
                     </tr>
-<?php for($i = 0; $i < count($t); $i++):?>
+<?php
+    for($i = 0; $i < count($t); $i++) {
+?>
                     <tr>
-                        <th style="width: 30%"><?php echo $t[$i][0]?></th>
-                        <th style="text-align: center; width: 10%"><input type="text" name="<?php echo $c?>[]" value="<?php echo !empty(${$d}[$i]) ? ${$d}[$i]: 0;?>" style="width: 30px;"></th>
-                        <th style="width: 15%"><span style="color: green"><?php echo number_format($t_v[$i][0], 0, ',', '.');?></span></th>
-                        <th style="width: 15%"><span style="color: blue"><?php echo number_format($t_v[$i][1], 0, ',', '.');?></span></th>
-                        <th style="width: 15%"><span style="color: darkred"><?php echo number_format($t_v[$i][2], 0, ',', '.');?></span></th>
-                        <th style="width: 10%"><?php echo number_format($t_v[$i][3], 0, ',', '.');?> (<?php echo @round((100 * $t_v[$i][3]) / $tot)?>%)</th>
+                        <th style="width: 30%"><?=$t[$i][0]?></td>
+                        <th style="text-align: center; width: 10%"><input type="text" name="<?=$c?>[]" value="<?=!empty(${$d}[$i]) ? ${$d}[$i]: 0;?>" style="width: 30px;"></th>
+                        <th style="width: 15%"><span style="color: green"><?=number_format($t_v[$i][0], 0, ',', '.');?></span></th>
+                        <th style="width: 15%"><span style="color: blue"><?=number_format($t_v[$i][1], 0, ',', '.');?></span></th>
+                        <th style="width: 15%"><span style="color: darkred"><?=number_format($t_v[$i][2], 0, ',', '.');?></span></th>
+                        <th style="width: 10%"><?=number_format($t_v[$i][3], 0, ',', '.');?> (<?=@round((100 * $t_v[$i][3]) / $tot)?>%)</th>
                     </tr>
-    <?php $to[$a] += $t_v[$i][3] ?>
-    <?php endfor?>
+<?php
+
+        $to[$a] += $t_v[$i][3];
+    }
+?>
                     <tr>
                         <td colspan="4">&nbsp;</td>
-                        <td class="c">Summe: </td>
-                        <th><?php echo $to[$a]?> (<?php echo round((100 * $to[$a]) / $tot)?>%)</th>
+                        <td class="c">Summe: </th>
+                        <th><?=$to[$a]?> (<?=@round((100 * $to[$a]) / $tot)?>%)</th>
                     </tr>
                 </table><br />
-<?php endfor ?>
+<?php
+}
+
+?>
+
                 <input type="submit" name="suma" value="Berechen">
                 <input type="submit" name="reset" value="Zur&uuml;cksetzen">
+
                 <br /><br />
-                Punkte: <?php echo number_format($tot, 0, '.', ''); ?>
+                Punkte: <?=number_format($tot, 0, '.', ''); ?>
+
             </form>
+
+
+
         </center>
     </body>
 </html>

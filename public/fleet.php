@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -116,7 +116,7 @@ require_once dirname(__FILE__) .'/common.php';
 	$i  = 0;
 
 
-	while ($f = mysql_fetch_assoc($fq)) {
+	while ($f = mysql_fetch_array($fq)) {
 		$i++;
 		$page .= "<tr height=20>";
 		// (01) Fleet ID
@@ -149,11 +149,11 @@ require_once dirname(__FILE__) .'/common.php';
 		// (04) Fleet From (Planete d'origine)
 		$page .= "<th>[".$f[fleet_start_galaxy].":".$f[fleet_start_system].":".$f[fleet_start_planet]."]</th>";
 		// (05) Fleet Start Time
-		$page .= "<th>". date("d. M Y H:i:s", $f['fleet_start_time']) ."</th>";
+		$page .= "<th>". gmdate("d. M Y H:i:s", $f['fleet_start_time']) ."</th>";
 		// (06) Fleet Target (Planete de destination)
 		$page .= "<th>[".$f[fleet_end_galaxy].":".$f[fleet_end_system].":".$f[fleet_end_planet]."]</th>";
 		// (07) Fleet Target Time
-		$page .= "<th>". date("d. M Y H:i:s", $f['fleet_end_time']) ."</th>";
+		$page .= "<th>". gmdate("d. M Y H:i:s", $f['fleet_end_time']) ."</th>";
 		// (08) Fleet Back Time
 //		$page .= "<th><font color=\"lime\"><div id=\"time_0\"><font>". pretty_time(floor($f['fleet_end_time'] + 1 - time())) ."</font></th>";
 		// (09) Fleet Back In

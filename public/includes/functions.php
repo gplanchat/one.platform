@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ function check_urlaubmodus_time () {
 // Routine Test de validit� d'une adresse email
 //
 function is_email($email) {
-	return preg_match("#^([a-z0-9\-_\.]+)@(?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)+(?:[a-a]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum)$#i", $email);
+	return(preg_match("/^[-_.[:alnum:]]+@((([[:alnum:]]|[[:alnum:]][[:alnum:]-]*[[:alnum:]])\.)+(ad|ae|aero|af|ag|ai|al|am|an|ao|aq|ar|arpa|as|at|au|aw|az|ba|bb|bd|be|bf|bg|bh|bi|biz|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|com|coop|cr|cs|cu|cv|cx|cy|cz|de|dj|dk|dm|do|dz|ec|edu|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gh|gi|gl|gm|gn|gov|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|in|info|int|io|iq|ir|is|it|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|mg|mh|mil|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|museum|mv|mw|mx|my|mz|na|name|nc|ne|net|nf|ng|ni|nl|no|np|nr|nt|nu|nz|om|org|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|pro|ps|pt|pw|py|qa|re|ro|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)$|(([0-9][0-9]?|[0-1][0-9][0-9]|[2][0-4][0-9]|[2][5][0-5])\.){3}([0-9][0-9]?|[0-1][0-9][0-9]|[2][0-4][0-9]|[2][5][0-5]))$/i", $email));
 }
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ function message($mes, $title = 'Error', $dest = "", $time = "3", $color = 'oran
 
     $page = parsetemplate(gettemplate('admin/message_body'), $parse);
 
-    display ($page, $title, false, (($dest != "") ? "<meta http-equiv=\"refresh\" content=\"$time;URL=javascript:self.location='$dest';\">" : ""), false);
+    display ($page, $title, false, (($dest != "") ? "<meta http-equiv=\"refresh\" content=\"$time;URL=javascript:self.location='$dest';\">" : ""), true);
 }
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -107,13 +107,9 @@ function display ($page, $title = '', $topnav = true, $metatags = '', $AdminPage
 		$DisplayPage .= ShowTopNavigationBar( $user, $planetrow );
 	}
 	$DisplayPage .= "<center>\n". $page ."\n</center>\n";
-
 	// Affichage du Debug si necessaire
 	if (isset($user['authlevel']) && ($user['authlevel'] == 1 || $user['authlevel'] == 3)) {
-		if ($game_config['debug'] == 1) {
-		    $oldDebug = new Debug(); // @deprecated
-		    $oldDebug->echo_log();
-		}
+		if ($game_config['debug'] == 1) $debug->echo_log();
 	}
 
 	$DisplayPage .= StdFooter();
@@ -135,20 +131,14 @@ function StdUserHeader ($title = '', $metatags = '') {
 
 	$parse             = $langInfos;
 	$parse['title']    = $title;
-
 	if ( defined('LOGIN') ) {
-		$parse['dpath']    = 'skins/xnova/';
-		$parse['-style-']  = '<link rel="stylesheet" type="text/css" href="css/styles.css">' . PHP_EOL;
-		$parse['-style-'] .= '<link rel="stylesheet" type="text/css" href="css/about.css">' . PHP_EOL;
-	} else if ( defined('DISABLE_IDENTITY_CHECK') ) {
-		$parse['dpath']    = DEFAULT_SKINPATH;
-		$parse['-style-']  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"". DEFAULT_SKINPATH ."default.css\" />";
-		$parse['-style-'] .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"". DEFAULT_SKINPATH ."formate.css\" />";
+		$parse['dpath']    = "skins/xnova/";
+		$parse['-style-']  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/styles.css\">\n";
+		$parse['-style-'] .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/about.css\">\n";
 	} else {
-	    $user['dpath'] = ($user['dpath'] != '') ? $user['dpath'] : DEFAULT_SKINPATH;
-		$parse['dpath']    = $user['dpath'];
-		$parse['-style-']  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"". $user['dpath']."default.css\" />";
-		$parse['-style-'] .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"". $user['dpath'] ."formate.css\" />";
+		$parse['dpath']    = DEFAULT_SKINPATH;
+		$parse['-style-']  = "<link rel=\"stylesheet\" type=\"text/css\" href=\"". DEFAULT_SKINPATH ."/default.css\" />";
+		$parse['-style-'] .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"". DEFAULT_SKINPATH ."/formate.css\" />";
 	}
 
 	$parse['-meta-']  = ($metatags) ? $metatags : "";

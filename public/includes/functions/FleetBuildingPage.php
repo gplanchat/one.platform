@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,76 +29,66 @@
  */
 
 function FleetBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
-    global $pricelist, $lang, $resource, $dpath, $reslist;
+ 	global $pricelist, $lang, $resource, $dpath, $_POST;
 
-    if (isset($_POST['fmenge'])) {
-        // On vient de Cliquer ' Construire '
-        // Ici, on sait precisement ce qu'on aimerait bien construire ...
+	if (isset($_POST['fmenge'])) {
+		// On vient de Cliquer ' Construire '
+		// Et y a une liste de dol�ances
+		$AddedInQueue                     = false;
+		// Ici, on sait precisement ce qu'on aimerait bien construire ...
+		foreach($_POST['fmenge'] as $Element => $Count) {
+			// Construction d'Element recuper�s sur la page de Flotte ...
+			// ATTENTION ! La file d'attente Flotte est Commune a celle des Defenses
+			// Dans fmenge, on devrait trouver un tableau des elements constructibles et du nombre d'elements souhait�s
 
-        foreach($_POST['fmenge'] as $Element => $Count) {
-            // Construction d'Element recuper�s sur la page de Flotte ...
-            // ATTENTION ! La file d'attente Flotte est Commune a celle des Defenses
-            // Dans fmenge, on devrait trouver un tableau des elements constructibles et du nombre d'elements souhait�s
-			
-            $Element = (int) $Element;
-            $Count   = (int) $Count;
-            $Count = ($Count > MAX_FLEET_OR_DEFS_PER_ROW) ? MAX_FLEET_OR_DEFS_PER_ROW : $Count;
+			$Element = intval($Element);
+			$Count   = ereg_replace("[^0-9]",'',$Count);
+			if ($Count > MAX_FLEET_OR_DEFS_PER_ROW) {
+				$Count = MAX_FLEET_OR_DEFS_PER_ROW;
+			}
 
-            if (!in_array($Element, $reslist[Legacies_Empire::TYPE_SHIP]) || $Count < 1 ||
-                !IsTechnologieAccessible ($CurrentUser, $CurrentPlanet, $Element) ) {
-                continue;
+			if ($Count != 0) {
+            // On verifie si on a les technologies necessaires a la construction de l'element
+            if ( IsTechnologieAccessible ($CurrentUser, $CurrentPlanet, $Element) ) {
+               // On verifie combien on sait faire de cet element au max
+               $MaxElements   = GetMaxConstructibleElements ( $Element, $CurrentPlanet );
+               // Si pas assez de ressources, on ajuste le nombre d'elements
+               if ($Count > $MaxElements) {
+                  $Count = $MaxElements;
+               }
+               $Ressource = GetElementRessources ( $Element, $Count );
+               $BuildTime = GetBuildingTime($CurrentUser, $CurrentPlanet, $Element);
+                                  if ($Count >= 1) {
+                      if ($BuildTime > 0) {
+                      $CurrentPlanet['metal']           -= $Ressource['metal'];
+                      $CurrentPlanet['crystal']         -= $Ressource['crystal'];
+                      $CurrentPlanet['deuterium']       -= $Ressource['deuterium'];
+               	if ($Element == 214 && $CurrentUser['rpg_destructeur'] == 1) {
+                   	$Count = $Count * 2; //On multiplie les EDLM par 2
+                   	}
+                      $CurrentPlanet['b_hangar_id']     .= "". $Element .",". $Count .";";
+                    } else {
+                      $res=doquery("SELECT ".$resource[$Element]." FROM {{table}} WHERE id = '". $CurrentPlanet['id'] ."'  ;",'planets');
+                      $NombreVaisseauxActuel=mysql_result($res,0,$resource[$Element]);
+
+                      $CurrentPlanet['metal'] -= $Ressource['metal'];
+                      $CurrentPlanet['crystal'] -= $Ressource['crystal'];
+                      $CurrentPlanet['deuterium'] -= $Ressource['deuterium'];
+                      $NewFleetNumber = $CurrentPlanet[$resource[$Element]] + $Count;
+               if ($Element == 214 && $CurrentUser['rpg_destructeur'] == 1) {
+                   $Count = $Count * 2; //On multiplie les EDLM par 2
+                   }
+                      $QryUpdatefleet = "UPDATE {{table}} SET ";
+                      $QryUpdatefleet .= "`$resource[$Element]` = '".$NombreVaisseauxActuel."' + '".$Count."' ";
+                      $QryUpdatefleet .= "WHERE ";
+                      $QryUpdatefleet .= "`id` = '". $CurrentPlanet['id'] ."'";
+                      doquery ( $QryUpdatefleet, 'planets');
+                      }
+                   }
             }
-
-
-            // On verifie combien on sait faire de cet element au max
-            $MaxElements   = GetMaxConstructibleElements ( $Element, $CurrentPlanet );
-
-            // Si pas assez de ressources, on ajuste le nombre d'elements
-            $Count = ($Count > $MaxElements) ? $MaxElements : $Count;
-
-            $Ressource = GetElementRessources ( $Element, $Count );
-            $BuildTime = GetBuildingTime($CurrentUser, $CurrentPlanet, $Element);
-
-            //Correctif en attendant mieux.
-            if ($CurrentPlanet['b_hangar_id'] == '') {
-                $CurrentPlanet['b_hangar'] = 0;
-            }
-
-            if ($BuildTime > 0) {
-
-                $CurrentPlanet['metal']           -= $Ressource['metal'];
-                $CurrentPlanet['crystal']         -= $Ressource['crystal'];
-                $CurrentPlanet['deuterium']       -= $Ressource['deuterium'];
-
-                if ($Element == 214 && $CurrentUser['rpg_destructeur'] == 1) {
-                    $Count = $Count * 2; //On multiplie les EDLM par 2
-                }
-
-                $CurrentPlanet['b_hangar_id']     .= "". $Element .",". $Count .";";
-
-            } else {
-
-                $res=doquery("SELECT ".$resource[$Element]." FROM {{table}} WHERE id = '". $CurrentPlanet['id'] ."'  ;",'planets');
-                $NombreVaisseauxActuel=mysql_result($res,0,$resource[$Element]);
-
-                $CurrentPlanet['metal'] -= $Ressource['metal'];
-                $CurrentPlanet['crystal'] -= $Ressource['crystal'];
-                $CurrentPlanet['deuterium'] -= $Ressource['deuterium'];
-                $NewFleetNumber = $CurrentPlanet[$resource[$Element]] + $Count;
-
-                if ($Element == 214 && $CurrentUser['rpg_destructeur'] == 1) {
-                    $Count = $Count * 2; //On multiplie les EDLM par 2
-                }
-
-                $QryUpdatefleet = "UPDATE {{table}} SET ";
-                $QryUpdatefleet .= "`$resource[$Element]` = '".$NombreVaisseauxActuel."' + '".$Count."' ";
-                $QryUpdatefleet .= "WHERE ";
-                $QryUpdatefleet .= "`id` = '". $CurrentPlanet['id'] ."'";
-                    doquery ( $QryUpdatefleet, 'planets');
-            }
-   	}
-    }
-
+         }
+      }
+   }
 	// -------------------------------------------------------------------------------------------------------
 	// S'il n'y a pas de Chantier ...
 	if ($CurrentPlanet[$resource[21]] == 0) {
@@ -144,29 +134,23 @@ function FleetBuildingPage ( &$CurrentPlanet, $CurrentUser ) {
 
 				// Case nombre d'elements a construire
 				$PageTable .= "<th class=k>";
-				
-				// Si ... Et Seulement si je peux construire je mets la p'tite zone de saisie
-                if ($CanBuildOne)
-				{
-					$TabIndex++;
-					$PageTable .= "<input type=text id=fmenge[".$Element."] name=fmenge[".$Element."] alt='".$lang['tech'][$Element]."' value=0 tabindex=".$TabIndex.">";
-						
-					$MaxElements   = GetMaxConstructibleElements ( $Element, $CurrentPlanet );
+				    // Si ... Et Seulement si je peux construire je mets la p'tite zone de saisie
+                if ($CanBuildOne) {
+                   $TabIndex++;
+                   $PageTable .= "<input type=text id=fmenge[".$Element."] name=fmenge[".$Element."] alt='".$lang['tech'][$Element]."' value=0 tabindex=".$TabIndex.">";
+                }
 
-					if($MaxElements>MAX_FLEET_OR_DEFS_PER_ROW)
-						$MaxElements=MAX_FLEET_OR_DEFS_PER_ROW;
-
-					$PageTable.='<BR><BR><A ONCLICK="document.getElementById(\'fmenge['.$Element.']\').value=\''.intval($MaxElements).'\';" STYLE="cursor:pointer;">Nombre max ('.intval($MaxElements).')</A></th>';
-				}
-				else
-				{
-					$PageTable .= $lang['no_enought_res'] . '</th>';
-				}
-
-				$MaxElements   = GetMaxConstructibleElements ( $Element, $CurrentPlanet );
+		$MaxElements   = GetMaxConstructibleElements ( $Element, $CurrentPlanet );
 
                 if($MaxElements>MAX_FLEET_OR_DEFS_PER_ROW)
                  $MaxElements=MAX_FLEET_OR_DEFS_PER_ROW;
+
+                   if ($BuildOneElementTime > 0) {
+                 $MaxElements=1; }
+
+                if ($CanBuildOne)
+                 $PageTable.='<BR><BR><A ONCLICK="document.getElementById(\'fmenge['.$Element.']\').value=\''.intval($MaxElements).'\';" STYLE="cursor:pointer;">Nombre max ('.intval($MaxElements).')</A>';
+
 
 				// Fin de ligne (les 3 cases sont construites !!
 				$PageTable .= "</tr>";

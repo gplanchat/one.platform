@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ switch($type){
 */
 if(isset($searchtext) && isset($type)){
 
-	while($r = mysql_fetch_assoc($search, MYSQL_BOTH)){
+	while($r = mysql_fetch_array($search, MYSQL_BOTH)){
 
 		if($type=='playername'||$type=='planetname'){
 			$s=$r;
@@ -82,14 +82,14 @@ if(isset($searchtext) && isset($type)){
 			if ($type == "planetname")
 			{
 			$pquery = doquery("SELECT * FROM {{table}} WHERE id = {$s['id_owner']}","users",true);
-/*			$farray = mysql_fetch_assoc($pquery);*/
+/*			$farray = mysql_fetch_array($pquery);*/
 			$s['planet_name'] = $s['name'];
 			$s['username'] = $pquery['username'];
 			$s['ally_name'] = ($pquery['ally_name']!='')?"<a href=\"alliance.php?mode=ainfo&tag={$pquery['ally_name']}\">{$pquery['ally_name']}</a>":'';
 			}else{
 			$pquery = doquery("SELECT name FROM {{table}} WHERE id = {$s['id_planet']}","planets",true);
 			$s['planet_name'] = $pquery['name'];
-			$s['ally_name'] = ($aquery['ally_name']!='')?"<a href=\"ainfo.php?tag={$aquery['ally_name']}\">{$aquery['ally_name']}</a>":'';
+			$s['ally_name'] = ($aquery['ally_name']!='')?"<a href=\"alliance.php?mode=ainfo&tag={$aquery['ally_name']}\">{$aquery['ally_name']}</a>":'';
 			}
 			//ahora la alianza
 			if($s['ally_id']!=0&&$s['ally_request']==0){

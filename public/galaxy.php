@@ -5,7 +5,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,8 +34,9 @@ require_once dirname(__FILE__) .'/common.php';
 
 	includeLang('galaxy');
 
-	$CurrentPlanet = $planetrow;
+	$CurrentPlanet = doquery("SELECT * FROM {{table}} WHERE `id` = '". $user['current_planet'] ."';", 'planets', true);
 	$lunarow       = doquery("SELECT * FROM {{table}} WHERE `id` = '". $user['current_luna'] ."';", 'lunas', true);
+	$galaxyrow     = doquery("SELECT * FROM {{table}} WHERE `id_planet` = '". $CurrentPlanet['id'] ."';", 'galaxy', true);
 
 	$dpath         = (!$user["dpath"]) ? DEFAULT_SKINPATH : $user["dpath"];
 	$fleetmax      = $user['computer_tech'] + 1;
@@ -82,79 +83,68 @@ require_once dirname(__FILE__) .'/common.php';
 		// $_POST['systemLeft']  => <- A ete cliqué
 		// $_POST['systemRight'] => -> A ete cliqué
 
-		if ($_POST["galaxyLeft"])
-		{
-			if ($_POST["galaxy"] <= 1)
-			{
+		if ($_POST["galaxyLeft"]) {
+			if ($_POST["galaxy"] < 1) {
 				$_POST["galaxy"] = 1;
 				$galaxy          = 1;
-			} else
-				$galaxy = intval($_POST["galaxy"]) - 1;
-		}
-		elseif ($_POST["galaxyRight"])
-		{
-			if ($_POST["galaxy"] >= MAX_GALAXY_IN_WORLD || $_POST["galaxyRight"] > MAX_GALAXY_IN_WORLD)
-			{
+			} elseif ($_POST["galaxy"] == 1) {
+				$_POST["galaxy"] = 1;
+				$galaxy          = 1;
+			} else {
+				$galaxy = $_POST["galaxy"] - 1;
+			}
+		} elseif ($_POST["galaxyRight"]) {
+			if ($_POST["galaxy"]      > MAX_GALAXY_IN_WORLD OR
+				$_POST["galaxyRight"] > MAX_GALAXY_IN_WORLD) {
 				$_POST["galaxy"]      = MAX_GALAXY_IN_WORLD;
 				$_POST["galaxyRight"] = MAX_GALAXY_IN_WORLD;
 				$galaxy               = MAX_GALAXY_IN_WORLD;
-			} else
-				$galaxy = intval($_POST["galaxy"]) + 1;
-		} else
-		{
-			$galaxy = intval($_POST["galaxy"]);
-			
-			if ($galaxy <= 1)
-				$galaxy = 1;
-			elseif ($galaxy > MAX_GALAXY_IN_WORLD)
-				$galaxy = MAX_GALAXY_IN_WORLD;
+			} elseif ($_POST["galaxy"] == MAX_GALAXY_IN_WORLD) {
+				$_POST["galaxy"]      = MAX_GALAXY_IN_WORLD;
+				$galaxy               = MAX_GALAXY_IN_WORLD;
+			} else {
+				$galaxy = $_POST["galaxy"] + 1;
+			}
+		} else {
+			$galaxy = $_POST["galaxy"];
 		}
 
-		if ($_POST["systemLeft"])
-		{
-			if ($_POST["system"] <= 1)
-			{
+		if ($_POST["systemLeft"]) {
+			if ($_POST["system"] < 1) {
 				$_POST["system"] = 1;
 				$system          = 1;
-			} else
-				$system = intval($_POST["system"]) - 1;
-		}
-		elseif ($_POST["systemRight"])
-		{
-			if ($_POST["system"] >= MAX_SYSTEM_IN_GALAXY || $_POST["systemRight"] > MAX_SYSTEM_IN_GALAXY)
-			{
+			} elseif ($_POST["system"] == 1) {
+				$_POST["system"] = 1;
+				$system          = 1;
+			} else {
+				$system = $_POST["system"] - 1;
+			}
+		} elseif ($_POST["systemRight"]) {
+			if ($_POST["system"]      > MAX_SYSTEM_IN_GALAXY OR
+				$_POST["systemRight"] > MAX_SYSTEM_IN_GALAXY) {
 				$_POST["system"]      = MAX_SYSTEM_IN_GALAXY;
 				$system               = MAX_SYSTEM_IN_GALAXY;
+			} elseif ($_POST["system"] == MAX_SYSTEM_IN_GALAXY) {
+				$_POST["system"]      = MAX_SYSTEM_IN_GALAXY;
+				$system               = MAX_SYSTEM_IN_GALAXY;
+			} else {
+				$system = $_POST["system"] + 1;
 			}
-			else
-				$system = intval($_POST["system"]) + 1;
-		} else
-		{
-			$system = intval($_POST["system"]);
-			
-			if ($system <= 1)
-				$system = 1;
-			elseif ($system > MAX_SYSTEM_IN_GALAXY)
-				$system = MAX_SYSTEM_IN_GALAXY;
+		} else {
+			$system = $_POST["system"];
 		}
-			
-	} elseif ($mode == 2)
-	{
+	} elseif ($mode == 2) {
 		// Mais c'est qu'il mordrait !
 		// A t'on idée de vouloir lancer des MIP sur ce pauvre bonhomme !!
 
-		$galaxy        = intval($_GET['galaxy']);
-		$system        = intval($_GET['system']);
-		$planet        = intval($_GET['planet']);
-	}
-	elseif ($mode == 3)
-	{
+		$galaxy        = $_GET['galaxy'];
+		$system        = $_GET['system'];
+		$planet        = $_GET['planet'];
+	} elseif ($mode == 3) {
 		// Appel depuis un menu avec uniquement galaxy et system de passé !
-		$galaxy        = intval($_GET['galaxy']);
-		$system        = intval($_GET['system']);
-	}
-	else
-	{
+		$galaxy        = $_GET['galaxy'];
+		$system        = $_GET['system'];
+	} else {
 		// Si j'arrive ici ...
 		// C'est qu'il y a vraiment eu un bug
 		$galaxy        = 1;

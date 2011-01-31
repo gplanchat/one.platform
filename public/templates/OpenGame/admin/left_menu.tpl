@@ -80,13 +80,13 @@ parent.frames['Hauptframe'].location.replace("overview.php");
 </tr><tr>
 	<td><div><a href="errors.php" accesskey="e" target="{mf}">{adm_error}</a></div></td>
 </tr><tr>
-	<td><div><a href="http://www.xnova-ng.org/" accesskey="3" target="{mf}">{adm_help}</a></div></td>
+	<td><div><a href="http://www.xnova.fr/forum/index.php" accesskey="3" target="{mf}">{adm_help}</a></div></td>
 </tr><tr>
 	<td><div><a href="../frames.php" accesskey="i" target="_top" style="color:red">{adm_back}</a></div></td>
 </tr><tr>
 	<td background="{dpath}img/bg1.gif"><center>{infog}</center></td>
 </tr><tr>
-	<td><div><center><a href="../credit.php" accesskey="T" target="{mf}">XNova:Legacies</a><br>&copy; Copyright (c) 2009-2010</center></div></td>
+	<td><div><center><a href="../credit.php" accesskey="T" target="{mf}">XNova Team</a><br>&copy; Copyright 2008</center></div></td>
 </tr>
 </table>
 </div>

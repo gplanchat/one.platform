@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -124,8 +124,8 @@
 	$QryInsertConfig    .= "('Fleet_Cdr'             , '30'), ";
 	$QryInsertConfig    .= "('Defs_Cdr'              , '30'), ";
 	$QryInsertConfig    .= "('initial_fields'        , '163'), ";
-	$QryInsertConfig    .= "('COOKIE_NAME'           , 'Legacies'), ";
-	$QryInsertConfig    .= "('game_name'             , 'XNova:Legacies'), ";
+	$QryInsertConfig    .= "('COOKIE_NAME'           , 'XNova Legacies'), ";
+	$QryInsertConfig    .= "('game_name'             , 'XNova Legacies'), ";
 	$QryInsertConfig    .= "('game_disable'          , '1'), ";
 	$QryInsertConfig    .= "('close_reason'          , 'Le jeu est clos pour le moment!'), ";
 	$QryInsertConfig    .= "('metal_basic_income'    , '20'), ";
@@ -159,7 +159,7 @@
 	$QryInsertConfig    .= "('enable_marchand'                 , '1'), ";
 	$QryInsertConfig    .= "('enable_notes'                 , '1'), ";
 	$QryInsertConfig    .= "('bot_name'                 , 'XNoviana Reali'), ";
-	$QryInsertConfig    .= "('bot_adress'          , 'no-reply@xnova-ng.org' ), ";
+	$QryInsertConfig    .= "('bot_adress'          , 'xnova@xnova.fr' ), ";
 	$QryInsertConfig    .= "('banner_source_post'          , '../images/bann.png' ), ";
 	$QryInsertConfig    .= "('ban_duration'          , '30' ), ";
 	$QryInsertConfig    .= "('enable_bot'          , '0' ), ";

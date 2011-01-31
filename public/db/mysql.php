@@ -37,11 +37,12 @@
 function doquery($query, $table, $fetch = false)
 {
     static $instance = null;
+    static $prefix = null;
 
     /*
      * Throw notices on doquery() calls.
      */
-    if (defined(DEPRECATION)) {
+    if (defined('DEPRECATION')) {
         $backtrace = debug_backtrace();
         $message = "Function doquery() called from file '%s', line %d.";
         trigger_error(sprintf($message, $backtrace[0]['file'], $backtrace[0]['line']),
@@ -49,33 +50,38 @@ function doquery($query, $table, $fetch = false)
     }
 
     if ($instance === null) {
-        /**
-         * @var Zend_Db_Adapter_Abstract
-         */
-        $instance = One::app()
-            ->getSingleton('core/database.connection.pool')
-            ->getConnection('legacies_setup')
-        ;
+        $config = simplexml_load_file(implode(DIRECTORY_SEPARATOR, array(dirname(ROOT_PATH), 'application', 'configs', 'local.xml')));
+        $dbConfig = $config->default->general->database->connection->core_setup->params;
+
+        $instance = mysql_connect((string) $dbConfig->host, (string) $dbConfig->username, (string) $dbConfig->password);
+        mysql_select_db((string) $dbConfig->dbname, $instance);
+
+        $prefix = (string) $dbConfig->{'table-prefix'};
     }
 
-    $sql = str_replace('{{table}}', $instance->getTable("legacies/{$table}"), $query);
-
-    if ($fetch === false) {
-        $backtrace = debug_backtrace();
-        $message = "Function doquery() called from file '%s', line %d, with 3rd parameter not false.";
-
-        trigger_error(sprintf($message, $backtrace[0]['file'], $backtrace[0]['line']),
-            $fetch ? E_USER_NOTICE : E_USER_WARNING);
-    }
+    $sql = str_replace('{{table}}', $prefix.'legacies_'.$table, $query);
 
     try {
         /**
          * @var Zend_Db_Statement_Abstract
          */
-        $statement = $instance->query($sql);
-    } catch (Zend_Db_Exception $e) {
+        if (!($statement = mysql_query($sql, $instance))) {
+            throw new Exception(mysql_error($instance));
+        }
+    } catch (Exception $e) {
         trigger_error($e->getMessage() . PHP_EOL . "<br /><pre></code>$sql<code></pre><br />" . PHP_EOL, E_USER_WARNING);
     }
 
-    return $statement->fetch(Zend_Db::FETCH_BOTH);
+
+    if (func_num_args() < 3) {
+        $backtrace = debug_backtrace();
+        $message = "Function doquery() called from file '%s', line %d, without the 3rd parameter set to true.";
+
+        !defined('DEPRECATION') || trigger_error(sprintf($message, $backtrace[0]['file'], $backtrace[0]['line']),
+            defined('E_USER_DEPRECATED') ? E_USER_DEPRECATED : E_USER_WARNING);
+
+        return $statement;
+    } else {
+        return mysql_fetch_array($statement);
+    }
 }

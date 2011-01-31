@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,83 +28,61 @@
  *
  */
 
-/**
- * MissionCaseStayAlly @todo description
- *
- * @global array $lang @see common.php
- * @param array $fleetRow @see common.php
- * @return bool true.
- */
-function missionCaseStayAlly ($fleetRow) {
-    global $lang;
+function MissionCaseStayAlly ( $FleetRow ) {
+	global $lang;
 
-    $readConnection = Nova::getSingleton('core/database_connection_pool')
-        ->getConnection('core_read');
+	$QryStartPlanet   = "SELECT * FROM {{table}} ";
+	$QryStartPlanet  .= "WHERE ";
+	$QryStartPlanet  .= "`galaxy` = '". $FleetRow['fleet_start_galaxy'] ."' AND ";
+	$QryStartPlanet  .= "`system` = '". $FleetRow['fleet_start_system'] ."' AND ";
+	$QryStartPlanet  .= "`planet` = '". $FleetRow['fleet_start_planet'] ."';";
+	$StartPlanet      = doquery( $QryStartPlanet, 'planets', true);
+	$StartName        = $StartPlanet['name'];
+	$StartOwner       = $StartPlanet['id_owner'];
 
-    $startPlanet = $readConnection->select(array ('name', 'id_owner'))
-        ->from($readConnection->getDeprecatedTable('planets'))
-        ->where('galaxy =?', $fleetRow['fleet_start_galaxy'])
-        ->where('system =?', $fleetRow['fleet_start_system'])
-        ->where('planet =?', $fleetRow['fleet_start_planet'])
-        ->query()->fetch()
-     ;
+	$QryTargetPlanet  = "SELECT * FROM {{table}} ";
+	$QryTargetPlanet .= "WHERE ";
+	$QryTargetPlanet .= "`galaxy` = '". $FleetRow['fleet_end_galaxy'] ."' AND ";
+	$QryTargetPlanet .= "`system` = '". $FleetRow['fleet_end_system'] ."' AND ";
+	$QryTargetPlanet .= "`planet` = '". $FleetRow['fleet_end_planet'] ."';";
+	$TargetPlanet     = doquery( $QryTargetPlanet, 'planets', true);
+	$TargetName       = $TargetPlanet['name'];
+	$TargetOwner      = $TargetPlanet['id_owner'];
 
-    $endPlanet = $readConnection->select(array ('name', 'id_owner'))
-        ->from($readConnection->getDeprecatedTable('planets'))
-        ->where('galaxy =?', $fleetRow['fleet_end_galaxy'])
-        ->where('system =?', $fleetRow['fleet_end_system'])
-        ->where('planet =?', $fleetRow['fleet_end_planet'])
-        ->query()->fetch()
-     ;
+	if ($FleetRow['fleet_mess'] == 0) {
+		if ($FleetRow['fleet_start_time'] <= time()) {
 
-    $fleetStartLink = GetStartAdressLink($fleetRow, '');
-    $fleetEndLink = GetTargetAdressLink($fleetRow, '');
+			$Message         = sprintf( $lang['sys_tran_mess_owner'],
+									$TargetName, GetTargetAdressLink($FleetRow, ''),
+									$FleetRow['fleet_resource_metal'], $lang['Metal'],
+									$FleetRow['fleet_resource_crystal'], $lang['Crystal'],
+									$FleetRow['fleet_resource_deuterium'], $lang['Deuterium'] );
 
-    if ($fleetRow['fleet_mess'] == 0) {
+			SendSimpleMessage ( $StartOwner, '', $FleetRow['fleet_start_time'], 5, $lang['sys_mess_tower'], $lang['sys_mess_transport'], $Message);
 
-        if ($fleetRow['fleet_end_stay'] <= time()) {
-
-            $readConnection->update(
-                    $readConnection->getDeprecatedTable('fleets'),
-                    array ('fleet_mess' => 1),
-                    array ('fleet_id =?' => $fleetRow['fleet_id'])
-                 );
-
-        } else if ($fleetRow['fleet_start_time'] <= time()) {
-
-            $message = sprintf($lang['sys_tran_mess_owner'],
-                $endPlanet['name'], $fleetEndLink, $fleetRow['fleet_resource_metal'],
-                $lang['Metal'], $fleetRow['fleet_resource_crystal'], $lang['Crystal'],
-                $fleetRow['fleet_resource_deuterium'], $lang['Deuterium']
-             );
-            SendSimpleMessage ($startPlanet['id_owner'], '', $fleetRow['fleet_start_time'],
-                5, $lang['sys_mess_tower'], $lang['sys_mess_transport'], $message);
-
-
-            $message = sprintf($lang['sys_tran_mess_user'],
-                $startPlanet['name'], $fleetStartLink, $endPlanet['name'], $fleetEndLink,
-                $fleetRow['fleet_resource_metal'], $lang['Metal'],
-                $fleetRow['fleet_resource_crystal'], $lang['Crystal'],
-                $fleetRow['fleet_resource_deuterium'], $lang['Deuterium']
-             );
-            SendSimpleMessage ($endPlanet['id_owner'], '', $fleetRow['fleet_start_time'],
-                    5, $lang['sys_mess_tower'], $lang['sys_mess_transport'], $message);
-
-
-        }
-
-    } else {
-        if ($fleetRow['fleet_end_time'] <= time()) {
-
-            $message = sprintf ($lang['sys_tran_mess_back'], $startPlanet['name'], $fleetStartLink);
-            SendSimpleMessage ($startPlanet['id_owner'], '', $fleetRow['fleet_end_time'],
-                    5, $lang['sys_mess_tower'], $lang['sys_mess_fleetback'], $message);
-
-            RestoreFleetToPlanet ( $fleetRow, true );
-            $readConnection->delete($readConnection->getDeprecatedTable('fleets'), array ('fleet_id =?' => $fleetRow['fleet_id']));
-        }
-    }
-
-    return true;
-
+			$Message         = sprintf( $lang['sys_tran_mess_user'],
+									$StartName, GetStartAdressLink($FleetRow, ''),
+									$TargetName, GetTargetAdressLink($FleetRow, ''),
+									$FleetRow['fleet_resource_metal'], $lang['Metal'],
+									$FleetRow['fleet_resource_crystal'], $lang['Crystal'],
+									$FleetRow['fleet_resource_deuterium'], $lang['Deuterium'] );
+			SendSimpleMessage ( $TargetOwner, '', $FleetRow['fleet_start_time'], 5, $lang['sys_mess_tower'], $lang['sys_mess_transport'], $Message);
+		} elseif ( $FleetRow['fleet_end_stay'] <= time() ) {
+			$QryUpdateFleet  = "UPDATE {{table}} SET ";
+			$QryUpdateFleet .= "`fleet_mess` = 2 ";
+			$QryUpdateFleet .= "WHERE `fleet_id` = '". $FleetRow['fleet_id'] ."' ";
+			$QryUpdateFleet .= "LIMIT 1 ;";
+			doquery( $QryUpdateFleet, 'fleets');
+		}
+	} else {
+		if ($FleetRow['fleet_end_time'] < time()) {
+			$Message         = sprintf ($lang['sys_tran_mess_back'],
+									$StartName, GetStartAdressLink($FleetRow, ''));
+			SendSimpleMessage ( $StartOwner, '', $FleetRow['fleet_end_time'], 5, $lang['sys_mess_tower'], $lang['sys_mess_fleetback'], $Message);
+			RestoreFleetToPlanet ( $FleetRow, true );
+			doquery("DELETE FROM {{table}} WHERE fleet_id=" . $FleetRow["fleet_id"], 'fleets');
+		}
+	}
 }
+
+?>

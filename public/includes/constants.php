@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,9 +28,9 @@
  *
  */
 
-if (defined('ROOT_PATH')) {
-	define('ADMINEMAIL', "admin@xnova.fr");
-	define('GAMEURL', "http://".$_SERVER['HTTP_HOST']."/");
+if ( defined('INSIDE') ) {
+	define('ADMINEMAIL'               , "admin@xnova.fr");
+	define('GAMEURL'                  , "http://".$_SERVER['HTTP_HOST']."/");
 
 	// Definition du monde connu !
 	define('MAX_GALAXY_IN_WORLD'      , 9);
@@ -60,8 +60,14 @@ if (defined('ROOT_PATH')) {
 	define('BUILD_CRISTAL'            , 500);
 	define('BUILD_DEUTERIUM'          , 500);
 
+	// Debug Level
+	define('DEBUG', 1); // Debugging off
 	// Mot qui sont interdit a la saisie !
-	$ListCensure = array("<", ">", "script", "doquery", "http", "javascript", "'");
+	$ListCensure = array ( "<", ">", "script", "doquery", "http", "javascript", "'" );
 } else {
 	die("Hacking attempt");
 }
+
+
+
+?>

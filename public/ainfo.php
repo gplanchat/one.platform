@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,41 +32,40 @@ define('INSIDE' , true);
 define('INSTALL' , false);
 require_once dirname(__FILE__) .'/common.php';
 
-includeLang('alliance');
-			
-$tag = (isset($_GET['tag'])) ? mysql_real_escape_string($_GET['tag']) : false;
+$dpath = (!$userrow["dpath"]) ? DEFAULT_SKINPATH : $userrow["dpath"];
 
-	if ($tag) {
 
-		$row = $lang;
-		$allyRow = doquery("SELECT * FROM {{table}} WHERE ally_tag = '{$tag}' LIMIT 1", 'alliance', true);
-				
-		if ($allyRow) {
-			
-			if($allyRow['ally_description'] !== '') {
-			    $allyDescription = bbcode($allyRow['ally_description']);
-				$row['ally_description'] = "<tr><th colspan=\"2\" height=\"100\">{$allyDescription}</th></tr>";
-			} else {
-				$row['ally_description'] = "<tr><th colspan=2 height=100>{$lang['Alliance_NoDescription']}</th></tr>";
-			}
-				
-			$row['ally_image'] = ($allyRow['ally_image'] !== '') ? 
-				"<tr><th colspan=2><img src=\"{$allyRow['ally_image']}\"></td></tr>" : '';
-			$row['ally_web'] = ($allyRow['ally_web'] !== '') ?
-				"<a href=\"{$allyRow['ally_web']}\">{$allyRow['ally_web']}</a>" : "{$lang['Alliance_NoHomePage']}";
-			
-			$row['ally_member_scount'] = $allyRow['ally_members'];
-			$row['ally_name'] = $allyRow['ally_name'];
-			$row['ally_tag'] = $allyRow['ally_tag'];
-					
-			$row['request'] = ($user['ally_id'] == 0) ?
-				"<tr><th>{$lang['Alliance_Requests']}</th><th><a href=\"alliance.php?mode=apply&amp;allyid={$id}\">{$lang['Alliance_WriteRequest']}</a></th></tr>" : '';
-				
-			$page = parsetemplate(gettemplate('alliance_ainfo'), $row);		
-				display($page, $lang['Alliance_AllianceInformation']);
-				
-			} 
-		}
-		
-		message($lang['Alliance_AllyDoesentExist'], $lang['Alliance_AllianceInformation']);
-			
+if(!is_numeric($_GET["a"]) || !$_GET["a"] ){ message("Ung&uuml;ltige Allianz-ID","Fehler");}
+
+$allyrow = doquery("SELECT ally_name,ally_tag,ally_description,ally_web,ally_image FROM {{table}} WHERE id=".$_GET["a"],"alliance",true);
+
+if(!$allyrow){ message("Alliance non trouv&eacute;e","Erreur");}
+
+$count = doquery("SELECT COUNT(DISTINCT(id)) FROM {{table}} WHERE ally_id=".$_GET["a"].";","users",true);
+$ally_member_scount = $count[0];
+
+$page .="<table width=519><tr><td class=c colspan=2>Informations sur l'alliance</td></tr>";
+
+	if($allyrow["ally_image"] != ""){
+		$page .= "<tr><th colspan=2><img src=\"".$allyrow["ally_image"]."\"></td></tr>";
+	}
+
+	$page .= "<tr><th>Tag</th><th>".$allyrow["ally_tag"]."</th></tr><tr><th>Nom</th><th>".$allyrow["ally_name"]."</th></tr><tr><th>Membres</th><th>$ally_member_scount</th></tr>";
+
+	if($allyrow["ally_description"] != ""){
+		$page .= "<tr><th colspan=2 height=100>".$allyrow["ally_description"]."</th></tr>";
+	}
+
+
+	if($allyrow["ally_web"] != ""){
+		$page .="<tr>
+		<th>Site internet</th>
+		<th><a href=\"".$allyrow["ally_web"]."\">".$allyrow["ally_web"]."</a></th>
+		</tr>";
+	}
+	$page .= "</table>";
+
+	display($page,"Information sur l'alliance [".$allyrow["ally_name"]."]",false);
+
+// Created by Perberos. All rights reversed (C) 2006
+?>

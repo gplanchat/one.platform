@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -146,7 +146,7 @@ elseif($_POST){//Borrar
 		//Loop para crear la lista de notas que el jugador tiene
 		$count = 0;
 		$parse=$lang;
-		while($note = mysql_fetch_assoc($notes_query)){
+		while($note = mysql_fetch_array($notes_query)){
 			$count++;
 			//Colorea el titulo dependiendo de la prioridad
 			if($note["priority"] == 0){ $parse['NOTE_COLOR'] = "lime";}//Importante

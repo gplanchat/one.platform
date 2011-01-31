@@ -1,22 +1,22 @@
-<script src="scripts/wz_tooltip.js" type="text/javascript"></script>
-<br />
+<br>
 <table width="519">
 	<tr>
-		<td class="c" colspan="9">{Alliance_MembersList} ({Alliance_AllyPlayerNumber}: {memberzahl})</td>
-	</tr><tr>
-		<th>{Alliance_PlayerId}</th>
-		<th><a href="?mode=admin&edit=members&sortby=username&sortorder={s}">{Alliance_Username}</a></th>
-		<th> </th>
-		<th>{Alliance_UserRank}</th>
-		<th>{Alliance_UsersPoint}</th>
-		<th>{Alliance_Position}</th>
-		<th><a href="?mode=admin&edit=members&sortby=ally_register_time&sortorder={s}">{Alliance_RegisterTime}</a></th>
-		<th><a href="?mode=admin&edit=members&sortby=onlinetime&sortorder={s}">{Alliance_Onlinetime}</a></th>
-		<th>{Alliance_Function}</th>
+	  <td class="c" colspan="9">{Members_list} ({Ammount}: {memberzahl})</td>
 	</tr>
-		{memberslist}
 	<tr>
-		<td class="c" colspan="9"><a href="alliance.php?mode=admin&edit=ally">{Alliance_ReturnToOverview}</a></td>
+	  <th>{Number}</th>
+	  <th><a href="alliance.php?mode=admin&edit=members&sort1=1&sort2={s}">{Name}</a></th>
+	  <th> </th>
+	  <th><a href="alliance.php?mode=admin&edit=members&sort1=2&sort2={s}">{Position}</a></th>
+	  <th><a href="alliance.php?mode=admin&edit=members&sort1=3&sort2={s}">{Points}</a></th>
+	  <th><a href="alliance.php?mode=admin&edit=members&sort1=0&sort2={s}">{Coordinated}</a></th>
+	  <th><a href="alliance.php?mode=admin&edit=members&sort1=4&sort2={s}">{Member_from}</a></th>
+	  <th><a href="alliance.php?mode=admin&edit=members&sort1=5&sort2={s}">Duree d inactivite</a></th>
+	  <th>Fonction</th>
+	</tr>
+	{memberslist}
+	<tr>
+	  <td class="c" colspan="9"><a href="alliance.php?mode=admin&edit=ally">{Return_to_overview}</a></td>
 	</tr>
 </table>
-
+<script src="scripts/wz_tooltip.js" type="text/javascript"></script>

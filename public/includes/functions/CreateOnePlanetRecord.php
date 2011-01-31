@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,100 +28,49 @@
  *
  */
 
-/**
- * Return the size and the diameter of a planet 
- * 
- * @param int $position Position of the planet in galaxy
- * @param bool $homeWorld If the planet a homeworld or not
- 
- * @return array 
- */
-function PlanetSizeRandomiser ($position, $homeWorld = false) {
+function PlanetSizeRandomiser ($Position, $HomeWorld = false) {
 	global $game_config;
-    
-	/**
- 	 * @var array List of planet min and max size.
- 	*/
-    $fieldsPlanete = array (
-        0 => 0,
-        1 => array ('min' => 40, 'max' => 60),
-        2 => array ('min' => 40, 'max' => 70),
-        3 => array ('min' => 40, 'max' => 65),
-        4 => array ('min' => 100, 'max' => 250),
-        5 => array ('min' => 100, 'max' => 250),
-        6 => array ('min' => 100, 'max' => 250),
-        7 => array ('min' => 80, 'max' => 180),
-        8 => array ('min' => 80, 'max' => 180),
-        9 => array ('min' => 80, 'max' => 180),
-        10 => array ('min' => 70, 'max' => 130),
-        11 => array ('min' => 70, 'max' => 140),
-        12 => array ('min' => 70, 'max' => 130),
-        13 => array ('min' => 50, 'max' => 150),
-        14 => array ('min' => 60, 'max' => 140),
-        15 => array ('min' => 40, 'max' => 160)
-      );
 
-    if (!$homeWorld) {
-        /**
-         * @var int Multiplicater to coincide with the game settings
-         */
-        $planetRatio    = floor($game_config['initial_fields'] /163 );
-        
-        $porcent = mt_rand(1, 100);
-        if ($porcent < 10 ) {
-            $fields = mt_rand(30, $fieldsPlanete[$position]['min']);
-        } else if ($porcent > 90) {
-            $fields = mt_rand($fieldsPlanete[$position]['max'], 349);
-        } else {
-            $fields = mt_rand($fieldsPlanete[$position]['min'], $fieldsPlanete[$position]['max']);
-        }
-        
-        /**
-         * @var int Final size of the planet
-         */
-        $planetFields = $fields * $planetRatio;
-       
-    } else {
-        $planetFields = $game_config['initial_fields'];
-    }
-    
-    return array(
-        'diameter'    => ($planetFields ^ (14 / 1.5)) * 75,
-        'field_max'   => $planetFields
-      );
+	if (!$HomeWorld) {
+		$ClassicBase      = 163;
+		$SettingSize      = $game_config['initial_fields'];
+		$PlanetRatio      = floor ( ($ClassicBase / $SettingSize) * 10000 ) / 100;
+		$RandomMin        = array (  40,  50,  55, 100,  95,  80, 115, 120, 125,  75,  80,  85,  60,  40,  50);
+		$RandomMax        = array (  90,  95,  95, 240, 240, 230, 180, 180, 190, 125, 120, 130, 160, 300, 150);
+		$CalculMin        = floor ( $RandomMin[$Position - 1] + ( $RandomMin[$Position - 1] * $PlanetRatio ) / 100 );
+		$CalculMax        = floor ( $RandomMax[$Position - 1] + ( $RandomMax[$Position - 1] * $PlanetRatio ) / 100 );
+		$RandomSize       = mt_rand($CalculMin, $CalculMax);
+		$MaxAddon         = mt_rand(0, 110);
+		$MinAddon         = mt_rand(0, 100);
+		$Addon            = ($MaxAddon - $MinAddon);
+		$PlanetFields     = ($RandomSize + $abweichung);
+	} else {
+		$PlanetFields     = $game_config['initial_fields'];
+	}
+	$PlanetSize           = ($PlanetFields ^ (14 / 1.5)) * 75;
 
+	$return['diameter']   = $PlanetSize;
+	$return['field_max']  = $PlanetFields;
+	return $return;
 }
-/**
- * Create a new planet and insert it on the database
- * 
- * @param int|string $galaxy
- * @param int|string $system
- * @param int|string $position
- * @param int|string $planetOwnerId
- * @param string $planetName
- * @param bool $homeWorld
- * 
- * @return bool
- */
-function CreateOnePlanetRecord($galaxy, $system, $position, $planetOwnerId, $planetName = '', $homeWorld = false) {
-	global $lang, $game_config;
-    /**
-     * @var resource Get database link
-     */
-	$readConnection = Nova::getSingleton('core/database_connection_pool')
-    ->getConnection('core_read');
-	
-	$planetExist = $readConnection->select()
-	    ->from($readConnection->getDeprecatedTable('planets'))
-	    ->where('galaxy =?', $galaxy)
-	    ->where('system =?', $system)
-	    ->where('planet =?', $position)
-	    ->query()
-	    ->fetch()
-	  ;
 
-	if (!$planetExist) {
-		$planet                      = PlanetSizeRandomiser ($position, $homeWorld);
+function CreateOnePlanetRecord($Galaxy, $System, $Position, $PlanetOwnerID, $PlanetName = '', $HomeWorld = false) {
+	global $lang;
+
+	// Avant tout, on verifie s'il existe deja une planete a cet endroit
+	$QrySelectPlanet  = "SELECT	`id` ";
+	$QrySelectPlanet .= "FROM {{table}} ";
+	$QrySelectPlanet .= "WHERE ";
+	$QrySelectPlanet .= "`galaxy` = '". $Galaxy ."' AND ";
+	$QrySelectPlanet .= "`system` = '". $System ."' AND ";
+	$QrySelectPlanet .= "`planet` = '". $Position ."';";
+	$PlanetExist = doquery( $QrySelectPlanet, 'planets', true);
+
+	// Si $PlanetExist est autre chose que false ... c'est qu'il y a quelque chose l� bas ...
+	// C'est donc aussi que je ne peux pas m'y poser !!
+	if (!$PlanetExist) {
+		$planet                      = PlanetSizeRandomiser ($Position, $HomeWorld);
+		$planet['diameter']          = ($planet['field_max'] ^ (14 / 1.5)) * 75 ;
 		$planet['metal']             = BUILD_METAL;
 		$planet['crystal']           = BUILD_CRISTAL;
 		$planet['deuterium']         = BUILD_DEUTERIUM;
@@ -132,84 +81,131 @@ function CreateOnePlanetRecord($galaxy, $system, $position, $planetOwnerId, $pla
 		$planet['crystal_max']       = BASE_STORAGE_SIZE;
 		$planet['deuterium_max']     = BASE_STORAGE_SIZE;
 
-		$planet['galaxy'] = $galaxy;
-		$planet['system'] = $system;
-		$planet['planet'] = $position;
+		// Posistion  1 -  3: 80% entre  40 et  70 Cases (  55+ / -15 )
+		// Posistion  4 -  6: 80% entre 120 et 310 Cases ( 215+ / -95 )
+		// Posistion  7 -  9: 80% entre 105 et 195 Cases ( 150+ / -45 )
+		// Posistion 10 - 12: 80% entre  75 et 125 Cases ( 100+ / -25 )
+		// Posistion 13 - 15: 80% entre  60 et 190 Cases ( 125+ / -65 )
 
-		if ($position == 1 || $position == 2 || $position == 3) {
-			$planetType         = 'trocken';
-			$planetDesign       = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10');
+		$planet['galaxy'] = $Galaxy;
+		$planet['system'] = $System;
+		$planet['planet'] = $Position;
+
+		if ($Position == 1 || $Position == 2 || $Position == 3) {
+			$PlanetType         = array('trocken');
+			$PlanetClass        = array('planet');
+			$PlanetDesign       = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10');
 			$planet['temp_min'] = rand(0, 100);
 			$planet['temp_max'] = $planet['temp_min'] + 40;
-		} elseif ($position == 4 || $position == 5 || $position == 6) {
-			$planetType         = 'dschjungel';
-			$planetDesign       = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10');
+		} elseif ($Position == 4 || $Position == 5 || $Position == 6) {
+			$PlanetType         = array('dschjungel');
+			$PlanetClass        = array('planet');
+			$PlanetDesign       = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10');
 			$planet['temp_min'] = rand(-25, 75);
 			$planet['temp_max'] = $planet['temp_min'] + 40;
-		} elseif ($position == 7 || $position == 8 || $position == 9) {
-			$planetType         = 'normaltemp';
-			$planetDesign       = array('01', '02', '03', '04', '05', '06', '07');
+		} elseif ($Position == 7 || $Position == 8 || $Position == 9) {
+			$PlanetType         = array('normaltemp');
+			$PlanetClass        = array('planet');
+			$PlanetDesign       = array('01', '02', '03', '04', '05', '06', '07');
 			$planet['temp_min'] = rand(-50, 50);
 			$planet['temp_max'] = $planet['temp_min'] + 40;
-		} elseif ($position == 10 || $position == 11 || $position == 12) {
-			$planetType         = 'wasser';
-			$planetDesign       = array('01', '02', '03', '04', '05', '06', '07', '08', '09');
+		} elseif ($Position == 10 || $Position == 11 || $Position == 12) {
+			$PlanetType         = array('wasser');
+			$PlanetClass        = array('planet');
+			$PlanetDesign       = array('01', '02', '03', '04', '05', '06', '07', '08', '09');
 			$planet['temp_min'] = rand(-75, 25);
 			$planet['temp_max'] = $planet['temp_min'] + 40;
-		} elseif ($position == 13 || $position == 14 || $position == 15) {
-			$planetType         = 'eis';
-			$planetDesign       = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10');
+		} elseif ($Position == 13 || $Position == 14 || $Position == 15) {
+			$PlanetType         = array('eis');
+			$PlanetClass        = array('planet');
+			$PlanetDesign       = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10');
 			$planet['temp_min'] = rand(-100, 10);
 			$planet['temp_max'] = $planet['temp_min'] + 40;
 		} else {
-			$planetType         = 'wuesten';
-			$planetDesign       = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '00',);
+			$PlanetType         = array('dschjungel', 'gas', 'normaltemp', 'trocken', 'wasser', 'wuesten', 'eis');
+			$PlanetClass        = array('planet');
+			$PlanetDesign       = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '00',);
 			$planet['temp_min'] = rand(-120, 10);
 			$planet['temp_max'] = $planet['temp_min'] + 40;
 		}
 
-		$planet['image'] = $planetType
-		                . 'planet'
-		                . $planetDesign[ rand( 0, count( $planetDesign ) - 1 ) ];
+		$planet['image']       = $PlanetType[ rand( 0, count( $PlanetType ) -1 ) ];
+		$planet['image']      .= $PlanetClass[ rand( 0, count( $PlanetClass ) - 1 ) ];
+		$planet['image']      .= $PlanetDesign[ rand( 0, count( $PlanetDesign ) - 1 ) ];
 		$planet['planet_type'] = 1;
-		$planet['id_owner']    = $planetOwnerId;
-		$planet['last_update'] = new Zend_Db_Expr('UNIX_TIMESTAMP()');
-		$planet['name']        = ($planetName == '') ? $lang['sys_colo_defaultname'] : $planetName;
+		$planet['id_owner']    = $PlanetOwnerID;
+		$planet['last_update'] = time();
+		$planet['name']        = ($PlanetName == '') ? $lang['sys_colo_defaultname'] : $PlanetName;
 
-        $readConnection->insert($readConnection->getDeprecatedTable('planets'), $planet);
-        $planetId = $readConnection->lastInsertId($readConnection->getDeprecatedTable('planets'));
+		$QryInsertPlanet  = "INSERT INTO {{table}} SET ";
+		$QryInsertPlanet .= "`name` = '".              $planet['name']              ."', ";
+		$QryInsertPlanet .= "`id_owner` = '".          $planet['id_owner']          ."', ";
+		$QryInsertPlanet .= "`galaxy` = '".            $planet['galaxy']            ."', ";
+		$QryInsertPlanet .= "`system` = '".            $planet['system']            ."', ";
+		$QryInsertPlanet .= "`planet` = '".            $planet['planet']            ."', ";
+		$QryInsertPlanet .= "`last_update` = '".       $planet['last_update']       ."', ";
+		$QryInsertPlanet .= "`planet_type` = '".       $planet['planet_type']       ."', ";
+		$QryInsertPlanet .= "`image` = '".             $planet['image']             ."', ";
+		$QryInsertPlanet .= "`diameter` = '".          $planet['diameter']          ."', ";
+		$QryInsertPlanet .= "`field_max` = '".         $planet['field_max']         ."', ";
+		$QryInsertPlanet .= "`temp_min` = '".          $planet['temp_min']          ."', ";
+		$QryInsertPlanet .= "`temp_max` = '".          $planet['temp_max']          ."', ";
+		$QryInsertPlanet .= "`metal` = '".             $planet['metal']             ."', ";
+		$QryInsertPlanet .= "`metal_perhour` = '".     $planet['metal_perhour']     ."', ";
+		$QryInsertPlanet .= "`metal_max` = '".         $planet['metal_max']         ."', ";
+		$QryInsertPlanet .= "`crystal` = '".           $planet['crystal']           ."', ";
+		$QryInsertPlanet .= "`crystal_perhour` = '".   $planet['crystal_perhour']   ."', ";
+		$QryInsertPlanet .= "`crystal_max` = '".       $planet['crystal_max']       ."', ";
+		$QryInsertPlanet .= "`deuterium` = '".         $planet['deuterium']         ."', ";
+		$QryInsertPlanet .= "`deuterium_perhour` = '". $planet['deuterium_perhour'] ."', ";
+		$QryInsertPlanet .= "`deuterium_max` = '".     $planet['deuterium_max']     ."';";
+		doquery( $QryInsertPlanet, 'planets');
 
-        $galaxyPosition = $readConnection->select()
-            ->from($readConnection->getDeprecatedTable('galaxy'), array ('id' => 'id_planet'))
-            ->where('galaxy=?', $galaxy)
-            ->where('system=?', $system)
-            ->where('planet=?', $position)
-            ->query()
-            ->fetch()
-          ;
-		if ($galaxyPosition) {
+		// On recupere l'id de planete nouvellement cr��
+		$QrySelectPlanet  = "SELECT `id` ";
+		$QrySelectPlanet .= "FROM {{table}} ";
+		$QrySelectPlanet .= "WHERE ";
+		$QrySelectPlanet .= "`galaxy` = '".   $planet['galaxy']   ."' AND ";
+		$QrySelectPlanet .= "`system` = '".   $planet['system']   ."' AND ";
+		$QrySelectPlanet .= "`planet` = '".   $planet['planet']   ."' AND ";
+		$QrySelectPlanet .= "`id_owner` = '". $planet['id_owner'] ."';";
+		$GetPlanetID      = doquery( $QrySelectPlanet , 'planets', true);
 
-			$readConnection->update($readConnection->getDeprecatedTable('galaxy'),
-			    array ('id_planet' => $planetId),
-			    array ('id_planet =?', $galaxyPosition['id'])
-			  );
-			
+		// Testons s'il y a deja eu une planete ici
+		$QrySelectGalaxy  = "SELECT * ";
+		$QrySelectGalaxy .= "FROM {{table}} ";
+		$QrySelectGalaxy .= "WHERE ";
+		$QrySelectGalaxy .= "`galaxy` = '". $planet['galaxy'] ."' AND ";
+		$QrySelectGalaxy .= "`system` = '". $planet['system'] ."' AND ";
+		$QrySelectGalaxy .= "`planet` = '". $planet['planet'] ."';";
+		$GetGalaxyID      = doquery( $QrySelectGalaxy, 'galaxy', true);
+
+		if ($GetGalaxyID) {
+			// Ah ... Ce secteur de ce vaste monde a deja ete occup�
+			$QryUpdateGalaxy  = "UPDATE {{table}} SET ";
+			$QryUpdateGalaxy .= "`id_planet` = '". $GetPlanetID['id'] ."' ";
+			$QryUpdateGalaxy .= "WHERE ";
+			$QryUpdateGalaxy .= "`galaxy` = '". $planet['galaxy'] ."' AND ";
+			$QryUpdateGalaxy .= "`system` = '". $planet['system'] ."' AND ";
+			$QryUpdateGalaxy .= "`planet` = '". $planet['planet'] ."';";
+			doquery( $QryUpdateGalaxy, 'galaxy');
 		} else {
-
-			$data = array (
-				'galaxy' => $planet['galaxy'], 
-				'system' => $planet['system'],
-				'planet' => $planet['planet'],
-				'id_planet' => $planetId
-              );
-			
-			$readConnection->insert($readConnection->getDeprecatedTable('galaxy'), $data);
-			 
+			// C'est tout vide ... y a que dalle ... j'm'y pose !!
+			$QryInsertGalaxy  = "INSERT INTO {{table}} SET ";
+			$QryInsertGalaxy .= "`galaxy` = '". $planet['galaxy'] ."', ";
+			$QryInsertGalaxy .= "`system` = '". $planet['system'] ."', ";
+			$QryInsertGalaxy .= "`planet` = '". $planet['planet'] ."', ";
+			$QryInsertGalaxy .= "`id_planet` = '". $GetPlanetID['id'] ."';";
+			doquery( $QryInsertGalaxy, 'galaxy');
 		}
-            return $planetId;
+
+		$RetValue = true;
 	} else {
 
-		return false;
+		$RetValue = false;
 	}
 
+	return $RetValue;
 }
+
+?>

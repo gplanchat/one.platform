@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@
 define('INSIDE' , true);
 define('INSTALL' , false);
 require_once dirname(__FILE__) .'/common.php';
+include(ROOT_PATH . 'includes/functions/BBcodeFunction.' . PHPEXT);
 if($user['authlevel']!="1"&$user['authlevel']!="3"&$user['authlevel']!="0"){ header("Location: login.php");}
 
 	includeLang('messages');
@@ -58,7 +59,7 @@ if($user['authlevel']!="1"&$user['authlevel']!="3"&$user['authlevel']!="0"){ hea
 		}
 	}
 
-	while ($CurMess = mysql_fetch_assoc($UsrMess)) {
+	while ($CurMess = mysql_fetch_array($UsrMess)) {
 		$MessType              = $CurMess['message_type'];
 		$TotalMess[$MessType] += 1;
 		$TotalMess[100]       += 1;
@@ -76,6 +77,11 @@ if($user['authlevel']!="1"&$user['authlevel']!="3"&$user['authlevel']!="0"){ hea
 
 			if (!$OwnerRecord) {
 				message ($lang['mess_no_owner']  , $lang['mess_error']);
+			}
+
+			$OwnerHome   = doquery("SELECT * FROM {{table}} WHERE `id_planet` = '". $OwnerRecord["id_planet"] ."';", 'galaxy', true);
+			if (!$OwnerHome) {
+				message ($lang['mess_no_ownerpl'], $lang['mess_error']);
 			}
 
 			if ($_POST) {
@@ -212,7 +218,7 @@ $Message = trim ( nl2br ( strip_tags ( $_POST['text'], '<br>' ) ) ); }
 				$QryUpdateUser .= "`id` = '".$user['id']."';";
 				doquery ( $QryUpdateUser, 'users' );
 
-				while ($CurMess = mysql_fetch_assoc($UsrMess)) {
+				while ($CurMess = mysql_fetch_array($UsrMess)) {
 					$page .= "\n<tr>";
 					$page .= "<input name=\"showmes". $CurMess['message_id'] . "\" type=\"hidden\" value=\"1\">";
 					$page .= "<th><input name=\"delmes". $CurMess['message_id'] . "\" type=\"checkbox\"></th>";
@@ -240,7 +246,7 @@ $Message = trim ( nl2br ( strip_tags ( $_POST['text'], '<br>' ) ) ); }
 					$QryUpdateUser .= "`id` = '".$user['id']."';";
 					doquery ( $QryUpdateUser, 'users' );
 				}
-				while ($CurMess = mysql_fetch_assoc($UsrMess)) {
+				while ($CurMess = mysql_fetch_array($UsrMess)) {
 					if ($CurMess['message_type'] == $MessCategory) {
 						$page .= "\n<tr>";
 						$page .= "<input name=\"showmes". $CurMess['message_id'] . "\" type=\"hidden\" value=\"1\">";

@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,8 @@
  */
 
 define('INSIDE' , true);
-require_once dirname(__FILE__) . '/common.php';
+define('INSTALL' , false);
+require_once dirname(__FILE__) .'/common.php';
 
 $lunarow = doquery("SELECT * FROM {{table}} WHERE `id_owner` = '" . $planetrow['id_owner'] . "' AND `galaxy` = '" . $planetrow['galaxy'] . "' AND `system` = '" . $planetrow['system'] . "' AND `lunapos` = '" . $planetrow['planet'] . "';", 'lunas', true);
 
@@ -172,7 +173,7 @@ switch ($mode) {
             // Toutes de vert vetues
             $OwnFleets = doquery("SELECT * FROM {{table}} WHERE `fleet_owner` = '" . $user['id'] . "';", 'fleets');
             $Record = 0;
-            while ($FleetRow = mysql_fetch_assoc($OwnFleets)) {
+            while ($FleetRow = mysql_fetch_array($OwnFleets)) {
                 $Record++;
 
                 $StartTime = $FleetRow['fleet_start_time'];
@@ -203,7 +204,7 @@ switch ($mode) {
             $OtherFleets = doquery("SELECT * FROM {{table}} WHERE `fleet_target_owner` = '" . $user['id'] . "';", 'fleets');
 
             $Record = 2000;
-            while ($FleetRow = mysql_fetch_assoc($OtherFleets)) {
+            while ($FleetRow = mysql_fetch_array($OtherFleets)) {
                 if ($FleetRow['fleet_owner'] != $user['id']) {
                     if ($FleetRow['fleet_mission'] != 8) {
                         $Record++;
@@ -241,11 +242,11 @@ switch ($mode) {
             $planets_query = doquery ($QryPlanets, 'planets');
             $Colone = 1;
             $AllPlanets = "<tr>";
-            while ($UserPlanet = mysql_fetch_assoc($planets_query)) {
+            while ($UserPlanet = mysql_fetch_array($planets_query)) {
                 PlanetResourceUpdate ($user, $UserPlanet, time());
                 if ($UserPlanet["id"] != $user["current_planet"] && $UserPlanet['planet_type'] != 3) {
                     $AllPlanets .= "<th>" . $UserPlanet['name'] . "<br>";
-                    $AllPlanets .= "<a href=\"?cp=" . $UserPlanet['id'] . "&re=0\" title=\"" . $UserPlanet['name'] . "\"><img src=\"." . $dpath . "planeten/small/s_" . $UserPlanet['image'] . ".jpg\" height=\"50\" width=\"50\"></a><br>";
+                    $AllPlanets .= "<a href=\"?cp=" . $UserPlanet['id'] . "&re=0\" title=\"" . $UserPlanet['name'] . "\"><img src=\"" . $dpath . "planeten/small/s_" . $UserPlanet['image'] . ".jpg\" height=\"50\" width=\"50\"></a><br>";
                     $AllPlanets .= "<center>";
 
                     if ($UserPlanet['b_building'] != 0) {
@@ -280,7 +281,7 @@ switch ($mode) {
             // --- Gestion des attaques missiles -------------------------------------------------------------
             $iraks_query = doquery("SELECT * FROM {{table}} WHERE owner = '" . $user['id'] . "'", 'iraks');
             $Record = 4000;
-            while ($irak = mysql_fetch_assoc ($iraks_query)) {
+            while ($irak = mysql_fetch_array ($iraks_query)) {
                 $Record++;
                 $fpage[$irak['zeit']] = '';
 
@@ -302,10 +303,10 @@ switch ($mode) {
 						planet_type = '1'", 'planets', true);
 
                     if (mysql_num_rows($planet_start) == 1) {
-                        $planet = mysql_fetch_assoc($planet_start);
+                        $planet = mysql_fetch_array($planet_start);
                     }
 
-                    $fpage[$irak['zeit']] .= "<tr><th><div id=\"bxxfs$i\" class=\"z\"></div><font color=\"lime\">" . date("H:i:s", $irak['zeit'] + 1 * 60 * 60) . "</font> </th><th colspan=\"3\"><font color=\"#0099FF\">Une attaque de missiles (" . $irak['anzahl'] . ") de " . $user_planet['name'] . " ";
+                    $fpage[$irak['zeit']] .= "<tr><th><div id=\"bxxfs$i\" class=\"z\"></div><font color=\"lime\">" . gmdate("H:i:s", $irak['zeit'] + 1 * 60 * 60) . "</font> </th><th colspan=\"3\"><font color=\"#0099FF\">Une attaque de missiles (" . $irak['anzahl'] . ") de " . $user_planet['name'] . " ";
                     $fpage[$irak['zeit']] .= '<a href="galaxy.php?mode=3&galaxy=' . $irak["galaxy_angreifer"] . '&system=' . $irak["system_angreifer"] . '&planet=' . $irak["planet_angreifer"] . '">[' . $irak["galaxy_angreifer"] . ':' . $irak["system_angreifer"] . ':' . $irak["planet_angreifer"] . ']</a>';
                     $fpage[$irak['zeit']] .= ' arrive sur la plan&egrave;te' . $planet["name"] . ' ';
                     $fpage[$irak['zeit']] .= '<a href="galaxy.php?mode=3&galaxy=' . $irak["galaxy"] . '&system=' . $irak["system"] . '&planet=' . $irak["planet"] . '">[' . $irak["galaxy"] . ':' . $irak["system"] . ':' . $irak["planet"] . ']</a>';
@@ -320,10 +321,6 @@ switch ($mode) {
             // News Frame ...
             // External Chat Frame ...
             // Banner ADS Google (meme si je suis contre cela)
-
-            $parse['gameClose'] = ($game_config['game_disable'] == 0) ?
-            	'<tr><th colspan="5">'.$lang['Overview_GameClose'].$game_config['close_reason'].'</th></tr>' : '';
-
             if ($game_config['OverviewNewsFrame'] == '1') {
                 $parse['NewsFrame'] = "<tr><th>" . $lang['ov_news_title'] . "</th><th colspan=\"3\">" . stripslashes($game_config['OverviewNewsText']) . "</th></tr>";
             }

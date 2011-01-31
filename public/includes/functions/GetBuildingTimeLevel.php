@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ function GetBuildingTimeLevel ($user, $planet, $Element, $level) {
 		} elseif ( $intergal_lab >= "1" ) {
 			$empire = doquery("SELECT * FROM {{table}} WHERE id_owner='". $user[id] ."';", 'planets');
 			$NbLabs = 0;
-			while ($colonie = mysql_fetch_assoc($empire)) {
+			while ($colonie = mysql_fetch_array($empire)) {
 				$techlevel[$NbLabs] = $colonie[$resource['31']];
 				$NbLabs++;
 			}

@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,9 +29,9 @@
  */
 
 function ShowGalaxyMISelector ( $Galaxy, $System, $Planet, $Current, $MICount ) {
-	global $lang, $reslist;
+	global $lang;
 
-	$Result  = "<form action=\"raketenangriff.php?mode=2&galaxy=".$Galaxy."&system=".$System."&planet=".$Planet."\" method=\"POST\">";
+	$Result  = "<form action=\"raketenangriff.php?c=".$Current."&mode=2&galaxy=".$Galaxy."&system=".$System."&planet=".$Planet."\" method=\"POST\">";
 	$Result .= "<tr>";
 	$Result .= "<table border=\"0\">";
 	$Result .= "<tr>";
@@ -43,11 +43,15 @@ function ShowGalaxyMISelector ( $Galaxy, $System, $Planet, $Current, $MICount ) 
 	$String  = sprintf($lang['gm_restmi'], $MICount);
 	$Result .= "<td class=\"c\">".$String." <input type=\"text\" name=\"SendMI\" size=\"2\" maxlength=\"7\" /></td>";
 	$Result .= "<td class=\"c\">".$lang['gm_target']." <select name=\"Target\">";
-	
-	foreach ($reslist[Legacies_Empire::TYPE_DEFENSE] as $id) {
-	    $Result .= "<option value=\"{$id}\">{$lang['tech'][$id]}</option>";
-	}
-
+	$Result .= "<option value=\"all\" selected>".$lang['gm_all']."</option>";
+	$Result .= "<option value=\"0\">".$lang['tech'][401]."</option>";
+	$Result .= "<option value=\"1\">".$lang['tech'][402]."</option>";
+	$Result .= "<option value=\"2\">".$lang['tech'][403]."</option>";
+	$Result .= "<option value=\"3\">".$lang['tech'][404]."</option>";
+	$Result .= "<option value=\"4\">".$lang['tech'][405]."</option>";
+	$Result .= "<option value=\"5\">".$lang['tech'][406]."</option>";
+	$Result .= "<option value=\"6\">".$lang['tech'][407]."</option>";
+	$Result .= "<option value=\"7\">".$lang['tech'][408]."</option>";
 	$Result .= "</select>";
 	$Result .= "</td>";
 	$Result .= "</tr>";

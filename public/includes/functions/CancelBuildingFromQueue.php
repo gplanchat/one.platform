@@ -1,11 +1,11 @@
 <?php
 /**
- * This file is part of XNova:Legacies
+ * Tis file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
  *
- * Copyright (c) 2009-2010, XNova Support Team <http://www.xnova-ng.org>
+ * Copyright (c) 2009-Present, XNova Support Team <http://www.xnova-ng.org>
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,51 +28,81 @@
  *
  */
 
-/**
- * Cancel a building from the queue and give the resource to the player
- *
- * @param array $currentPlanet @see $planetrow
- * @param array $currentUser @see $user
- * @return bool True if the cancel the cancel is correct
- */
-function CancelBuildingFromQueue(&$currentPlanet, &$currentUser)
-{
-    if ($currentPlanet['b_building_id'] == 0) {
-        return false;
-    }
+function CancelBuildingFromQueue ( &$CurrentPlanet, &$CurrentUser ) {
 
-    $currentQueue = explode(';', $currentPlanet['b_building_id']);
-    $firstElement = explode(',', $currentQueue[0]);
+	$CurrentQueue  = $CurrentPlanet['b_building_id'];
+	if ($CurrentQueue != 0) {
+		// Creation du tableau de la liste de construction
+		$QueueArray          = explode ( ";", $CurrentQueue );
+		// Comptage du nombre d'elements dans la liste
+		$ActualCount         = count ( $QueueArray );
 
-    array_shift($currentQueue);
-    $queueSize = count($currentQueue);
+		// Stockage de l'element a 'interrompre'
+		$CanceledIDArray     = explode ( ",", $QueueArray[0] );
+		$Element             = $CanceledIDArray[0];
+		$BuildMode           = $CanceledIDArray[4]; // pour savoir si on construit ou detruit
 
-    $forDestroy = ($firstElement[4] == 'destroy') ? true : false;
-    $elementPrice = GetBuildingPrice($currentUser, $currentPlanet, $firstElement[0], true, $forDestroy);
+		$nb_item = $Element;
 
-    $currentPlanet['metal']     += $elementPrice['metal'];
-    $currentPlanet['crystal']   += $elementPrice['crystal'];
-    $currentPlanet['deuterium'] += $elementPrice['deuterium'];
+		if ($ActualCount > 1) {
+			array_shift( $QueueArray );
+			$NewCount        = count( $QueueArray );
+			// Mise a jour de l'heure de fin de construction theorique du batiment
+			$BuildEndTime        = time();
 
-    if ($queueSize > 0) {
+			for ($ID = 0; $ID < $NewCount ; $ID++ ) {
+				$ListIDArray          = explode ( ",", $QueueArray[$ID] );
 
-        $buildEndTime = time();
-        $newQueue = array();
-        for ($i = 0; $i < $queueSize; $i++) {
-            $elementArray = explode(',', $currentQueue[$i]);
+				// Pour diminuer le niveau et le temps de construction
+				// si le bâtiment qui est annulé se trouve plusieurs fois dans la queue
+				// Exemple de queue de construction :
+				// Mine de métal (Niveau 40) | Silo de missile (Niveau 30) | Silo de missiles (Niveau 31) | Mine de métal (Niveau 41)
 
-            if ($firstElement[0] == $elementArray[0]) {
-                $elementArray[1]--;
-                $elementArray[2] = GetBuildingTimeLevel($currentUser, $currentPlanet, $elementArray[0], $elementArray[1]);
-            }
-            $buildEndTime += $elementArray[2];
-            $elementArray[3] = $buildEndTime;
+				// Si on supprime le premier bâtiment, on aura dans la queue de construction :
+				// Silo de missile (Niveau 30) | Silo de missiles (Niveau 31) | Mine de métal (Niveau 40)
+				if ( $nb_item == $ListIDArray[0])
+				{
+					$ListIDArray[1]		 -= 1;
+					$ListIDArray[2]		  = GetBuildingTimeLevel($CurrentUser, $CurrentPlanet, $ListIDArray[0], $ListIDArray[1]);
+				}
+				$BuildEndTime        += $ListIDArray[2];
+				$ListIDArray[3]       = $BuildEndTime;
+				$QueueArray[$ID]      = implode ( ",", $ListIDArray );
+			}
+			$NewQueue        = implode(";", $QueueArray );
+			$ReturnValue     = true;
+			$BuildEndTime    = '0';
+		} else {
+			$NewQueue        = '0';
+			$ReturnValue     = false;
+			$BuildEndTime    = '0';
+		}
 
-            $newQueue[$i] = implode(',', $elementArray);
-        }
-    }
-    $currentPlanet['b_building_id'] = ($queueSize > 0) ? implode(';', $newQueue) : 0;
-    $currentPlanet['b_building'] = ($queueSize > 0) ? $buildEndTime : 0;
+		// Ici on va rembourser les ressources engagées ...
+		// Deja le mode (car quand on detruit ca ne coute que la moitié du prix de construction classique
+		if ($BuildMode == 'destroy') {
+			$ForDestroy = true;
+		} else {
+			$ForDestroy = false;
+		}
 
-    return true;
+		if ( $Element != false ) {
+			$Needed                        = GetBuildingPrice ($CurrentUser, $CurrentPlanet, $Element, true, $ForDestroy);
+			$CurrentPlanet['metal']       += $Needed['metal'];
+			$CurrentPlanet['crystal']     += $Needed['crystal'];
+			$CurrentPlanet['deuterium']   += $Needed['deuterium'];
+		}
+
+	} else {
+		$NewQueue          = '0';
+		$BuildEndTime      = '0';
+		$ReturnValue       = false;
+	}
+
+	$CurrentPlanet['b_building_id']  = $NewQueue;
+	$CurrentPlanet['b_building']     = $BuildEndTime;
+
+	return $ReturnValue;
 }
+
+?>

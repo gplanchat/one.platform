@@ -7,7 +7,7 @@
 		<table width=530>
 		{buildlist}
 		<tr>
-			<td class="c" colspan=3 align="center"><input type="submit" value="{Construire}"></td>
+			<td class="c" colspan=2 align="center"><input type="submit" value="{Construire}"></td>
 		</tr>
 		</table>
 		</form>
