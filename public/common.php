@@ -36,11 +36,6 @@ define('PHPEXT', require 'extension.inc');
 
 define('VERSION', '2011.1');
 
-if (0 === filesize(ROOT_PATH . 'config.php')) {
-    header('Location: setup.php/');
-    exit(0);
-}
-
 $game_config   = array();
 $user          = array();
 $lang          = array();
