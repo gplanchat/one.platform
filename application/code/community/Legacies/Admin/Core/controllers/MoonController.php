@@ -59,7 +59,7 @@ class Legacies_Admin_Core_MoonController
     {
         $this->loadLayout('admin.grid');
 
-        $this->_prepareGrid('legacies-planets', 'legacies/planet.collection', $this->_getParam('sort'));
+        $this->_prepareGrid('legacies-planets', 'legacies/astronomical.moon.collection', $this->_getParam('sort'));
 
         $this->_collectionModel
             ->addAttributeFilter('planet_type', Legacies_Model_Planet::TYPE_MOON)
@@ -76,7 +76,7 @@ class Legacies_Admin_Core_MoonController
     public function gridAjaxAction()
     {
         $collection = $this->app()
-            ->getModel('legacies/planet.collection')
+            ->getModel('legacies/astronomical.moon.collection')
             ->setPage($this->_getParam('p'), $this->_getParam('n'));
 
         $this->getResponse()
@@ -95,7 +95,7 @@ class Legacies_Admin_Core_MoonController
         $this->_buildEditForm();
 
         $entityModel = $this->app()
-            ->getModel('legacies/planet')
+            ->getModel('legacies/astronomical.moon')
             ->load($this->_getParam('id'))
         ;
 
@@ -186,7 +186,7 @@ class Legacies_Admin_Core_MoonController
     public function editPostAction()
     {
         $entityModel = $this->app()
-            ->getModel('legacies/planet')
+            ->getModel('legacies/astronomical.moon')
             ->load($this->_getParam('id'))
         ;
 
@@ -311,7 +311,7 @@ class Legacies_Admin_Core_MoonController
     public function newPostAction()
     {
         $entityModel = $this->app()
-            ->getModel('legacies/planet')
+            ->getModel('legacies/astronomical.moon')
         ;
 
         $optionGroups = array(
@@ -414,7 +414,7 @@ class Legacies_Admin_Core_MoonController
     {
         try {
             $entityModel = $this->app()
-                ->getModel('legacies/planet')
+                ->getModel('legacies/astronomical.moon')
                 ->load($this->_getParam('id'))
                 ->delete()
             ;

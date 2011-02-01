@@ -62,10 +62,10 @@ class Legacies_Model_Planet
         return parent::_construct($options);
     }
 
-    public function checkPlanetUsedFields()
+    public function checkUsedFields()
     {
         // {{{
-        // FIXME: Delete gloval variables
+        // FIXME: Delete global variables
         global $resource, $reslist;
         // }}}
 

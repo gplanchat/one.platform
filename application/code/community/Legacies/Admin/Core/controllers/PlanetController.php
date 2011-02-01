@@ -59,7 +59,7 @@ class Legacies_Admin_Core_PlanetController
     {
         $this->loadLayout('admin.grid');
 
-        $this->_prepareGrid('legacies-planets', 'legacies/planet.collection', $this->_getParam('sort'));
+        $this->_prepareGrid('legacies-planets', 'legacies/astronomical.planet.collection', $this->_getParam('sort'));
 
         $this->_collectionModel
             ->addAttributeFilter('planet_type', Legacies_Model_Planet::TYPE_PLANET)
@@ -76,7 +76,7 @@ class Legacies_Admin_Core_PlanetController
     public function gridAjaxAction()
     {
         $collection = $this->app()
-            ->getModel('legacies/planet.collection')
+            ->getModel('legacies/astronomical.planet.collection')
             ->setPage($this->_getParam('p'), $this->_getParam('n'));
 
         $this->getResponse()
@@ -95,7 +95,7 @@ class Legacies_Admin_Core_PlanetController
         $this->_buildEditForm();
 
         $entityModel = $this->app()
-            ->getModel('legacies/planet')
+            ->getModel('legacies/astronomical.planet')
             ->load($this->_getParam('id'))
         ;
 
@@ -187,7 +187,7 @@ class Legacies_Admin_Core_PlanetController
     public function editPostAction()
     {
         $entityModel = $this->app()
-            ->getModel('legacies/planet')
+            ->getModel('legacies/astronomical.planet')
             ->load($this->_getParam('id'))
         ;
 

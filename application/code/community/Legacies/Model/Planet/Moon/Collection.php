@@ -41,7 +41,7 @@
  */
 
 /**
- * Page collection model
+ * Page entity model
  *
  * @access      public
  * @author      gplanchat
@@ -49,13 +49,13 @@
  * @package     One_Cms
  * @subpackage  One_Cms
  */
-class Legacies_Model_Moon_Collection
-    extends One_Core_Bo_CollectionAbstract
+class Legacies_Model_Planet_Moon_Collection
+    extends Legacies_Model_Astronomical_Collection
 {
     protected function _construct($options)
     {
-        $this->_init('legacies/planet', 'legacies/planet');
+        parent::_construct($options);
 
-        return parent::_construct($options);
+        $this->addAttributeFilter('planet_type', Legacies_Model_Astronomical::TYPE_MOON);
     }
 }
