@@ -59,7 +59,7 @@ abstract class One_Core_Bo_CollectionAbstract
     implements One_Core_Bo_CollectionInterface
 {
     const MIN_PAGE_SIZE = 1;
-    const MAX_PAGE_SIZE = null;
+    const MAX_PAGE_SIZE = 200;
 
     /**
      * Default primary key field name.
@@ -631,10 +631,10 @@ abstract class One_Core_Bo_CollectionAbstract
      */
     public function setPage($page, $pageSize = null)
     {
-        if (self::MAX_PAGE_SIZE !== null) {
-            $this->_pageSize = min(max(intval($pageSize), self::MIN_PAGE_SIZE), self::MAX_PAGE_SIZE);
+        if ($pageSize !== null) {
+            $this->setPageSize($pageSize);
         }
-        $this->_page = min(max(1, intval($page)), ceil($this->count() / $this->_pageSize));
+        $this->_page = min(max(1, intval($page)), $this->getPageCount());
 
         return $this;
     }
@@ -684,7 +684,7 @@ abstract class One_Core_Bo_CollectionAbstract
      */
     public function setPageSize($pageSize)
     {
-        $this->_pageSize = $pageSize;
+        $this->_pageSize = max(min(intval($pageSize), self::MAX_PAGE_SIZE), self::MIN_PAGE_SIZE);
 
         return $this;
     }
@@ -706,6 +706,10 @@ abstract class One_Core_Bo_CollectionAbstract
 
     public function sort($fields)
     {
+//        foreach ($fields as $field => $sort) {
+//            TODO
+//        }
+
         return $this;
     }
 
