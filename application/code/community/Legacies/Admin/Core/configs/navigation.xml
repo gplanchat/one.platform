@@ -95,6 +95,13 @@
                 <controller>mission</controller>
               </route>
             </mission-->
+            <users>
+              <label>Users management</label>
+              <route>
+                <path>game</path>
+                <controller>user</controller>
+              </route>
+            </users>
             <planets>
               <label>Planets management</label>
               <route>

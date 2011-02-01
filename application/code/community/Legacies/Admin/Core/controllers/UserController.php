@@ -59,7 +59,7 @@ class Legacies_Admin_Core_UserController
     {
         $this->loadLayout('admin.grid');
 
-        $this->_prepareGrid('legacies-user', 'legacies/user.collection', $this->_getParam('sort'));
+        $this->_prepareGrid('legacies-users', 'legacies/user.collection', $this->_getParam('sort'));
 
         $container = $this->getLayout()
             ->getBlock('container')
@@ -314,6 +314,6 @@ class Legacies_Admin_Core_UserController
                 ));
         $this->_form->setAction($url);
 
-        $this->addTab('legacies-config', 'config', 'Configuration');
+        $this->addTab('legacies-users-general', 'general', 'General');
     }
 }

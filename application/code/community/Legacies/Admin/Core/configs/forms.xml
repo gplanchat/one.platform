@@ -299,7 +299,7 @@
             </metal-hangar>
             <cristal-hangar>
               <type>text</type>
-              <name>cristal_store</name>
+              <name>crystal_store</name>
               <options>
                 <label>Cristal Hangar</label>
                 <value>0</value>
