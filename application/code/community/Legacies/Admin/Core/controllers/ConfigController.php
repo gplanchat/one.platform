@@ -133,7 +133,7 @@ class Legacies_Admin_Core_ConfigController
     public function editPostAction()
     {
         $entityModel = $this->app()
-            ->getModel('cms/page')
+            ->getModel('legacies/config')
             ->load($this->_getParam('id'))
         ;
 
@@ -149,7 +149,7 @@ class Legacies_Admin_Core_ConfigController
 
         $request = $this->getRequest();
 
-        if ($request->getPost('form_key') === $session->getFormKey()) {
+        if ($request->getPost('form_key') !== $session->getFormKey()) {
             $session->addError('Invalid form data.');
 
             $this->_helper->redirector->gotoRoute(array(
@@ -176,8 +176,10 @@ class Legacies_Admin_Core_ConfigController
         }
         try {
             $entityModel->save();
-            $session->addError('Configuration successfully updated.');
+            $session->addInfo('Configuration option successfully updated.');
         } catch (One_Core_Exception $e) {
+            var_dump($e);
+            die();
             $session->addError('Could not save configuration updates.');
         }
 
@@ -230,7 +232,7 @@ class Legacies_Admin_Core_ConfigController
 
         $request = $this->getRequest();
 
-        if ($request->getPost('form_key') === $session->getFormKey()) {
+        if ($request->getPost('form_key') !== $session->getFormKey()) {
             $session->addError('Invalid form data.');
 
             $this->_helper->redirector->gotoRoute(array(
@@ -258,7 +260,7 @@ class Legacies_Admin_Core_ConfigController
 
         try {
             $entityModel->save();
-            $session->addError('Configuration successfully updated.');
+            $session->addInfo('Configuration option successfully created.');
         } catch (One_Core_Exception $e) {
             $session->addError('Could not save configuration updates.');
         }
