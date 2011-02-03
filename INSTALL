@@ -14,63 +14,16 @@ Or, if the git command is not available on your system, use the taball located
 at https://github.com/gplanchat/one.platform/tarball/master and extract it in
 /opt/one-platform.
 
-3. Create your bootstraps
-
-Copy the public directory into Apache's DocumentRoot directory and rename the
-bootstrap files :
-
-$ cp -R /opt/one-platform/public/* /var/www/
-$ mv /var/www/index.php.sample /var/www/index.php
-$ mv /var/www/admin/index.php.sample /var/www/admin/index.php
-
-4. Configure rewrite rules
-
-Create a file named .htaccess in your directory /var/www :
-
-RewriteEngine On
-
-RewriteBase /
-
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -s [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule . - [L,NC]
-
-RewriteRule . index.php [L,NC]
-
-SetEnv ROOT_PATH /opt/one-platform
-SetEnv APPLICATION_ENV production
-
-
-Then create a second .htaccess file in you directory /var/www/admin : 
-
-RewriteEngine On
-
-RewriteBase /admin/
-
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -s [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule . - [L,NC]
-
-RewriteRule . index.php [L,NC]
-
-SetEnv ROOT_PATH /opt/one-platform
-SetEnv APPLICATION_ENV production
-
-
-5. Run the SQL script
-
-Run the SQL script named install.mysql, located in the folder setup, using
-this command :
-
-$ mysql -u root -h localhost -p < /opt/one-platform/setup/install.mysql
-
-7. Install the Zend Framework
+3. Install the Zend Framework
 
 Download the tarball at http://framework.zend.com/ and uncompress the libraries
 files into the folder /opt/one-platform/externals/libraries/.
 
-8. Run One.Platform
+4. Run the setup
+
+Run the file setup.php located in the public/ directory and follow installation
+instructions.
+
+5. Run One.Platform
 
 Connect to http://your.domain.tld/ and enjoy.
