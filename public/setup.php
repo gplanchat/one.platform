@@ -1,5 +1,10 @@
 <?php
 
+if (substr($_SERVER['REQUEST_URI'], strlen($_SERVER['SCRIPT_NAME'])) === false) {
+    header("Location: {$_SERVER['REQUEST_URI']}/");
+    exit(0);
+}
+
 set_time_limit(0);
 
 defined('ROOT_PATH') ||
