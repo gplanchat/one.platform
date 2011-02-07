@@ -314,6 +314,8 @@ class Legacies_Admin_Core_UserController
                 ));
         $this->_form->setAction($url);
 
-        $this->addTab('legacies-users-general', 'general', 'General');
+        $this->addTab('legacies-user-general', 'general', 'General');
+        $this->addTab('legacies-user-researches', 'researches', 'Researches');
+        $this->addTab('legacies-user-officers', 'officers', 'Officers');
     }
 }

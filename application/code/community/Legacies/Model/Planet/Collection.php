@@ -49,7 +49,7 @@
  * @package     One_Cms
  * @subpackage  One_Cms
  */
-class Legacies_Model_Moon_Collection
+class Legacies_Model_Planet_Collection
     extends One_Core_Bo_CollectionAbstract
 {
     protected function _construct($options)

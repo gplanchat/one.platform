@@ -50,12 +50,12 @@
  * @subpackage  One_Cms
  */
 class Legacies_Model_Planet_Planet_Collection
-    extends Legacies_Model_Astronomical_Collection
+    extends Legacies_Model_Planet_Collection
 {
     protected function _construct($options)
     {
         parent::_construct($options);
 
-        $this->addAttributeFilter('planet_type', Legacies_Model_Astronomical::TYPE_PLANET);
+        $this->addAttributeFilter('planet_type', Legacies_Model_Planet::TYPE_PLANET);
     }
 }
