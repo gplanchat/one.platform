@@ -95,7 +95,7 @@ class Legacies_Admin_Core_PlanetController
         $this->_buildEditForm();
 
         $entityModel = $this->app()
-            ->getModel('legacies/planet.planet')
+            ->getModel('legacies/planet')
             ->load($this->_getParam('id'))
         ;
 
@@ -187,7 +187,7 @@ class Legacies_Admin_Core_PlanetController
     public function editPostAction()
     {
         $entityModel = $this->app()
-            ->getModel('legacies/planet.planet')
+            ->getModel('legacies/planet')
             ->load($this->_getParam('id'))
         ;
 
@@ -401,7 +401,7 @@ class Legacies_Admin_Core_PlanetController
         try {
             $entityModel->save();
             $session->addError('Planet successfully updated.');
-        } catch (One_Core_Exception $e) {
+        } catch (One_Core_Exception_DaoError $e) {
             $session->addError('Could not save Planet updates.');
         }
 

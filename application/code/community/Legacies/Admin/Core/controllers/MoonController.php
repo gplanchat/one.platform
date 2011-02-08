@@ -95,7 +95,7 @@ class Legacies_Admin_Core_MoonController
         $this->_buildEditForm();
 
         $entityModel = $this->app()
-            ->getModel('legacies/planet.moon')
+            ->getModel('legacies/planet')
             ->load($this->_getParam('id'))
         ;
 
@@ -186,7 +186,7 @@ class Legacies_Admin_Core_MoonController
     public function editPostAction()
     {
         $entityModel = $this->app()
-            ->getModel('legacies/planet.moon')
+            ->getModel('legacies/planet')
             ->load($this->_getParam('id'))
         ;
 
@@ -311,7 +311,7 @@ class Legacies_Admin_Core_MoonController
     public function newPostAction()
     {
         $entityModel = $this->app()
-            ->getModel('legacies/planet.moon')
+            ->getModel('legacies/planet')
         ;
 
         $optionGroups = array(
@@ -414,7 +414,7 @@ class Legacies_Admin_Core_MoonController
     {
         try {
             $entityModel = $this->app()
-                ->getModel('legacies/planet.moon')
+                ->getModel('legacies/planet')
                 ->load($this->_getParam('id'))
                 ->delete()
             ;
