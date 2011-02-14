@@ -129,13 +129,14 @@ class One_Core_Setup_Model_Updater_ScriptQueue
         }
 
         if (isset($this->_installVersions[$highestVersion][self::STAGE_STABLE][0])) {
-            $this->enqueue($this->_installVersions[$highestVersion][self::STAGE_STABLE][0]);
-
-            return array(
+            $version = array(
                 'version' => $highestVersion,
                 'stage'   => self::STAGE_STABLE,
                 'level'   => 0,
                 );
+            $this->enqueue(array($version, $this->_installVersions[$highestVersion][self::STAGE_STABLE][0]));
+
+            return $version;
         }
 
         if (isset($this->_installVersions[$highestVersion][self::STAGE_RC])) {
@@ -157,13 +158,15 @@ class One_Core_Setup_Model_Updater_ScriptQueue
             }
         }
 
-        $this->enqueue($this->_installVersions[$highestVersion][$stage][$highestLevel]);
-
-        return array(
+        $version = array(
             'version' => $highestVersion,
             'stage'   => $stage,
             'level'   => $highestLevel,
             );
+
+        $this->enqueue(array($version, $this->_installVersions[$highestVersion][$stage][$highestLevel]));
+
+        return $version;
     }
 
     protected function _downgradeToVersion($fromVersion, $toVersion)
@@ -228,12 +231,12 @@ class One_Core_Setup_Model_Updater_ScriptQueue
                 throw new RuntimeException("Invalid version value.");
             }
 
-            $this->enqueue($versionPointer[$highestVersion][$stage][$level]);
             $currentVersion = array(
                 'version' => $highestVersion,
                 'stage'   => $stage,
                 'level'   => $level
                 );
+            $this->enqueue(array($currentVersion, $versionPointer[$highestVersion][$stage][$level]));
         }
 
         $this->_finalVersion = $currentVersion;
@@ -429,6 +432,9 @@ class One_Core_Setup_Model_Updater_ScriptQueue
 
     public function enqueue($data)
     {
-        $this->_scripts[] = $data;
+        $this->_scripts[] = array(
+            'script'  => $data[1],
+            'version' => $data[0]
+            );
     }
 }

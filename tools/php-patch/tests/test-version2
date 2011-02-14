@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <title>One.Platform PHPatch - version 1.0.1</title>
+    <style type="text/css">
+/*<![CDATA[*/
+h1,div.form {display:block;width:800px;margin:0 auto;text-align:center;}
+/*]]>*/
+    </style>
+  </head>
+  <body>
+    <h1>One.Platform PHPatch</h1>
+    <div class="form">
+
+      <form action="#" method="post" enctype="multipart/form-data">
+        <p>
+          <label for="base-path">Enter here the base path where the patch will be applied (defaults to the current directory) : </label>
+          <input type="text" id="base-path" name="path" size="50" value="D:\php-env\workspace\one-platform\tools\php-patch" />
+        </p>
+        <p>
+          <label for="fuzz">Fuzz size</label>
+          <input type="text" id="fuzz" name="fuzz" size="3" value="1" />
+
+        </p>
+        <p>
+          <label for="patch">Enter here your Unix format patch to execute : </label>
+          <input type="file" id="patch" name="patch" />
+        </p>
+        <p>
+          <input type="submit" id="submit" />
+        </p>
+
+      </form>
+    </div>
+  </body>
+</html>

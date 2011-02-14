@@ -72,7 +72,7 @@ class One_Core_Setup_Model_Updater
         ;
         try {
             $moduleSetup->load($module, 'identifier');
-        } catch (Zend_Db_Exception $e) {
+        } catch (One_Core_Exception_Dao_ReadError $e) {
             $moduleSetup
                 ->setIdentifier($module)
                 ->setVersion('0.0.0')
@@ -103,24 +103,33 @@ class One_Core_Setup_Model_Updater
             ->getModel('setup/updater.script-queue', $path, $fromVersion, $toVersion)
         ;
 
-        foreach ($scriptQueue as $script) {
-            $this->_run($script);
+        $finalVersion = null;
+        foreach ($scriptQueue as $installer) {
+            try {
+                $this->_run($installer['script']);
+                $finalVersion = $installer['version'];
+            } catch (Exception $e) {
+                break;
+            }
         }
-        $finalVersion = $scriptQueue->getFinalVersion();
-        if ($finalVersion !== null) {
-            $moduleSetup
-                ->setIdentifier($module)
-                ->setData('version', $finalVersion['version'])
-                ->setData('stage', $finalVersion['stage'] . $finalVersion['level'])
-                ->save()
-            ;
-        } else {
-            $moduleSetup
-                ->setIdentifier($module)
-                ->setVersion('0.0.0')
-                ->setStage(One_Core_Setup_Model_Updater_ScriptQueue::STAGE_STABLE)
-                ->save()
-            ;
+
+        try {
+            if ($finalVersion !== null) {
+                $moduleSetup
+                    ->setIdentifier($module)
+                    ->setData('version', $finalVersion['version'])
+                    ->setData('stage', $finalVersion['stage'] . $finalVersion['level'])
+                    ->save()
+                ;
+            } else {
+                $moduleSetup
+                    ->setIdentifier($module)
+                    ->setVersion('0.0.0')
+                    ->setStage(One_Core_Setup_Model_Updater_ScriptQueue::STAGE_STABLE)
+                    ->save()
+                ;
+            }
+        } catch (One_Core_Exception $e) {
         }
 
         return $this;
