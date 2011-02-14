@@ -188,39 +188,88 @@ class One_Core_Setup_IndexController
         $this->renderLayout();
     }
 
-    protected function _getDatabaseVersion($adapter, $engine, $connectionConfig)
+    protected function _getDatabaseInfo($engine, $connectionConfig)
     {
+        $adapterList = array(
+            'mysqli' => array(
+                'adapter'=> 'core/connection.adapter.mysqli',
+                'dialect' => 'mysql5'
+                ),
+            'pdo-mysql' => array(
+                'adapter' => 'core/connection.adapter.pdo.mysql',
+                'dialect' => 'mysql5'
+                ),
+//            'postgre' => array(
+//                'adapter' => 'core/connection.adapter.postgre',
+//                'dialect' => 'postgre9'
+//                ),
+//            'pdo-postgre' => array(
+//                'adapter' => 'core/connection.adapter.pdo.postgre',
+//                'dialect' => 'postgre9'
+//                )
+            );
+
+        if (isset($adapterList[$engine])) {
+            $adapter = $adapterList[$engine]['adapter'];
+            $dialect = $adapterList[$engine]['dialect'];
+        } else {
+            $adapter = 'core/connection.adapter.mysqli';
+            $dialect = 'mysql5';
+        }
+
         $connection = $this->app()
             ->getResource($adapter, 'dal/database', $connectionConfig, $this->app())
         ;
 
-        switch ($engine) {
+        switch ($dialect) {
         case 'mysql5':
-            return $connection->query('SELECT @@VERSION')->fetchColumn(0);
+            return array(
+                'version' => $connection->query('SELECT @@VERSION')->fetchColumn(0),
+                'adapter' => $adapter,
+                'dialect' => $dialect
+                );
             break;
 
         case 'postgre':
-            return $connection->query('SELECT VERSION()')->fetchColumn(0);
+            return array(
+                'version' =>$connection->query('SELECT VERSION()')->fetchColumn(0),
+                'adapter' => $adapter,
+                'dialect' => $dialect
+                );
             break;
         }
         return false;
     }
 
+    protected function _getDatabaseVersion($engine, $connectionConfig)
+    {
+        $info = $this->_getDatabaseInfo($engine, $connectionConfig);
+
+        if ($info === false) {
+            return false;
+        }
+        return $info['version'];
+    }
+
     public function setupRdbmsTestAjaxAction()
     {
         $connectionConfig = $this->_getParam('setuprdbms');
-        $engine = $connectionConfig['engine'];
-        unset($connectionConfig['engine']);
+        if (isset($connectionConfig['engine'])) {
+            $engine = $connectionConfig['engine'];
+            unset($connectionConfig['engine']);
+        } else {
+            $engine = 'mysqli';
+        }
 
         try {
             $return = array(
-                'status' => true,
+                'status'  => true,
                 'version' => $this->_getDatabaseVersion($engine, $connectionConfig)
                 );
         } catch (Zend_Db_Exception $e) {
             $return = array(
                 'status' => false,
-                'error' => $e->getMessage()
+                'error'  => $e->getMessage()
                 );
         }
 
@@ -232,48 +281,39 @@ class One_Core_Setup_IndexController
 
     public function setupPostAction()
     {
-        $adapters = array(
-            'mysqli' => array(
-                'engine'  => 'core/connection.adapter.mysqli',
-                'dialect' => 'mysql5'
-                ),
-            'pdo-mysql' => array(
-                'engine'  => 'core/connection.adapter.pdo.mysql',
-                'dialect' => 'mysql5'
-                ),
-//            'postgre' => array(
-//                'engine'  => 'core/connection.adapter.postgre',
-//                'dialect' => 'postgre9'
-//                ),
-//            'pdo-postgre' => array(
-//                'engine'  => 'core/connection.adapter.pdo.postgre',
-//                'dialect' => 'postgre9'
-//                )
-            );
-
         $connectionConfig = $this->_getParam('setuprdbms');
-        if (isset($adapters[$connectionConfig['engine']])) {
-            $engine = $adapters[$connectionConfig['engine']]['engine'];
-            $dialect = $adapters[$connectionConfig['engine']]['dialect'];
+        if (isset($connectionConfig['engine'])) {
+            $engine = $connectionConfig['engine'];
+            unset($connectionConfig['engine']);
         } else {
-            $engine = 'core/connection.adapter.mysqli';
-            $dialect = 'mysql5';
+            $engine = 'mysqli';
         }
-        unset($connectionConfig['engine']);
-        $prefixConfig = $this->_getParam('setupdatabase');
-        $prefixConfig = isset($prefixConfig['prefix']) ? $prefixConfig['prefix'] : 'platform_';
 
         try {
-            $this->_getDatabaseVersion($adapter, $engine, $connectionConfig);
+            $info = $this->_getDatabaseInfo($engine, $connectionConfig);
+            if ($info === false || !is_array($info) || !isset($info['dialect'])) {
+                $this->app()->throwException('core/database.connectio-error',
+                    'Could not connect to the specified database.');
+            }
+
+            $dialect = $info['dialect'];
+            $adapter = $info['adapter'];
         } catch (One_Core_Exception $e) {
             $this->_session->addError($e->getMessage());
             $this->_redirectError('stage-one');
+            return;
+        }
+
+        $prefixConfig = $this->_getParam('setupdatabase');
+        if (isset($prefixConfig['prefix'])) {
+            $prefix = $prefixConfig['prefix'];
         }
 
         $this->_session->setDatabaseEngine($engine);
+        $this->_session->setDatabaseAdapter($adapter);
         $this->_session->setDatabaseDialect($dialect);
         $this->_session->setDatabaseConfig($connectionConfig);
-        $this->_session->setDatabaseTablePrefix($prefixConfig);
+        $this->_session->setDatabaseTablePrefix($prefix);
 
         $this->_session->setRegistrationData($this->_getParam('registration'));
 
@@ -290,7 +330,7 @@ class One_Core_Setup_IndexController
         $connections = $config->default->general->database->connection;
         foreach (array('core_setup', 'core_read', 'core_write') as $connection) {
             $connections->$connection->engine = $adapter;
-            $connections->$connection->dialect = $adapter;
+            $connections->$connection->dialect = $dialect;
             $connections->$connection->params->{'table-prefix'} = $prefixConfig;
             $connections->$connection->params->host = $connectionConfig['host'];
             $connections->$connection->params->username = $connectionConfig['username'];
@@ -336,9 +376,10 @@ HTACCESS_EOF;
         $updater = $this->app()->getModel('setup/updater');
 
         try {
+            var_dump($this->_session->getData());
             $updater
-                ->setup('One_Core', $this->_session->getDatabaseEngine())
-                ->setup('One_User', $this->_session->getDatabaseEngine())
+                ->setup('One_Core', $this->_session->getDatabaseDialect())
+                ->setup('One_User', $this->_session->getDatabaseDialect())
             ;
 
             $group = $this->app()
@@ -355,6 +396,9 @@ HTACCESS_EOF;
                 ->register($registrationData, 1)
             ;
         } catch (Exception $e) {
+            var_dump($e);
+            echo $e->getMessage();
+            return;
         }
 
         $baseUrl = $this->getFrontController()->getBaseUrl();

@@ -12,6 +12,7 @@
         <connection>
           <core_setup>
             <engine>core/connection.adapter.mysqli</engine>
+            <dialect>mysql5</dialect>
             <params>
               <host>localhost</host>
               <username>root</username>
@@ -24,6 +25,7 @@
           </core_setup>
           <core_read>
             <engine>core/connection.adapter.mysqli</engine>
+            <dialect>mysql5</dialect>
             <params>
               <host>localhost</host>
               <username>root</username>
@@ -36,6 +38,7 @@
           </core_read>
           <core_write>
             <engine>core/connection.adapter.mysqli</engine>
+            <dialect>mysql5</dialect>
             <params>
               <host>localhost</host>
               <username>root</username>

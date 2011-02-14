@@ -12,7 +12,7 @@ $(document).ready(function(){
     $('.rdbms.test').click(function(e){
         e.preventDefault();
 
-        var result = $.post('stage-two-rdbms-test-ajax', $(':input', $(this).parents('fieldset').first()).serializeArray(), function(response, status, request) {
+        var result = $.post('setup-rdbms-test-ajax', $(':input', $(this).parents('fieldset').first()).serializeArray(), function(response, status, request) {
             if (status !== 'success') {
                 return;
             }
