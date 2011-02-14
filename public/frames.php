@@ -1,6 +1,6 @@
 <?php
 /**
- * Tis file is part of XNova:Legacies
+ * This file is part of XNova:Legacies
  *
  * @license http://www.gnu.org/licenses/gpl-3.0.txt
  * @see http://www.xnova-ng.org/
@@ -30,36 +30,22 @@
 
 define('INSIDE' , true);
 define('INSTALL' , false);
-define('DISABLE_IDENTITY_CHECK', true);
-
-$XNova_Host    = $_SERVER['HTTP_HOST'];
-$XNova_Script  = $_SERVER['SCRIPT_NAME'];
-$Uri_Array     = explode ('/', $XNova_Script);
-// On vire le script
-array_pop($Uri_Array);
-$XNova_URI     = implode ('/', $Uri_Array);
-
-$XNovaRootURL  = "http://". $XNova_Host ."/". $XNova_URI ."/";
 
 require_once dirname(__FILE__) .'/common.php';
-
-$page  = "<html>";
-$page .= "<head>";
-$page .= "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=". $langInfos['ENCODING']."\">";
-$page .= "<link rel=\"shortcut icon\" href=\"favicon.ico\">";
-$page .= "<title>". $game_config['game_name'] ."</title>";
-$page .= "</head>";
-
-$page .= "<frameset framespacing=\"0\" border=\"0\" cols=\"190,*\" frameborder=\"0\">";
-$page .= "<frame name=\"LeftMenu\" target=\"Mainframe\" src=\"leftmenu.php\" noresize scrolling=\"no\" marginwidth=\"0\" marginheight=\"0\">";
-$page .= "<frame name=\"Hauptframe\" src=\"overview.php\">";
-$page .= "<noframes>";
-$page .= "<body>";
-$page .= "<p>Votre navigateur ne gère pas les frames.</p>";
-$page .= "</noframes>";
-$page .= "</frameset>";
-    $page .= "</body>";
-$page .= "</html>";
-
-echo $page;
-
+?>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=<?php echo htmlspecialchars($langInfos['ENCODING'], ENT_QUOTES, 'ASCII')?>">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title><?php echo htmlspecialchars($game_config['game_name'], ENT_QUOTES, $langInfos['ENCODING'])?></title>
+  </head>
+  <frameset framespacing="0" border="0" cols="190,*" frameborder="0">
+    <frame name="LeftMenu" src="leftmenu.php" noresize scrolling="no" marginwidth="0" marginheight="0"></frame>
+    <frame name="Hauptframe" src="overview.php"></frame>
+    <noframes>
+      <body>
+        <p>Votre navigateur ne gère pas les frames.</p>
+      </body>
+    </noframes>
+  </frameset>
+</html>
