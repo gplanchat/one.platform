@@ -72,6 +72,8 @@ class One_Core_Model_Application
 
     protected $_event = null;
 
+    protected $_translator = null;
+
     /**
      * @var Zend_Controller_Front
      */
@@ -243,6 +245,15 @@ class One_Core_Model_Application
         $dispatcher->setParam('websiteId', $this->getWebsiteId());
 
         $this->_frontController->setParam('noViewRenderer', true);
+
+        $locale = $config->system->get('locale', 'en');
+        Zend_Locale::setDefault($locale, 2);
+        $path = implode(self::DS, array(APPLICATION_PATH, 'datas', 'locale'));
+        $this->_translator = new Zend_Translate('csv', $path, 'auto', array(
+            'separator' => ';',
+            'enclosure' => '"',
+            'scan'      => Zend_Translate::LOCALE_DIRECTORY
+            ));
     }
 
     /**
@@ -690,5 +701,22 @@ class One_Core_Model_Application
     {
         return $this->getFrontController()
             ->getRouter();
+    }
+
+    /**
+     * TODO: PHPDoc
+     * TODO: PHPUnit
+     *
+     * @param string $message
+     * @param mixed $_
+     */
+    public function _($message = null, $_ = null)
+    {
+        $params = func_get_args();
+        array_shift($params);
+
+        var_dump(array($message, $this->_translator->translate($message)));
+
+        return vsprintf($this->_translator->translate($message), $params);
     }
 }
