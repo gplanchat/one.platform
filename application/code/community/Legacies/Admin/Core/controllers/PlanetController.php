@@ -55,6 +55,60 @@
 class Legacies_Admin_Core_PlanetController
     extends One_Admin_Core_Controller_FormGridAbstract
 {
+    protected function _getFormOptionGroupMapping()
+    {
+        return array(
+            'general' => array(
+                'name'     => 'name',
+                'position' => 'position',
+                'owner'    => 'owner'
+                ),
+            'production' => array(
+                'metal_mine_porcent'           => 'metal_mine_porcent',
+                'crystal_mine_porcent'         => 'crystal_mine_porcent',
+                'deuterium_sintetizer_porcent' => 'deuterium_sintetizer_porcent',
+                'solar_plant_porcent'          => 'solar_plant_porcent',
+                'fusion_plant_porcent'         => 'fusion_plant_porcent',
+                'solar_satelit_porcent'        => 'solar_satelit_porcent'
+                ),
+            'resource' => array(
+                'metal_mine'           => 'metal_mine',
+                'crystal_mine'         => 'crystal_mine',
+                'deuterium_sintetizer' => 'deuterium_sintetizer',
+                'solar_plant'          => 'solar_plant',
+                'fusion_plant'         => 'fusion_plant',
+                'metal_store'          => 'metal_store',
+                'crystal_store'        => 'crystal_store',
+                'deuterium_store'      => 'deuterium_store'
+                ),
+            'military' => array(
+                'hangar'       => 'hangar',
+                'ally_deposit' => 'ally_deposit',
+                'silo'         => 'silo'
+                ),
+            'special' => array(
+                'robot_factory' => 'robot_factory',
+                'nano_factory'  => 'nano_factory',
+                'laboratory'    => 'laboratory',
+                'terraformer'   => 'terraformer'
+                ),
+            'defenses' => array(
+                'misil_launcher'          => 'misil_launcher',
+                'small_laser'             => 'small_laser',
+                'big_laser'               => 'big_laser',
+                'gauss_canyon'            => 'gauss_canyon',
+                'ionic_canyon'            => 'ionic_canyon',
+                'buster_canyon'           => 'buster_canyon',
+                'small_protection_shield' => 'small_protection_shield',
+                'big_protection_shield'   => 'big_protection_shield'
+                ),
+            'ballistic' => array(
+                'interceptor_misil'    => 'interceptor_misil',
+                'interplanetary_misil' => 'interplanetary_misil'
+                )
+            );
+    }
+
     public function indexAction()
     {
         $this->loadLayout('admin.grid');
@@ -67,42 +121,32 @@ class Legacies_Admin_Core_PlanetController
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle('Planet management')
+            ->setTitle($this->app()->_('Planet management'))
         ;
 
         $this->renderLayout();
     }
 
-    public function gridAjaxAction()
-    {
-        $collection = $this->app()
-            ->getModel('legacies/planet.planet.collection')
-            ->setPage($this->_getParam('p'), $this->_getParam('n'));
-
-        $this->getResponse()
-            ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
-            ->setBody(Zend_Json::encode($collection->load()->toArray()))
-        ;
-    }
-
     public function editAction()
     {
-        if ($this->getRequest()->isPost()){
-            $this->_forward('edit-post');
+        $this->_buildEditForm();
+
+        if (($id = $this->_getParam('id')) === null) {
+            $this->getSingleton('admin.core/session')
+                ->addError($this->app()->_('Unable to load entity: no entity id was specified.'))
+            ;
+            $this->_helper->redirector->gotoRoute(array(
+                'path'       => $this->_getParam('path'),
+                'controller' => $this->_getParam('controller'),
+                'action'     => 'index'
+                ), null, true);
             return;
         }
-
-        $this->_buildEditForm();
 
         $entityModel = $this->app()
             ->getModel('legacies/planet')
             ->load($this->_getParam('id'))
         ;
-
-        $formKey = uniqid();
-        $this->app()
-            ->getSingleton('admin.core/session')
-            ->setFormKey($formKey);
 
         $this->_form
             ->getTab('general')
@@ -110,145 +154,28 @@ class Legacies_Admin_Core_PlanetController
             ->setMultiOptions($this->app()->getModel('legacies/user.collection')->load()->toHash('username'))
         ;
 
-        $this->_form->populate(array(
-            'form_key' => $formKey,
-            'general' => array(
-                'name'     => $entityModel->getName(),
-                'position' => $entityModel->getPosition(),
-                'owner'    => $entityModel->getIdOwner()
-                ),
-            'production' => array(
-                'metal_mine_porcent'           => $entityModel->getMetalMinePorcent(),
-                'crystal_mine_porcent'         => $entityModel->getCrystalMinePorcent(),
-                'deuterium_sintetizer_porcent' => $entityModel->getDeuteriumSintetizerPorcent(),
-                'solar_plant_porcent'          => $entityModel->getSolarPlantPorcent(),
-                'fusion_plant_porcent'         => $entityModel->getFusionPlantPorcent(),
-                'solar_satelit_porcent'        => $entityModel->getSolarSatelitPorcent()
-                ),
-            'resource' => array(
-                'metal_mine'           => $entityModel->getMetalMine(),
-                'crystal_mine'         => $entityModel->getCrystalMine(),
-                'deuterium_sintetizer' => $entityModel->getDeuteriumSintetizer(),
-                'solar_plant'          => $entityModel->getSolarPlant(),
-                'fusion_plant'         => $entityModel->getFusionPlant(),
-                'metal_store'          => $entityModel->getMetalStore(),
-                'crystal_store'        => $entityModel->getCrystalStore(),
-                'deuterium_store'      => $entityModel->getDeuteriumStore()
-                ),
-            'military' => array(
-                'hangar'       => $entityModel->getHangar(),
-                'ally_deposit' => $entityModel->getAllyDeposit(),
-                'silo'         => $entityModel->getSilo()
-                ),
-            'special' => array(
-                'robot_factory' => $entityModel->getRobotFactory(),
-                'nano_factory'  => $entityModel->getNanoFactory(),
-                'laboratory'    => $entityModel->getLaboratory(),
-                'terraformer'   => $entityModel->getTerraformer()
-                ),
-            'defenses' => array(
-                'misil_launcher'          => $entityModel->getMisilLauncher(),
-                'small_laser'             => $entityModel->getSmallLaser(),
-                'big_laser'               => $entityModel->getBigLaser(),
-                'gauss_canyon'            => $entityModel->getGaussCanyon(),
-                'ionic_canyon'            => $entityModel->getIonicCanyon(),
-                'buster_canyon'           => $entityModel->getBusterCanyon(),
-                'small_protection_shield' => $entityModel->getSmallProtectionShield(),
-                'big_protection_shield'   => $entityModel->getBigProtectionShield()
-                ),
-            'ballistic' => array(
-                'interceptor_misil'    => $entityModel->getInterceptorMisil(),
-                'interplanetary_misil' => $entityModel->getInterplanetaryMisil()
-                )
-            ));
+        $this->_populateForm($entityModel);
 
         $this->getLayout()
             ->getBlock('container')
             ->addButtonDuplicate()
             ->addButtonDelete()
-            ->setTitle('Planet management')
-            ->setEntityLabel(sprintf('Edit Planet "%s"', $entityModel->getUsername()))
-            ->headTitle(sprintf('Edit Planet "%s"', $entityModel->getUsername()))
+            ->setTitle($this->app()->_('Planet management'))
+            ->setEntityLabel($this->app()->_('Edit Planet "%s"', $entityModel->getUsername()))
+            ->headTitle($this->app()->_('Edit Planet "%s"', $entityModel->getUsername()))
         ;
-
-        $url = $this->app()
-            ->getRouter()
-            ->assemble(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'edit-post'
-                ));
-
-        $this->_form->setAction($url);
 
         $this->renderLayout();
     }
 
     public function editPostAction()
     {
-        $entityModel = $this->app()
-            ->getModel('legacies/planet')
-            ->load($this->_getParam('id'))
-        ;
-
-        $optionGroups = array(
-            'general' => array(
-                'name'     => array($entityModel, 'setName'),
-                'position' => array($entityModel, 'setPosition'),
-                'owner'    => array($entityModel, 'setIdOwner')
-                ),
-            'production' => array(
-                'metal_mine_porcent'           => array($entityModel, 'setMetalMinePorcent'),
-                'crystal_mine_porcent'         => array($entityModel, 'setCrystalMinePorcent'),
-                'deuterium_sintetizer_porcent' => array($entityModel, 'setDeuteriumSintetizerPorcent'),
-                'solar_plant_porcent'          => array($entityModel, 'setSolarPlantPorcent'),
-                'fusion_plant_porcent'         => array($entityModel, 'setFusionPlantPorcent'),
-                'solar_satelit_porcent'        => array($entityModel, 'setSolarSatelitPorcent')
-                ),
-            'resource' => array(
-                'metal_mine'           => array($entityModel, 'setMetalMine'),
-                'crystal_mine'         => array($entityModel, 'setCrystalMine'),
-                'deuterium_sintetizer' => array($entityModel, 'setDeuteriumSintetizer'),
-                'solar_plant'          => array($entityModel, 'setSolarPlant'),
-                'fusion_plant'         => array($entityModel, 'setFusionPlant'),
-                'metal_store'          => array($entityModel, 'setMetalStore'),
-                'crystal_store'        => array($entityModel, 'setCrystalStore'),
-                'deuterium_store'      => array($entityModel, 'setDeuteriumStore')
-                ),
-            'military' => array(
-                'hangar'       => array($entityModel, 'setHangar'),
-                'ally_deposit' => array($entityModel, 'setAllyDeposit'),
-                'silo'         => array($entityModel, 'setSilo')
-                ),
-            'special' => array(
-                'robot_factory' => array($entityModel, 'setRobotFactory'),
-                'nano_factory'  => array($entityModel, 'setNanoFactory'),
-                'laboratory'    => array($entityModel, 'setLaboratory'),
-                'terraformer'   => array($entityModel, 'setTerraformer')
-                ),
-            'defenses' => array(
-                'misil_launcher'          => array($entityModel, 'setMisilLauncher'),
-                'small_laser'             => array($entityModel, 'setSmallLaser'),
-                'big_laser'               => array($entityModel, 'setBigLaser'),
-                'gauss_canyon'            => array($entityModel, 'setGaussCanyon'),
-                'ionic_canyon'            => array($entityModel, 'setIonicCanyon'),
-                'buster_canyon'           => array($entityModel, 'setBusterCanyon'),
-                'small_protection_shield' => array($entityModel, 'setSmallProtectionShield'),
-                'big_protection_shield'   => array($entityModel, 'setBigProtectionShield')
-                ),
-            'ballistic' => array(
-                'interceptor_misil'    => array($entityModel, 'setInterceptorMisil'),
-                'interplanetary_misil' => array($entityModel, 'setInterplanetaryMisil')
-                )
-            );
-
+        $request = $this->getRequest();
         $session = $this->app()
             ->getSingleton('admin.core/session');
 
-        $request = $this->getRequest();
-
-        if ($request->getPost('form_key') !== $session->getFormKey()) {
-            $session->addError('Invalid form data.');
+        if ($request->getPost('form_key') !== $this->_getFormKey()) {
+            $session->addError($this->app()->_('Invalid form data.'));
 
             $this->_helper->redirector->gotoRoute(array(
                     'path'       => $this->_getParam('path'),
@@ -258,25 +185,19 @@ class Legacies_Admin_Core_PlanetController
             return;
         }
 
-        foreach ($optionGroups as $groupName => $groupElements) {
-            $groupData = $request->getPost($groupName);
-            if (!is_array($groupElements) || empty($groupName) || !is_array($groupData)) {
-                continue;
-            }
+        $entityModel = $this->app()
+            ->getModel('legacies/planet')
+        ;
 
-            foreach ($groupElements as $element => $callback) {
-                if (!isset($groupData[$element])) {
-                    continue;
-                }
-
-                call_user_func($callback, $groupData[$element]);
-            }
+        if (($id = $this->_getParam('id')) !== null) {
+            $entityModel->load($id);
         }
+
         try {
             $entityModel->save();
-            $session->addInfo('Planet successfully updated.');
+            $session->addInfo($this->app()->_('Planet successfully updated.'));
         } catch (One_Core_Exception_DaoError $e) {
-            $session->addError('Could not save Planet updates.');
+            $session->addError($this->app()->_('Could not save planet updates.'));
         }
 
         $this->_helper->redirector->gotoRoute(array(
@@ -292,124 +213,17 @@ class Legacies_Admin_Core_PlanetController
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle('Planet management')
-            ->setEntityLabel('Add a new Planet')
-            ->headTitle('Add a new Planet')
+            ->setTitle($this->app()->_('Planet management'))
+            ->setEntityLabel($this->app()->_('Add a new planet'))
+            ->headTitle($this->app()->_('Add a new planet'))
         ;
-
-        $url = $this->app()
-            ->getRouter()
-            ->assemble(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'new-post'
-                ));
-
-        $this->_form->setAction($url);
 
         $this->renderLayout();
     }
 
     public function newPostAction()
     {
-        $entityModel = $this->app()
-            ->getModel('legacies/config')
-        ;
-
-        $optionGroups = array(
-            'general' => array(
-                'name'     => array($entityModel, 'setName'),
-                'position' => array($entityModel, 'setPosition')
-                ),
-            'production' => array(
-                'metal_mine_porcent'           => array($entityModel, 'setMetalMinePorcent'),
-                'crystal_mine_porcent'         => array($entityModel, 'setCrystalMinePorcent'),
-                'deuterium_sintetizer_porcent' => array($entityModel, 'setDeuteriumSintetizerPorcent'),
-                'solar_plant_porcent'          => array($entityModel, 'setSolarPlantPorcent'),
-                'fusion_plant_porcent'         => array($entityModel, 'setFusionPlantPorcent'),
-                'solar_satelit_porcent'        => array($entityModel, 'setSolarSatelitPorcent')
-                ),
-            'resource' => array(
-                'metal_mine'           => array($entityModel, 'setMetalMine'),
-                'crystal_mine'         => array($entityModel, 'setCrystalMine'),
-                'deuterium_sintetizer' => array($entityModel, 'setDeuteriumSintetizer'),
-                'solar_plant'          => array($entityModel, 'setSolarPlant'),
-                'fusion_plant'         => array($entityModel, 'setFusionPlant'),
-                'metal_store'          => array($entityModel, 'setMetalStore'),
-                'crystal_store'        => array($entityModel, 'setCrystalStore'),
-                'deuterium_store'      => array($entityModel, 'setDeuteriumStore')
-                ),
-            'military' => array(
-                'hangar'       => array($entityModel, 'setHangar'),
-                'ally_deposit' => array($entityModel, 'setAllyDeposit'),
-                'silo'         => array($entityModel, 'setSilo')
-                ),
-            'special' => array(
-                'robot_factory' => array($entityModel, 'setRobotFactory'),
-                'nano_factory'  => array($entityModel, 'setNanoFactory'),
-                'laboratory'    => array($entityModel, 'setLaboratory'),
-                'terraformer'   => array($entityModel, 'setTerraformer')
-                ),
-            'defenses' => array(
-                'misil_launcher'          => array($entityModel, 'setMisilLauncher'),
-                'small_laser'             => array($entityModel, 'setSmallLaser'),
-                'big_laser'               => array($entityModel, 'setBigLaser'),
-                'gauss_canyon'            => array($entityModel, 'setGaussCanyon'),
-                'ionic_canyon'            => array($entityModel, 'setIonicCanyon'),
-                'buster_canyon'           => array($entityModel, 'setBusterCanyon'),
-                'small_protection_shield' => array($entityModel, 'setSmallProtectionShield'),
-                'big_protection_shield'   => array($entityModel, 'setBigProtectionShield')
-                ),
-            'ballistic' => array(
-                'interceptor_misil'    => array($entityModel, 'setInterceptorMisil'),
-                'interplanetary_misil' => array($entityModel, 'setInterplanetaryMisil')
-                )
-            );
-
-        $session = $this->app()
-            ->getSingleton('admin.core/session');
-
-        $request = $this->getRequest();
-
-        if ($request->getPost('form_key') === $session->getFormKey()) {
-            $session->addError('Invalid form data.');
-
-            $this->_helper->redirector->gotoRoute(array(
-                    'path'       => $this->_getParam('path'),
-                    'controller' => $this->_getParam('controller'),
-                    'action'     => 'index'
-                    ), null, true);
-            return;
-        }
-
-        foreach ($optionGroups as $groupName => $groupElements) {
-            $groupData = $request->getPost($groupName);
-            if (!is_array($groupElements) || empty($groupName) || !is_array($groupData)) {
-                continue;
-            }
-
-            foreach ($groupElements as $element => $callback) {
-                if (!isset($groupData[$element])) {
-                    continue;
-                }
-
-                call_user_func($callback, $groupData[$element]);
-            }
-        }
-        $entityModel->setPlanetType(Legacies_Model_Planet::TYPE_MOON);
-
-        try {
-            $entityModel->save();
-            $session->addError('Planet successfully updated.');
-        } catch (One_Core_Exception_DaoError $e) {
-            $session->addError('Could not save Planet updates.');
-        }
-
-        $this->_helper->redirector->gotoRoute(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'index'
-                ), null, true);
+        $this->_forward('edit-post');
     }
 
     public function deleteAction()
@@ -423,24 +237,20 @@ class Legacies_Admin_Core_PlanetController
 
             $this->app()
                 ->getModel('admin.core/session')
-                ->addInfo('The Option has been successfully deleted.')
+                ->addInfo($this->app()->_('The planet has been successfully deleted.'))
             ;
         } catch (One_Core_Exception $e) {
             $this->app()
                 ->getModel('admin.core/session')
-                ->addError('An error occured while deleting the Option.')
+                ->addError($this->app()->_('An error occured while deleting the planet.'))
             ;
         }
 
-        $url = $this->app()
-            ->getRouter()
-            ->assemble(array(
+        $this->_helper->redirector->gotoRoute(array(
                 'path'       => $this->_getParam('path'),
                 'controller' => $this->_getParam('controller'),
                 'action'     => 'index'
                 ));
-
-        $this->_redirect($url);
     }
 
     protected function _buildEditForm()
@@ -456,12 +266,12 @@ class Legacies_Admin_Core_PlanetController
                 ));
         $this->_form->setAction($url);
 
-        $this->addTab('legacies-planet-general', 'general', 'General');
-        $this->addTab('legacies-planet-production', 'production', 'Production');
-        $this->addTab('legacies-planet-buildings-resources', 'resource', 'Resources Buildings');
-        $this->addTab('legacies-planet-buildings-military', 'military', 'Military Buildings');
-        $this->addTab('legacies-planet-buildings-special', 'special', 'Special Buildings');
-        $this->addTab('legacies-planet-defenses', 'defenses', 'Defenses');
-        $this->addTab('legacies-planet-ballistic', 'ballistic', 'Ballistics');
+        $this->addTab('legacies-planet-general', 'general', $this->app()->_('General'));
+        $this->addTab('legacies-planet-production', 'production', $this->app()->_('Production'));
+        $this->addTab('legacies-planet-buildings-resources', 'resource', $this->app()->_('Resources Buildings'));
+        $this->addTab('legacies-planet-buildings-military', 'military', $this->app()->_('Military Buildings'));
+        $this->addTab('legacies-planet-buildings-special', 'special', $this->app()->_('Special Buildings'));
+        $this->addTab('legacies-planet-defenses', 'defenses', $this->app()->_('Defenses'));
+        $this->addTab('legacies-planet-ballistic', 'ballistic', $this->app()->_('Ballistics'));
     }
 }

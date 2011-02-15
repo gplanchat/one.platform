@@ -41,20 +41,81 @@
  */
 
 /**
- * CMS Page administration controller
+ * XNova:Legacies user administration controller
  *
- * @uses        One_Admin_Core_ControllerAbstract
+ * @uses        One_Admin_Core_Controller_FormGridAbstract
  * @uses        Zend_Form
  *
  * @access      public
  * @author      gplanchat
- * @category    Cms
- * @package     One_Admin_Cms
- * @subpackage  One_Admin_Cms
+ * @category    Admin
+ * @package     Legacies
+ * @subpackage  Legacies_Admin_Core
  */
 class Legacies_Admin_Core_UserController
     extends One_Admin_Core_Controller_FormGridAbstract
 {
+    protected function _getFormOptionGroupMapping()
+    {
+        return array(
+            'general' => array(
+                'username' => 'username',
+                'email'    => 'email',
+                'lang'     => 'lang',
+                'sex'      => 'sex'
+                ),
+            'profile' => array(
+                'id_planet' => 'id_planet',
+                'avatar'    => 'avatar',
+                'sign'      => 'sign',
+                'dpath'     => 'dpath',
+                'design'    => 'design'
+                ),
+            'options' => array(
+                'noipcheck'             => 'noipcheck',
+                'planet_sort_order'     => 'planet_sort_order',
+                'spio_anz'              => 'spio_anz',
+                'settings_tooltiptime'  => 'settings_tooltiptime',
+                'settings_fleetactions' => 'settings_fleetactions',
+                'settings_allylogo'     => 'settings_allylogo',
+                'settings_esp'          => 'settings_esp',
+                'settings_wri'          => 'settings_wri',
+                'settings_bud'          => 'settings_bud',
+                'settings_mis'          => 'settings_mis',
+                'settings_rep'          => 'settings_rep'
+                ),
+            'meta' => array(
+                'urlaubs_modus'  => 'urlaubs_modus',
+                'urlaubs_until'  => 'urlaubs_until',
+                'onlinetime'     => 'onlinetime',
+                'user_lastip'    => 'user_lastip',
+                'ip_at_reg'      => 'ip_at_reg',
+                'register_time'  => 'register_time',
+                'user_agent'     => 'user_agent',
+                'current_page'   => 'current_page',
+                'current_planet' => 'current_planet'
+                ),
+            'researches' => array(
+                'spy_tech'              => 'spy_tech',
+                'computer_tech'         => 'computer_tech',
+                'military_tech'         => 'military_tech',
+                'shield_tech'           => 'shield_tech',
+                'defence_tech'          => 'defence_tech',
+                'energy_tech'           => 'energy_tech',
+                'hyperspace_tech'       => 'hyperspace_tech',
+                'combustion_tech'       => 'combustion_tech',
+                'impulse_motor_tech'    => 'impulse_motor_tech',
+                'hyperspace_motor_tech' => 'hyperspace_motor_tech',
+                'laser_tech'            => 'laser_tech',
+                'ionic_tech'            => 'ionic_tech',
+                'buster_tech'           => 'buster_tech',
+                'intergalactic_tech'    => 'intergalactic_tech',
+                'expedition_tech'       => 'expedition_tech',
+                'graviton_tech'         => 'graviton_tech'
+                )
+            );
+    }
+
     public function indexAction()
     {
         $this->loadLayout('admin.grid');
@@ -63,42 +124,34 @@ class Legacies_Admin_Core_UserController
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle('User management')
+            ->setTitle($this->app()->_('User management'))
         ;
 
         $this->renderLayout();
     }
 
-    public function gridAjaxAction()
-    {
-        $collection = $this->app()
-            ->getModel('legacies/user.collection')
-            ->setPage($this->_getParam('p'), $this->_getParam('n'));
-
-        $this->getResponse()
-            ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
-            ->setBody(Zend_Json::encode($collection->load()->toArray()))
-        ;
-    }
-
     public function editAction()
     {
-        if ($this->getRequest()->isPost()){
-            $this->_forward('edit-post');
+        $this->_buildEditForm();
+
+        if (($id = $this->_getParam('id')) === null) {
+            $this->getSingleton('admin.core/session')
+                ->addError($this->app()->_('Unable to load entity: no entity id was specified.'))
+            ;
+            $this->_helper->redirector->gotoRoute(array(
+                'path'       => $this->_getParam('path'),
+                'controller' => $this->_getParam('controller'),
+                'action'     => 'index'
+                ), null, true);
             return;
         }
-
-        $this->_buildEditForm();
 
         $entityModel = $this->app()
             ->getModel('legacies/user')
             ->load($this->_getParam('id'))
         ;
 
-        $formKey = uniqid();
-        $this->app()
-            ->getSingleton('admin.core/session')
-            ->setFormKey($formKey);
+        $this->_populateForm($entityModel);
 
         $planetCollection = $this->app()
             ->getModel('legacies/planet.planet.collection')
@@ -112,158 +165,26 @@ class Legacies_Admin_Core_UserController
             ->setMultiOptions($planetCollection)
         ;
 
-        $this->_form->populate(array(
-            'form_key' => $formKey,
-            'general' => array(
-                'username' => $entityModel->getUsername(),
-                'email'    => $entityModel->getEmail(),
-                'lang'     => $entityModel->getLang(),
-                'sex'      => $entityModel->getSex()
-                ),
-            'profile' => array(
-                'id_planet' => $entityModel->getIdPlanet(),
-                'avatar'    => $entityModel->getAvatar(),
-                'sign'      => $entityModel->getSign(),
-                'dpath'     => $entityModel->getDpath(),
-                'design'    => $entityModel->getDesign()
-                ),
-            'options' => array(
-                'noipcheck'             => $entityModel->getNoipcheck(),
-                'planet_sort_order'     => $entityModel->getPlanetSortOrder(),
-                'spio_anz'              => $entityModel->getSpioAnz(),
-                'settings_tooltiptime'  => $entityModel->getSettingsTooltiptime(),
-                'settings_fleetactions' => $entityModel->getSettingsFleetactions(),
-                'settings_allylogo'     => $entityModel->getSettingsAllylogo(),
-                'settings_esp'          => $entityModel->getSettingsEsp(),
-                'settings_wri'          => $entityModel->getSettingsWri(),
-                'settings_bud'          => $entityModel->getSettingsBud(),
-                'settings_mis'          => $entityModel->getSettingsMis(),
-                'settings_rep'          => $entityModel->getSettingsRep()
-                ),
-            'meta' => array(
-                'urlaubs_modus'  => $entityModel->getUrlaubsModus(),
-                'urlaubs_until'  => $entityModel->getUrlaubsUntil(),
-                'onlinetime'     => $entityModel->getOnlinetime(),
-                'user_lastip'    => $entityModel->getUserLastip(),
-                'ip_at_reg'      => $entityModel->getIpAtReg(),
-                'register_time'  => $entityModel->getRegisterTime(),
-                'user_agent'     => $entityModel->getUserAgent(),
-                'current_page'   => $entityModel->getCurrentPage(),
-                'current_planet' => $entityModel->getCurrentPlanet()
-                ),
-            'researches' => array(
-                'spy_tech'              => $entityModel->getSpyTech(),
-                'computer_tech'         => $entityModel->getComputerTech(),
-                'military_tech'         => $entityModel->getMilitaryTech(),
-                'shield_tech'           => $entityModel->getShieldTech(),
-                'defence_tech'          => $entityModel->getDefenceTech(),
-                'energy_tech'           => $entityModel->getEnergyTech(),
-                'hyperspace_tech'       => $entityModel->getHyperspaceTech(),
-                'combustion_tech'       => $entityModel->getCombustionTech(),
-                'impulse_motor_tech'    => $entityModel->getImpulseMotorTech(),
-                'hyperspace_motor_tech' => $entityModel->getHyperspaceMotorTech(),
-                'laser_tech'            => $entityModel->getLaserTech(),
-                'ionic_tech'            => $entityModel->getIonicTech(),
-                'buster_tech'           => $entityModel->getBusterTech(),
-                'intergalactic_tech'    => $entityModel->getIntergalacticTech(),
-                'expedition_tech'       => $entityModel->getExpeditionTech(),
-                'graviton_tech'         => $entityModel->getGravitonTech()
-                )
-            ));
-
         $this->getLayout()
             ->getBlock('container')
             ->addButtonDuplicate()
             ->addButtonDelete()
-            ->setTitle('User management')
-            ->setEntityLabel(sprintf('Edit User "%s"', $entityModel->getUsername()))
-            ->headTitle(sprintf('Edit User "%s"', $entityModel->getUsername()))
+            ->setTitle($this->app()->_('User management'))
+            ->setEntityLabel($this->app()->_('Edit user "%1$s"', $entityModel->getUsername()))
+            ->headTitle($this->app()->_('Edit user "%1$s"', $entityModel->getUsername()))
         ;
-
-        $url = $this->app()
-            ->getRouter()
-            ->assemble(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'edit-post'
-                ));
-
-        $this->_form->setAction($url);
 
         $this->renderLayout();
     }
 
     public function editPostAction()
     {
-        $entityModel = $this->app()
-            ->getModel('legacies/user')
-            ->load($this->_getParam('id'))
-        ;
-
-        $optionGroups = array(
-            'general' => array(
-                'username' => array($entityModel, 'setUsername'),
-                'email'    => array($entityModel, 'setEmail'),
-                'lang'     => array($entityModel, 'setLang'),
-                'sex'      => array($entityModel, 'setSex')
-                ),
-            'profile' => array(
-                'id_planet' => array($entityModel, 'setIdPlanet'),
-                'avatar'    => array($entityModel, 'setAvatar'),
-                'sign'      => array($entityModel, 'setSign'),
-                'dpath'     => array($entityModel, 'setDpath'),
-                'design'    => array($entityModel, 'setDesign')
-                ),
-            'options' => array(
-                'noipcheck'             => array($entityModel, 'setNoipcheck'),
-                'planet_sort_order'     => array($entityModel, 'setPlanetSortOrder'),
-                'spio_anz'              => array($entityModel, 'setSpioAnz'),
-                'settings_tooltiptime'  => array($entityModel, 'setSettingsTooltiptime'),
-                'settings_fleetactions' => array($entityModel, 'setSettingsFleetactions'),
-                'settings_allylogo'     => array($entityModel, 'setSettingsAllylogo'),
-                'settings_esp'          => array($entityModel, 'setSettingsEsp'),
-                'settings_wri'          => array($entityModel, 'setSettingsWri'),
-                'settings_bud'          => array($entityModel, 'setSettingsBud'),
-                'settings_mis'          => array($entityModel, 'setSettingsMis'),
-                'settings_rep'          => array($entityModel, 'setSettingsRep')
-                ),
-            'meta' => array(
-                'urlaubs_modus'  => array($entityModel, 'setUrlaubsModus'),
-                'urlaubs_until'  => array($entityModel, 'setUrlaubsUntil'),
-                'onlinetime'     => array($entityModel, 'setOnlinetime'),
-                'user_lastip'    => array($entityModel, 'setUserLastip'),
-                'ip_at_reg'      => array($entityModel, 'setIpAtReg'),
-                'register_time'  => array($entityModel, 'setRegisterTime'),
-                'user_agent'     => array($entityModel, 'setUserAgent'),
-                'current_page'   => array($entityModel, 'setCurrentPage'),
-                'current_planet' => array($entityModel, 'setCurrentPlanet')
-                ),
-            'researches' => array(
-                'spy_tech'              => array($entityModel, 'setSpyTech'),
-                'computer_tech'         => array($entityModel, 'setComputerTech'),
-                'military_tech'         => array($entityModel, 'setMilitaryTech'),
-                'shield_tech'           => array($entityModel, 'setShieldTech'),
-                'defence_tech'          => array($entityModel, 'setDefenceTech'),
-                'energy_tech'           => array($entityModel, 'setEnergyTech'),
-                'hyperspace_tech'       => array($entityModel, 'setHyperspaceTech'),
-                'combustion_tech'       => array($entityModel, 'setCombustionTech'),
-                'impulse_motor_tech'    => array($entityModel, 'setImpulseMotorTech'),
-                'hyperspace_motor_tech' => array($entityModel, 'setHyperspaceMotorTech'),
-                'laser_tech'            => array($entityModel, 'setLaserTech'),
-                'ionic_tech'            => array($entityModel, 'setIonicTech'),
-                'buster_tech'           => array($entityModel, 'setBusterTech'),
-                'intergalactic_tech'    => array($entityModel, 'setIntergalacticTech'),
-                'expedition_tech'       => array($entityModel, 'setExpeditionTech'),
-                'graviton_tech'         => array($entityModel, 'setGravitonTech')
-                )
-            );
+        $request = $this->getRequest();
         $session = $this->app()
             ->getSingleton('admin.core/session');
 
-        $request = $this->getRequest();
-
-        if ($request->getPost('form_key') !== $session->getFormKey()) {
-            $session->addError('Invalid form data.');
+        if ($request->getPost('form_key') !== $this->_getFormKey()) {
+            $session->addError($this->app()->_('Invalid form data.'));
 
             $this->_helper->redirector->gotoRoute(array(
                     'path'       => $this->_getParam('path'),
@@ -273,25 +194,21 @@ class Legacies_Admin_Core_UserController
             return;
         }
 
-        foreach ($optionGroups as $groupName => $groupElements) {
-            $groupData = $request->getPost($groupName);
-            if (!is_array($groupElements) || empty($groupName) || !is_array($groupData)) {
-                continue;
-            }
+        $entityModel = $this->app()
+            ->getModel('legacies/user')
+        ;
 
-            foreach ($groupElements as $element => $callback) {
-                if (!isset($groupData[$element])) {
-                    continue;
-                }
-
-                call_user_func($callback, $groupData[$element]);
-            }
+        if (($id = $this->_getParam('id')) !== null) {
+            $entityModel->load($id);
         }
+
+        $this->_populateEntity($entityModel);
+
         try {
             $entityModel->save();
-            $session->addInfo('User successfully updated.');
+            $session->addInfo($this->app()->_('User successfully updated.'));
         } catch (One_Core_Exception_DaoError $e) {
-            $session->addError('Could not save User updates.');
+            $session->addError($this->app()->_('Could not save user updates.'));
         }
 
         $this->_helper->redirector->gotoRoute(array(
@@ -307,163 +224,44 @@ class Legacies_Admin_Core_UserController
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle('User management')
-            ->setEntityLabel('Add a new User')
-            ->headTitle('Add a new User')
+            ->setTitle($this->app()->_('User management'))
+            ->setEntityLabel($this->app()->_('Add a new user'))
+            ->headTitle($this->app()->_('Add a new user'))
         ;
-
-        $url = $this->app()
-            ->getRouter()
-            ->assemble(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'new-post'
-                ));
-
-        $this->_form->setAction($url);
 
         $this->renderLayout();
     }
 
     public function newPostAction()
     {
-        $entityModel = $this->app()
-            ->getModel('legacies/user')
-        ;
-
-        $optionGroups = array(
-            'form_key' => $formKey,
-            'general' => array(
-                'username' => array($entityModel, 'setUsername'),
-                'email'    => array($entityModel, 'setEmail'),
-                'lang'     => array($entityModel, 'setLang'),
-                'sex'      => array($entityModel, 'setSex')
-                ),
-            'profile' => array(
-                'id_planet' => array($entityModel, 'setIdPlanet'),
-                'avatar'    => array($entityModel, 'setAvatar'),
-                'sign'      => array($entityModel, 'setSign'),
-                'dpath'     => array($entityModel, 'setDpath'),
-                'design'    => array($entityModel, 'setDesign')
-                ),
-            'options' => array(
-                'noipcheck'             => array($entityModel, 'setNoipcheck'),
-                'planet_sort_order'     => array($entityModel, 'setPlanetSortOrder'),
-                'spio_anz'              => array($entityModel, 'setSpioAnz'),
-                'settings_tooltiptime'  => array($entityModel, 'setSettingsTooltiptime'),
-                'settings_fleetactions' => array($entityModel, 'setSettingsFleetactions'),
-                'settings_allylogo'     => array($entityModel, 'setSettingsAllylogo'),
-                'settings_esp'          => array($entityModel, 'setSettingsEsp'),
-                'settings_wri'          => array($entityModel, 'setSettingsWri'),
-                'settings_bud'          => array($entityModel, 'setSettingsBud'),
-                'settings_mis'          => array($entityModel, 'setSettingsMis'),
-                'settings_rep'          => array($entityModel, 'setSettingsRep')
-                ),
-            'meta' => array(
-                'urlaubs_modus'  => array($entityModel, 'setUrlaubsModus'),
-                'urlaubs_until'  => array($entityModel, 'setUrlaubsUntil'),
-                'onlinetime'     => array($entityModel, 'setOnlinetime'),
-                'user_lastip'    => array($entityModel, 'setUserLastip'),
-                'ip_at_reg'      => array($entityModel, 'setIpAtReg'),
-                'register_time'  => array($entityModel, 'setRegisterTime'),
-                'user_agent'     => array($entityModel, 'setUserAgent'),
-                'current_page'   => array($entityModel, 'setCurrentPage'),
-                'current_planet' => array($entityModel, 'setCurrentPlanet')
-                ),
-            'researches' => array(
-                'spy_tech'              => array($entityModel, 'setSpyTech'),
-                'computer_tech'         => array($entityModel, 'setComputerTech'),
-                'military_tech'         => array($entityModel, 'setMilitaryTech'),
-                'shield_tech'           => array($entityModel, 'setShieldTech'),
-                'defence_tech'          => array($entityModel, 'setDefenceTech'),
-                'energy_tech'           => array($entityModel, 'setEnergyTech'),
-                'hyperspace_tech'       => array($entityModel, 'setHyperspaceTech'),
-                'combustion_tech'       => array($entityModel, 'setCombustionTech'),
-                'impulse_motor_tech'    => array($entityModel, 'setImpulseMotorTech'),
-                'hyperspace_motor_tech' => array($entityModel, 'setHyperspaceMotorTech'),
-                'laser_tech'            => array($entityModel, 'setLaserTech'),
-                'ionic_tech'            => array($entityModel, 'setIonicTech'),
-                'buster_tech'           => array($entityModel, 'setBusterTech'),
-                'intergalactic_tech'    => array($entityModel, 'setIntergalacticTech'),
-                'expedition_tech'       => array($entityModel, 'setExpeditionTech'),
-                'graviton_tech'         => array($entityModel, 'setGravitonTech')
-                )
-            );
-
-        $session = $this->app()
-            ->getSingleton('admin.core/session');
-
-        $request = $this->getRequest();
-
-        if ($request->getPost('form_key') === $session->getFormKey()) {
-            $session->addError('Invalid form data.');
-
-            $this->_helper->redirector->gotoRoute(array(
-                    'path'       => $this->_getParam('path'),
-                    'controller' => $this->_getParam('controller'),
-                    'action'     => 'index'
-                    ), null, true);
-            return;
-        }
-
-        foreach ($optionGroups as $groupName => $groupElements) {
-            $groupData = $request->getPost($groupName);
-            if (!is_array($groupElements) || empty($groupName) || !is_array($groupData)) {
-                continue;
-            }
-
-            foreach ($groupElements as $element => $callback) {
-                if (!isset($groupData[$element])) {
-                    continue;
-                }
-
-                call_user_func($callback, $groupData[$element]);
-            }
-        }
-
-        try {
-            $entityModel->save();
-            $session->addInfo('User successfully updated.');
-        } catch (One_Core_Exception_DaoError $e) {
-            $session->addError('Could not save User updates.');
-        }
-
-        $this->_helper->redirector->gotoRoute(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'index'
-                ), null, true);
+        $this->_forward('edit-post');
     }
 
     public function deleteAction()
     {
         try {
             $entityModel = $this->app()
-                ->getModel('legacies/config')
+                ->getModel('legacies/user')
                 ->load($this->_getParam('id'))
                 ->delete()
             ;
 
             $this->app()
                 ->getModel('admin.core/session')
-                ->addInfo('The Option has been successfully deleted.')
+                ->addInfo($this->app()->_('The user has been successfully deleted.'))
             ;
         } catch (One_Core_Exception $e) {
             $this->app()
                 ->getModel('admin.core/session')
-                ->addError('An error occured while deleting the Option.')
+                ->addError($this->app()->_('An error occured while deleting the user.'))
             ;
         }
 
-        $url = $this->app()
-            ->getRouter()
-            ->assemble(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'index'
-                ));
-
-        $this->_redirect($url);
+        $this->_helper->redirector->gotoRoute(array(
+            'path'       => $this->_getParam('path'),
+            'controller' => $this->_getParam('controller'),
+            'action'     => 'index'
+            ));
     }
 
     protected function _buildEditForm()

@@ -41,20 +41,30 @@
  */
 
 /**
- * CMS Page administration controller
+ * XNova:Legacies configuration administration controller
  *
- * @uses        One_Admin_Core_ControllerAbstract
+ * @uses        One_Admin_Core_Controller_FormGridAbstract
  * @uses        Zend_Form
  *
  * @access      public
  * @author      gplanchat
- * @category    Cms
- * @package     One_Admin_Cms
- * @subpackage  One_Admin_Cms
+ * @category    Admin
+ * @package     Legacies
+ * @subpackage  Legacies_Admin_Core
  */
 class Legacies_Admin_Core_ConfigController
     extends One_Admin_Core_Controller_FormGridAbstract
 {
+    protected function _getFormOptionGroupMapping()
+    {
+        return array(
+            'config' => array(
+                'key'   => 'config_name',
+                'value' => 'config_value'
+                )
+            );
+    }
+
     public function indexAction()
     {
         $this->loadLayout('admin.grid');
@@ -63,94 +73,55 @@ class Legacies_Admin_Core_ConfigController
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle('Configuration management')
+            ->setTitle($this->app()->_('Configuration management'))
         ;
 
         $this->renderLayout();
     }
 
-    public function gridAjaxAction()
-    {
-        $collection = $this->app()
-            ->getModel('legacies/config.collection')
-            ->setPage($this->_getParam('p'), $this->_getParam('n'));
-
-        $this->getResponse()
-            ->setHeader('Content-Type', 'application/json; encoding=UTF-8')
-            ->setBody(Zend_Json::encode($collection->load()->toArray()))
-        ;
-    }
-
     public function editAction()
     {
-        if ($this->getRequest()->isPost()){
-            $this->_forward('edit-post');
+        $this->_buildEditForm();
+
+        if (($id = $this->_getParam('id')) === null) {
+            $this->getSingleton('admin.core/session')
+                ->addError($this->app()->_('Unable to load entity: no entity id was specified.'))
+            ;
+            $this->_helper->redirector->gotoRoute(array(
+                'path'       => $this->_getParam('path'),
+                'controller' => $this->_getParam('controller'),
+                'action'     => 'index'
+                ), null, true);
             return;
         }
-
-        $this->_buildEditForm();
 
         $entityModel = $this->app()
             ->getModel('legacies/config')
             ->load($this->_getParam('id'))
         ;
 
-        $formKey = uniqid();
-        $this->app()
-            ->getSingleton('admin.core/session')
-            ->setFormKey($formKey);
-
-        $this->_form->populate(array(
-            'form_key' => $formKey,
-            'config' => array(
-                'key'   => $entityModel->getConfigName(),
-                'value' => $entityModel->getConfigValue()
-                )
-            ));
+        $this->_populateForm($entityModel);
 
         $this->getLayout()
             ->getBlock('container')
             ->addButtonDuplicate()
             ->addButtonDelete()
-            ->setTitle('Configuration Options')
-            ->setEntityLabel(sprintf('Edit Option "%s"', $entityModel->getTitle()))
-            ->headTitle(sprintf('Edit option "%s"', $entityModel->getTitle()))
+            ->setTitle($this->app()->_('Configuration Options'))
+            ->setEntityLabel($this->app()->_('Edit Option "%1$s"', $entityModel->getTitle()))
+            ->headTitle($this->app()->_('Edit option "%1$s"', $entityModel->getTitle()))
         ;
-
-        $url = $this->app()
-            ->getRouter()
-            ->assemble(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'edit-post'
-                ));
-
-        $this->_form->setAction($url);
 
         $this->renderLayout();
     }
 
     public function editPostAction()
     {
-        $entityModel = $this->app()
-            ->getModel('legacies/config')
-            ->load($this->_getParam('id'))
-        ;
-
-        $optionGroups = array(
-            'config' => array(
-                'key'    => array($entityModel, 'setConfigName'),
-                'value'  => array($entityModel, 'setConfigValue')
-                )
-            );
-
+        $request = $this->getRequest();
         $session = $this->app()
             ->getSingleton('admin.core/session');
 
-        $request = $this->getRequest();
-
-        if ($request->getPost('form_key') !== $session->getFormKey()) {
-            $session->addError('Invalid form data.');
+        if ($request->getPost('form_key') !== $this->_getFormKey()) {
+            $session->addError($this->app()->_('Invalid form data.'));
 
             $this->_helper->redirector->gotoRoute(array(
                     'path'       => $this->_getParam('path'),
@@ -160,27 +131,21 @@ class Legacies_Admin_Core_ConfigController
             return;
         }
 
-        foreach ($optionGroups as $groupName => $groupElements) {
-            $groupData = $request->getPost($groupName);
-            if (!is_array($groupElements) || empty($groupName) || !is_array($groupData)) {
-                continue;
-            }
+        $entityModel = $this->app()
+            ->getModel('legacies/config')
+        ;
 
-            foreach ($groupElements as $element => $callback) {
-                if (!isset($groupData[$element])) {
-                    continue;
-                }
-
-                call_user_func($callback, $groupData[$element]);
-            }
+        if (($id = $this->_getParam('id')) !== null) {
+            $entityModel->load($id);
         }
+
+        $this->_populateEntity($entityModel);
+
         try {
             $entityModel->save();
-            $session->addInfo('Configuration option successfully updated.');
+            $session->addInfo($this->app()->_('Configuration option successfully updated.'));
         } catch (One_Core_Exception $e) {
-            var_dump($e);
-            die();
-            $session->addError('Could not save configuration updates.');
+            $session->addError($this->app()->_('Could not save configuration updates.'));
         }
 
         $this->_helper->redirector->gotoRoute(array(
@@ -196,80 +161,17 @@ class Legacies_Admin_Core_ConfigController
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle('Configuration Options')
-            ->setEntityLabel('Add a new Option')
-            ->headTitle('Add a new Option')
+            ->setTitle($this->app()->_('Configuration Options'))
+            ->setEntityLabel($this->app()->_('Add a new Option'))
+            ->headTitle($this->app()->_('Add a new Option'))
         ;
-
-        $url = $this->app()
-            ->getRouter()
-            ->assemble(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'new-post'
-                ));
-
-        $this->_form->setAction($url);
 
         $this->renderLayout();
     }
 
     public function newPostAction()
     {
-        $entityModel = $this->app()
-            ->getModel('legacies/config')
-        ;
-
-        $optionGroups = array(
-            'config' => array(
-                'key'    => array($entityModel, 'setConfigName'),
-                'value'  => array($entityModel, 'setConfigValue')
-                )
-            );
-
-        $session = $this->app()
-            ->getSingleton('admin.core/session');
-
-        $request = $this->getRequest();
-
-        if ($request->getPost('form_key') !== $session->getFormKey()) {
-            $session->addError('Invalid form data.');
-
-            $this->_helper->redirector->gotoRoute(array(
-                    'path'       => $this->_getParam('path'),
-                    'controller' => $this->_getParam('controller'),
-                    'action'     => 'index'
-                    ), null, true);
-            return;
-        }
-
-        foreach ($optionGroups as $groupName => $groupElements) {
-            $groupData = $request->getPost($groupName);
-            if (!is_array($groupElements) || empty($groupName) || !is_array($groupData)) {
-                continue;
-            }
-
-            foreach ($groupElements as $element => $callback) {
-                if (!isset($groupData[$element])) {
-                    continue;
-                }
-
-                call_user_func($callback, $groupData[$element]);
-            }
-        }
-
-        try {
-            $entityModel->save();
-            $session->addInfo('Configuration option successfully created.');
-        } catch (One_Core_Exception $e) {
-            $session->addError('Could not save configuration updates.');
-        }
-
-        $this->_helper->redirector->gotoRoute(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'index'
-                ), null, true);
+        $this->_forward('edit-post');
     }
 
     public function deleteAction()
@@ -283,24 +185,20 @@ class Legacies_Admin_Core_ConfigController
 
             $this->app()
                 ->getModel('admin.core/session')
-                ->addInfo('The Option has been successfully deleted.')
+                ->addInfo($this->app()->_('The Option has been successfully deleted.'))
             ;
         } catch (One_Core_Exception $e) {
             $this->app()
                 ->getModel('admin.core/session')
-                ->addError('An error occured while deleting the Option.')
+                ->addError($this->app()->_('An error occured while deleting the Option.'))
             ;
         }
 
-        $url = $this->app()
-            ->getRouter()
-            ->assemble(array(
-                'path'       => $this->_getParam('path'),
-                'controller' => $this->_getParam('controller'),
-                'action'     => 'index'
-                ));
-
-        $this->_redirect($url);
+        $this->_helper->redirector->gotoRoute(array(
+            'path'       => $this->_getParam('path'),
+            'controller' => $this->_getParam('controller'),
+            'action'     => 'index'
+            ));
     }
 
     protected function _buildEditForm()
@@ -316,6 +214,6 @@ class Legacies_Admin_Core_ConfigController
                 ));
         $this->_form->setAction($url);
 
-        $this->addTab('legacies-config', 'config', 'Configuration');
+        $this->addTab('legacies-config', 'config', $this->app()->_('Configuration'));
     }
 }

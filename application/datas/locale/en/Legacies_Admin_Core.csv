@@ -1,0 +1,28 @@
+#
+## General
+#
+"Unable to load entity: no entity id was specified.";"Unable to load entity: no entity id was specified."
+
+#
+## Legacies_Admin_Core_ConfigController
+#
+"Configuration Options";"Configuration Options"
+"Edit Option ""%s"""";""Edit Option ""%s"""
+"Invalid form data.";"Invalid form data."
+"Configuration option successfully updated.";"Configuration option successfully updated."
+"Could not save configuration updates.";"Could not save configuration updates."
+"Configuration Options";"Configuration Options"
+"Add a new Option";"Add a new Option"
+"The Option has been successfully deleted.";"The Option has been successfully deleted."
+"An error occured while deleting the Option.";"An error occured while deleting the Option."
+
+#
+## Legacies_Admin_Core_UserController
+#
+"User management";"User management"
+"Edit user ""%s""";"Edit User ""%s"""
+"User successfully updated.";"User successfully updated."
+"Could not save user updates.";"Could not save user updates."
+"Add a new user";"Add a new user"
+"The user has been successfully deleted.";"The user has been successfully deleted."
+"An error occured while deleting the user.";"An error occured while deleting the user."

@@ -349,13 +349,6 @@ $this
 ;
 
 $sql = <<<SQL_EOF
-INSERT INTO {$this->getTableName('legacies/galaxy')} (`galaxy`, `system`, `planet`, `id_planet`, `metal`, `crystal`, `id_luna`, `luna`) VALUES
-    (1, 1, 1, 1, 0, 0, NULL, FALSE);
-SQL_EOF;
-
-$this->query($sql);
-
-$sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies/iraks')} (
     `id`                    BIGINT UNSIGNED         NOT NULL    AUTO_INCREMENT,
     `zeit`                  TIMESTAMP               NOT NULL,
@@ -565,17 +558,6 @@ $this
     ->grant('legacies/planets', 'legacies_write', array('SELECT', 'CREATE', 'UPDATE', 'DELETE'))
     ->grant('legacies/planets', 'legacies_setup')
 ;
-
-//$sql = <<<SQL_EOF
-//INSERT INTO `game_planets` (`id`, `name`, `id_owner`, `id_level`, `galaxy`, `system`, `planet`, `last_update`, `planet_type`, `destruyed`, `b_building`, `b_building_id`, `b_tech`, `b_tech_id`, `b_hangar`, `b_hangar_id`, `b_hangar_plus`, `image`, `diameter`, `points`, `ranks`, `field_current`, `field_max`, `temp_min`, `temp_max`, `metal`, `metal_perhour`, `metal_max`, `crystal`, `crystal_perhour`, `crystal_max`, `deuterium`, `deuterium_perhour`, `deuterium_max`, `energy_used`, `energy_max`, `metal_mine`, `crystal_mine`, `deuterium_sintetizer`, `solar_plant`, `fusion_plant`, `robot_factory`, `nano_factory`, `hangar`, `metal_store`, `crystal_store`, `deuterium_store`, `laboratory`, `terraformer`, `ally_deposit`, `silo`, `small_ship_cargo`, `big_ship_cargo`, `light_hunter`, `heavy_hunter`, `crusher`, `battle_ship`, `colonizer`, `recycler`, `spy_sonde`, `bomber_ship`, `solar_satelit`, `destructor`, `dearth_star`, `battleship`, `misil_launcher`, `small_laser`, `big_laser`, `gauss_canyon`, `ionic_canyon`, `buster_canyon`, `small_protection_shield`, `big_protection_shield`, `interceptor_misil`, `interplanetary_misil`, `metal_mine_porcent`, `crystal_mine_porcent`, `deuterium_sintetizer_porcent`, `solar_plant_porcent`, `fusion_plant_porcent`, `solar_satelit_porcent`, `mondbasis`, `phalanx`, `sprungtor`, `last_jump_time`) VALUES
-//('1', 'Homeworld', '1', '', '1', '1', '1', '1269388070', '1', '0', '0', '0', '0', '0', '9067893', '503,1;502,1;404,1000;408,1;407,1;', '0', 'normaltempplanet02', '12750', '407300069', '0', '358', '5000', '47', '87', '83328855370.19999700', '0', '1000000', '55552570246.80000300', '0', '1000000', '55552570246.80000300', '0', '1000000', '0', '0', '52', '46', '49', '44', '0', '26', '17', '20', '26', '25', '25', '22', '0', '0', '6', '3000', '11000', '3000', '0', '0', '0', '0', '0', '0', '0', '6000', '1000', '2408', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '10', '10', '10', '10', '10', '10', '0', '0', '0', '0'),
-//('2', 'test', '2', '', '1', '1', '10', '1258585650', '1', '0', '0', '', '0', '0', '0', '', '0', 'wasserplanet03', '12750', '0', '0', '0', '163', '-60', '-20', '501.40000000', '20', '1000000', '500.70000000', '10', '1000000', '500.00000000', '0', '1000000', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '10', '10', '10', '10', '10', '10', '0', '0', '0', '0'),
-//('3', 'test', '3', '', '1', '1', '5', '1258585688', '1', '0', '0', '', '0', '0', '0', '', '0', 'dschjungelplanet01', '12750', '0', '0', '0', '163', '62', '102', '501.11111111', '20', '1000000', '500.55555556', '10', '1000000', '500.00000000', '0', '1000000', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '10', '10', '10', '10', '10', '10', '0', '0', '0', '0'),
-//('4', 'test', '4', '', '1', '2', '7', '1258585619', '1', '0', '0', '', '0', '0', '0', '', '0', 'normaltempplanet01', '12750', '0', '0', '0', '163', '-42', '-2', '500.00000000', '0', '1000000', '500.00000000', '0', '1000000', '500.00000000', '0', '1000000', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '10', '10', '10', '10', '10', '10', '0', '0', '0', '0'),
-//('5', 'AdminPlanet', '1', '', '1', '1', '1', '1269388070', '1', '0', '0', '', '0', '0', '0', '', '0', 'normaltempplanet02', '12750', '0', '0', '0', '163', '47', '87', '2200000.00000000', '0', '1000000', '2200000.00000000', '0', '1000000', '500.00000000', '0', '1000000', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '10', '10', '10', '10', '10', '10', '0', '0', '0', '0');
-//SQL_EOF;
-//
-//$this->query($sql);
 
 $sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies/rw')} (
