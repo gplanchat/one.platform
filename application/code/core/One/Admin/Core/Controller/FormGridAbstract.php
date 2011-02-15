@@ -60,6 +60,22 @@ abstract class One_Admin_Core_Controller_FormGridAbstract
      */
     protected $_form = null;
 
+    protected function _prepareForm()
+    {
+        $this->loadLayout('admin.form');
+
+        $this->_form = $this->getLayout()
+            ->getBlock('form')
+        ;
+
+        return $this;
+    }
+
+    public function addTab($configIdentitifer, $name, $label)
+    {
+        $this->_form->addTab($configIdentitifer, $name, $label);
+    }
+
     protected function _prepareGrid($gridName, $collectionModel, $sort = array())
     {
         $this->loadLayout('admin.grid');
@@ -82,21 +98,68 @@ abstract class One_Admin_Core_Controller_FormGridAbstract
         return $grid;
     }
 
-    protected function _prepareForm()
+    protected function _populateEntity($entity)
     {
-        $this->loadLayout('admin.form');
+        foreach ($this->_getFormOptionGroupMapping() as $groupName => $groupElements) {
+            $groupData = $request->getPost($groupName);
+            if (!is_array($groupElements) || empty($groupName) || !is_array($groupData)) {
+                continue;
+            }
 
-        $this->_form = $this->getLayout()
-            ->getBlock('form')
-        ;
+            foreach ($groupElements as $element => $field) {
+                if (!isset($groupData[$element])) {
+                    continue;
+                }
+
+                if (is_string($field)) {
+                    $entity->setData($field, $groupData[$element]);
+                } else if (is_array($field)) {
+                    call_user_func($field, $groupData[$element]);
+                }
+            }
+        }
 
         return $this;
     }
 
-    public function addTab($configIdentitifer, $name, $label)
+    protected function _populateForm($entity)
     {
-        $this->_form->addTab($configIdentitifer, $name, $label);
+        $data = array(
+            'form_key' => $this->_getFormKey()
+            );
+
+        foreach ($this->_getFormOptionGroupMapping() as $groupName => $groupElements) {
+            if (!is_array($groupElements) || empty($groupName)) {
+                continue;
+            }
+
+            $data[$groupName] = array();
+            foreach ($groupElements as $element => $field) {
+                if (is_string($field)) {
+                    $data[$groupName][$element] = $entity->getData($field);
+                } else if (is_array($value)) {
+                    $data[$groupName][$element] = call_user_func($value);
+                }
+            }
+        }
+        $this->_form->populate($data);
+
+        return $this;
     }
+
+    protected function _getFormKey($reinit = true)
+    {
+        $session = $this->app()
+            ->getSingleton('admin.core/session')
+        ;
+        if ($reinit === true || $session->hasFormKey()) {
+            $session->setFormKey(uniqid('key_', true));
+        }
+
+        return $session->getFormKey();
+    }
+
+    abstract protected function _getFormOptionGroupMapping();
 
     abstract public function indexAction();
 
