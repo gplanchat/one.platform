@@ -13,6 +13,13 @@
                 <controller>page</controller>
               </route>
             </page>
+            <gaget>
+              <label>Gaget management</label>
+              <route>
+                <path>cms</path>
+                <controller>gaget</controller>
+              </route>
+            </gaget>
           </children>
         </cms>
       </navigation>

@@ -111,9 +111,76 @@
             </websites>
           </elements>
         </cms-page-general>
-        <cms-page-content>
+        <cms-gaget-general>
           <attribs>
-            <id>cms_page_content</id>
+            <id>cms_gaget_general</id>
+          </attribs>
+          <elements>
+            <title>
+              <type>text</type>
+              <name>title</name>
+              <options>
+                <label>Gaget Title</label>
+                <order>1</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>general:title</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                </validators>
+              </options>
+            </title>
+            <identifier>
+              <type>text</type>
+              <name>identifier</name>
+              <options>
+                <label>URL Key</label>
+                <order>2</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>general:identifier</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <format>
+                    <validator>Regex</validator>
+                    <params>
+                      <pattern>#^[[:alnum:]](?:[[:alnum:]\-\.\_]+[[:alnum:]])?$#i</pattern>
+                    </params>
+                  </format>
+                </validators>
+              </options>
+            </identifier>
+            <websites>
+              <type>select</type>
+              <name>websites</name>
+              <options>
+                <label>Website</label>
+                <order>3</order>
+                <required>1</required>
+                <allowEmpty>1</allowEmpty>
+                <attribs>
+                  <id>general:websites</id>
+                </attribs>
+                <disableTranslator>0</disableTranslator>
+                <validators>
+                  <required>
+                    <validator>NotEmpty</validator>
+                  </required>
+                </validators>
+              </options>
+            </websites>
+          </elements>
+        </cms-gaget-general>
+        <cms-content>
+          <attribs>
+            <id>cms_content</id>
           </attribs>
           <elements>
             <html>
@@ -137,7 +204,7 @@
               </options>
             </html>
           </elements>
-        </cms-page-content>
+        </cms-content>
         <cms-page-meta>
           <attribs>
             <id>cms_page_meta</id>
@@ -185,9 +252,9 @@
             </description>
           </elements>
         </cms-page-meta>
-        <cms-page-layout>
+        <cms-layout>
           <attribs>
-            <id>cms_page_layout</id>
+            <id>cms_layout</id>
           </attribs>
           <elements>
             <updates>
@@ -229,7 +296,7 @@
               </options>
             </active>
           </elements>
-        </cms-page-layout>
+        </cms-layout>
       </forms>
     </general>
   </default>

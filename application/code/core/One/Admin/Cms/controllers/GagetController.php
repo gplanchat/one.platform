@@ -41,7 +41,7 @@
  */
 
 /**
- * CMS Page administration controller
+ * CMS Gaget administration controller
  *
  * @uses        One_Admin_Core_Controller_FormGridAbstract
  * @uses        Zend_Form
@@ -52,23 +52,19 @@
  * @package     One_Admin_Cms
  * @subpackage  One_Admin_Cms
  */
-class One_Admin_Cms_PageController
+class One_Admin_Cms_GagetController
     extends One_Admin_Core_Controller_FormGridAbstract
 {
     protected function _getFormOptionGroupMapping()
     {
         return array(
             'general' => array(
-                'title'    => 'title',
-                'url-key'  => 'url-key',
-                'websites' => 'websites'
+                'title'      => 'title',
+                'identifier' => 'identifier',
+                'websites'   => 'websites'
                 ),
             'content' => array(
                 'html' => 'html'
-                ),
-            'meta' => array(
-                'description' => 'description',
-                'keywords'    => 'keywords'
                 ),
             'layout' => array(
                 'active'  => 'active',
@@ -81,11 +77,11 @@ class One_Admin_Cms_PageController
     {
         $this->loadLayout('admin.grid');
 
-        $this->_prepareGrid('cms-page', 'cms/page.collection', $this->_getParam('sort'));
+        $this->_prepareGrid('cms-gaget', 'cms/gaget.collection', $this->_getParam('sort'));
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle($this->app()->_('CMS Pages'))
+            ->setTitle($this->app()->_('CMS Gagets'))
         ;
 
         $this->renderLayout();
@@ -108,7 +104,7 @@ class One_Admin_Cms_PageController
         }
 
         $entityModel = $this->app()
-            ->getModel('cms/page')
+            ->getModel('cms/gaget')
             ->load($this->_getParam('id'))
         ;
 
@@ -123,9 +119,9 @@ class One_Admin_Cms_PageController
             ->getBlock('container')
             ->addButtonDuplicate()
             ->addButtonDelete()
-            ->setTitle('CMS Page')
-            ->setEntityLabel($this->app()->_('Edit CMS Page "%1$s"', $entityModel->getTitle()))
-            ->headTitle($this->app()->_('Edit CMS Page "%1$s"', $entityModel->getTitle()))
+            ->setTitle('CMS Gaget')
+            ->setEntityLabel($this->app()->_('Edit CMS Gaget "%1$s"', $entityModel->getTitle()))
+            ->headTitle($this->app()->_('Edit CMS Gaget "%1$s"', $entityModel->getTitle()))
         ;
 
         $this->renderLayout();
@@ -149,7 +145,7 @@ class One_Admin_Cms_PageController
         }
 
         $entityModel = $this->app()
-            ->getModel('cms/page')
+            ->getModel('cms/gaget')
         ;
 
         if (($id = $this->_getParam('id')) !== null) {
@@ -160,9 +156,9 @@ class One_Admin_Cms_PageController
 
         try {
             $entityModel->save();
-            $session->addError($this->app()->_('Page successfully updated.'));
+            $session->addError($this->app()->_('Gaget successfully updated.'));
         } catch (One_Core_Exception $e) {
-            $session->addError($this->app()->_('Could not save page updates.'));
+            $session->addError($this->app()->_('Could not save gaget updates.'));
         }
 
         $this->_helper->redirector->gotoRoute(array(
@@ -178,9 +174,9 @@ class One_Admin_Cms_PageController
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle($this->app()->_('CMS Page'))
-            ->setEntityLabel($this->app()->_('Add a new CMS Page'))
-            ->headTitle($this->app()->_('Add a new CMS Page'))
+            ->setTitle($this->app()->_('CMS Gaget'))
+            ->setEntityLabel($this->app()->_('Add a new CMS Gaget'))
+            ->headTitle($this->app()->_('Add a new CMS Gaget'))
         ;
 
         $websites = $this->_form->getTab('general')
@@ -200,19 +196,19 @@ class One_Admin_Cms_PageController
     {
         try {
             $entityModel = $this->app()
-                ->getModel('cms/page')
+                ->getModel('cms/gaget')
                 ->load($this->_getParam('id'))
                 ->delete()
             ;
 
             $this->app()
                 ->getModel('admin.core/session')
-                ->addInfo($this->app()->_('The page has been successfully deleted.'))
+                ->addInfo($this->app()->_('The gaget has been successfully deleted.'))
             ;
         } catch (One_Core_Exception $e) {
             $this->app()
                 ->getModel('admin.core/session')
-                ->addError($this->app()->_('An error occured while deleting the page.'))
+                ->addError($this->app()->_('An error occured while deleting the gaget.'))
             ;
         }
 
@@ -236,9 +232,8 @@ class One_Admin_Cms_PageController
                 ));
         $this->_form->setAction($url);
 
-        $this->addTab('cms-page-general', 'general', 'General');
+        $this->addTab('cms-gaget-general', 'general', 'General');
         $this->addTab('cms-content', 'content', 'Content');
-        $this->addTab('cms-page-meta', 'meta', 'Meta data');
         $this->addTab('cms-layout', 'layout', 'Layout updates');
     }
 }
