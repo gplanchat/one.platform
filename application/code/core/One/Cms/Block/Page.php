@@ -81,6 +81,10 @@ class One_Cms_Block_Page
                 ));
         }
 
-        return $this->_model->getContent();
+        return $this->app()
+            ->getSingleton('cms/template')
+            ->render($this->getLayout(), $this->_model->getContent(),
+                array_merge($this->getData(), $this->_model->getData()))
+        ;
     }
 }

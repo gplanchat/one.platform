@@ -56,7 +56,11 @@ class One_Cms_Block_Gaget
 
     protected function _construct($options)
     {
-        $options = parent::_construct($options);
+        if (isset($options['identifier'])) {
+            $this->setGagetId($options['identifier']);
+            unset($options['identifier']);
+        }
+        parent::_construct($options);
 
         $this->_model = $this->app()
             ->getSingleton('cms/gaget')
@@ -68,17 +72,25 @@ class One_Cms_Block_Gaget
     protected function _render()
     {
         $gagetId = $this->getGagetId();
-        if (is_int($gagetId)) {
-            $this->_model
-                ->load($gagetId);
-        } else {
-            $this->_model
-                ->load(array(
-                    'identifier' => $gagetId,
-                    'website_id' => $this->app()->getWebsiteId()
-                ));
+        try {
+            if (is_int($gagetId)) {
+                $this->_model
+                    ->load($gagetId);
+            } else {
+                $this->_model
+                    ->load(array(
+                        'identifier' => $gagetId,
+                        'website_id' => $this->app()->getWebsiteId()
+                    ));
+            }
+        } catch (One_Core_Exception $e) {
+            return 'CMS rendering error.';
         }
 
-        return $this->_model->getContent();
+        return $this->app()
+            ->getSingleton('cms/template')
+            ->render($this->getLayout(), $this->_model->getContent(),
+                array_merge($this->getData(), $this->_model->getData()))
+        ;
     }
 }
