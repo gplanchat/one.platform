@@ -41,7 +41,7 @@
  */
 
 /**
- * CMS Page display block
+ * CMS Gaget display block
  *
  * @access      public
  * @author      gplanchat
@@ -49,19 +49,21 @@
  * @package     One_Cms
  * @subpackage  One_Cms
  */
-class One_Cms_Block_Page
+class One_Cms_Block_Gaget
     extends One_Core_BlockAbstract
 {
     protected $_model = null;
 
     protected function _construct($options)
     {
-        $options = parent::_construct($options);
-
-        $this->setData('page_id', $this->getRequest()->getParam('page-id'));
+        if (isset($options['identifier'])) {
+            $this->setGagetId($options['identifier']);
+            unset($options['identifier']);
+        }
+        parent::_construct($options);
 
         $this->_model = $this->app()
-            ->getSingleton('cms/page')
+            ->getSingleton('cms/gaget')
         ;
 
         return $options;
@@ -69,16 +71,20 @@ class One_Cms_Block_Page
 
     protected function _render()
     {
-        $pageId = $this->getPageId();
-        if (is_int($pageId)) {
-            $this->_model
-                ->load($pageId);
-        } else {
-            $this->_model
-                ->load(array(
-                    'path'       => $pageId,
-                    'website_id' => $this->app()->getWebsiteId()
-                ));
+        $gagetId = $this->getGagetId();
+        try {
+            if (is_int($gagetId)) {
+                $this->_model
+                    ->load($gagetId);
+            } else {
+                $this->_model
+                    ->load(array(
+                        'identifier' => $gagetId,
+                        'website_id' => $this->app()->getWebsiteId()
+                    ));
+            }
+        } catch (One_Core_Exception $e) {
+            return 'CMS rendering error.';
         }
 
         return $this->app()

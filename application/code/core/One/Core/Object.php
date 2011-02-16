@@ -132,7 +132,7 @@ class One_Core_Object
      */
     protected function _construct($data)
     {
-        $this->_data = $data;
+        $this->addData($data);
         $this->_originalData = $this->_data;
 
         return $this;

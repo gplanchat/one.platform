@@ -51,34 +51,42 @@
  * @package     One_Core
  * @subpackage  One_Core
  */
-class One_Core_Block_Html_Token
-    extends One_Core_Block_Text
+class One_Core_Block_Text
+    extends One_Core_BlockAbstract
 {
-    protected $_token = null;
+    protected $_content = null;
 
     protected function _construct($options)
     {
-        if (isset($options['token'])) {
-            $this->setToken($options['token']);
-            unset($options['token']);
+        if (isset($options['content'])) {
+            $this->setContent($options['content']);
+            unset($options['content']);
         }
         parent::_construct($options);
     }
 
-    public function setToken($token)
+    public function setContent($content)
     {
-        $this->_token = $token;
+        $this->_content = $content;
 
         return $this;
     }
 
-    public function getToken()
+    public function getContent()
     {
-        return $this->_token;
+        return $this->_content;
     }
 
-    public function _render($name = null)
+    public function render($name = null)
     {
-        return "<{$this->getToken()}>{$this->getContent()}</{$this->getToken()}>";
+        $this->_beforeRender();
+        $render = $this->getContent();
+        $this->_afterRender();
+
+        return $render;
+    }
+
+    protected function _render($name = null)
+    {
     }
 }

@@ -715,8 +715,6 @@ class One_Core_Model_Application
         $params = func_get_args();
         array_shift($params);
 
-        var_dump(array($message, $this->_translator->translate($message)));
-
         return vsprintf($this->_translator->translate($message), $params);
     }
 }

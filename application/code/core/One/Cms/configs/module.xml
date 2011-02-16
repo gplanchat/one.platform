@@ -45,8 +45,8 @@
   <default>
     <modules>
       <One_Cms>
-        <version>0.2.0</version>
-        <stage>alpha3</stage>
+        <version>0.3.0</version>
+        <stage>alpha1</stage>
       </One_Cms>
     </modules>
 

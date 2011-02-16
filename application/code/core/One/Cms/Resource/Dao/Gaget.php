@@ -41,7 +41,7 @@
  */
 
 /**
- * CMS Page display block
+ * Page DAO resource
  *
  * @access      public
  * @author      gplanchat
@@ -49,42 +49,11 @@
  * @package     One_Cms
  * @subpackage  One_Cms
  */
-class One_Cms_Block_Page
-    extends One_Core_BlockAbstract
+class One_Cms_Resource_Dao_Gaget
+    extends One_Core_Dao_Database_Table
 {
-    protected $_model = null;
-
-    protected function _construct($options)
+    public function _construct($data)
     {
-        $options = parent::_construct($options);
-
-        $this->setData('page_id', $this->getRequest()->getParam('page-id'));
-
-        $this->_model = $this->app()
-            ->getSingleton('cms/page')
-        ;
-
-        return $options;
-    }
-
-    protected function _render()
-    {
-        $pageId = $this->getPageId();
-        if (is_int($pageId)) {
-            $this->_model
-                ->load($pageId);
-        } else {
-            $this->_model
-                ->load(array(
-                    'path'       => $pageId,
-                    'website_id' => $this->app()->getWebsiteId()
-                ));
-        }
-
-        return $this->app()
-            ->getSingleton('cms/template')
-            ->render($this->getLayout(), $this->_model->getContent(),
-                array_merge($this->getData(), $this->_model->getData()))
-        ;
+        $this->_init('cms/gaget', 'cms/gaget');
     }
 }
