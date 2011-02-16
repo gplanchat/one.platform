@@ -64,7 +64,7 @@ class One_Admin_Cms_GagetController
                 'websites'   => 'websites'
                 ),
             'content' => array(
-                'html' => 'html'
+                'html' => 'content'
                 ),
             'layout' => array(
                 'active'  => 'active',

@@ -64,7 +64,7 @@ class One_Admin_Cms_PageController
                 'websites' => 'websites'
                 ),
             'content' => array(
-                'html' => 'html'
+                'html' => 'content'
                 ),
             'meta' => array(
                 'description' => 'description',
