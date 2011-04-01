@@ -181,6 +181,15 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * FIXME: PHPDoc
      *
+     * @since 0.2.0
+     *
+     * @var array
+     */
+    protected $_orders = array();
+
+    /**
+     * FIXME: PHPDoc
+     *
      * @since 0.1.3
      *
      * @param string $daoClass
@@ -363,7 +372,7 @@ abstract class One_Core_Bo_CollectionAbstract
         $this->getDao()
             ->setLimit($this->_pageSize)
             ->setOffset($this->_pageSize * max($this->_page - 1, 0))
-            ->loadCollection($this, $this->getDataMapper(), $identifiers, $this->getFilters());
+            ->loadCollection($this, $this->getDataMapper(), $identifiers);
 
         return $this;
     }
@@ -706,9 +715,9 @@ abstract class One_Core_Bo_CollectionAbstract
 
     public function sort($fields)
     {
-//        foreach ($fields as $field => $sort) {
-//            TODO
-//        }
+        foreach ($fields as $field => $sort) {
+            $this->_orders[$field] = $sort;
+        }
 
         return $this;
     }
@@ -719,12 +728,12 @@ abstract class One_Core_Bo_CollectionAbstract
             $field = $this->getIdFieldName();
         }
 
-        if (empty($this->_items) || !current($this->_items)->hasData($field)) {
-            return array();
-        }
-
         if (!$this->isLoaded()) {
             $this->load();
+        }
+
+        if (empty($this->_items) || !current($this->_items)->hasData($field)) {
+            return array();
         }
 
         $hash = array();
@@ -789,11 +798,24 @@ abstract class One_Core_Bo_CollectionAbstract
     /**
      * Get all the filters
      *
+     * @since 0.2.0
      * @param string $attribute
      * @param mixed $params
      */
     public function getFilters()
     {
         return $this->_filters;
+    }
+
+    /**
+     * Get all the filters
+     *
+     * @since 0.2.0
+     * @param string $attribute
+     * @param mixed $params
+     */
+    public function getOrders()
+    {
+        return $this->_orders;
     }
 }

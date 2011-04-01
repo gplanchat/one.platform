@@ -249,4 +249,32 @@ class One_Core_Collection
     {
         return (bool) (($this->_index >= 0) && ($this->_index < count($this->_items)));
     }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.2.0
+     *
+     * @return One_Core_Bo_EntityInterface
+     */
+    public function previous()
+    {
+        $this->_index--;
+
+        return $this->current();
+    }
+
+    /**
+     * TODO: PHPDoc
+     *
+     * @since 0.2.0
+     *
+     * @return One_Core_Bo_EntityInterface
+     */
+    public function end()
+    {
+        $this->_index = $this->count() - 3;
+
+        return $this->current();
+    }
 }

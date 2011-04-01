@@ -4,7 +4,7 @@
       <tbody>
         <tr>
           <td>
-            <a onclick="return customerGrid_massactionJsObject.selectAll()" href="#">Select All</a>
+            <a class="all" href="#">Select All</a>
             <span class="separator">|</span>
             <a onclick="return customerGrid_massactionJsObject.unselectAll()" href="#">Unselect All</a>
             <span class="separator">|</span>
@@ -14,6 +14,16 @@
             <span class="separator">|</span>
             <strong id="customerGrid_massaction-count">0</strong> items selected
           </td>
+          <script type="text/javascript">
+$(document).ready(function(){
+  var container = $('.massaction');
+
+  $('.all', container).click(function(e){
+    e.preventDefault();
+
+    });
+  });
+          </script>
           <td>
             <div class="right">
               <div class="entry-edit">

@@ -59,15 +59,6 @@ abstract class One_Core_Bo_EntityAbstract
     implements One_Core_Bo_EntityInterface
 {
     /**
-     * Default primary key field name.
-     *
-     * @since 0.1.0
-     *
-     * @var string
-     */
-    const DEFAULT_ENTITY_ID_FIELD_NAME = 'entity_id';
-
-    /**
      * Default datamapper
      *
      * @since 0.1.0
@@ -171,9 +162,20 @@ abstract class One_Core_Bo_EntityAbstract
      *
      * @return string
      */
-    public function getId()
+    public function getId($field = null)
     {
-        return $this->getData($this->getIdFieldName());
+        $fieldList = $this->getIdFieldName();
+        if (!is_array($fieldList)) {
+            $field = $fieldList;
+        } else if ($field === null) {
+            $ids = array();
+            foreach ($fieldList as $field) {
+                $ids[$field] = $this->getData($field);
+            }
+            return $ids;
+        }
+
+        return $this->getData($field);
     }
 
     /**

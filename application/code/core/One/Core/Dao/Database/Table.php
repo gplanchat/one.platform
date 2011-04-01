@@ -304,6 +304,11 @@ abstract class One_Core_Dao_Database_Table
                 $this->_buildFilter($select, $filters);
             }
 
+            $orders = $collection->getOrders();
+            if (!empty($orders)) {
+                $this->_buildOrder($select, $orders);
+            }
+
             if ($this->_limit !== null) {
                 $select->limit($this->_limit, $this->_offset);
             }
@@ -323,7 +328,25 @@ abstract class One_Core_Dao_Database_Table
     }
 
     /**
-     *
+     * @since 0.2.0
+     * @param Zend_Db_Select $select
+     * @param array $filters
+     */
+    private function _buildOrder(Zend_Db_Select $select, Array $orders)
+    {
+        foreach ($orders as $field => $expression) {
+            if ($expression instanceof Zend_Db_Expr) {
+                $select->order($expression);
+            } else {
+                $select->order("{$field} {$expression}");
+            }
+        }
+
+        return $select;
+    }
+
+    /**
+     * @since 0.2.0
      * @param Zend_Db_Select $select
      * @param array $filters
      */
@@ -381,6 +404,10 @@ abstract class One_Core_Dao_Database_Table
 
                     case One_Core_Bo_CollectionInterface::FILTER_NOT:
                         $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} != ?", $expression);
+                        break;
+
+                    default:
+                        $select->where("{$this->getReadConnection()->quoteIdentifier($attribute)} = ?", $expression);
                         break;
                     }
                 } else if ($expression instanceof Zend_Db_Expr) {
