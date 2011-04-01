@@ -54,7 +54,6 @@
       <dal>
         <database>
           <legacies>
-            <namespace>Legacies_Dal_Database</namespace>
             <connection>
               <read>legacies_read</read>
               <write>legacies_write</write>
@@ -128,7 +127,9 @@
         </entities>
       </dal>
       <dao>
-        <namespace>Legacies_Resource_Dao</namespace>
+        <legacies>
+          <namespace>Legacies_Resource_Dao</namespace>
+        </legacies>
       </dao>
     </resource>
     

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-<?php
 /**
- * This file is part of One.Platform
+ * This file is part of XNova:Legacies
  *
  * @license Modified BSD
  * @see https://github.com/gplanchat/one.platform
@@ -20,7 +19,7 @@
  *       this list of conditions and the following disclaimer in the documentation
  *       and/or other materials provided with the distribution.
  *
- *     - Neither the name of Zend Technologies USA, Inc. nor the names of its
+ *     - Neither the name of Grégory PLANCHAT nor the names of its
  *       contributors may be used to endorse or promote products derived from this
  *       software without specific prior written permission.
  *
@@ -45,61 +44,50 @@
 <config>
   <default>
     <modules>
-      <Legacies>
-        <codePool>community</codePool>
-        <active>0</active>
-        <requires>
-          <One_Core />
-          <One_User />
-          <One_Cms />
-        </requires>
-      </Legacies>
-      <Legacies_Admin_Core>
-        <codePool>community</codePool>
-        <route type="admin.core/router.route" path="game" name="game" />
-        <active>0</active>
-        <require>
-          <Legacies />
-        </require>
-      </Legacies_Admin_Core>
       <Legacies_Chat>
-        <codePool>community</codePool>
-        <active>0</active>
-        <require>
-          <One_Core />
-          <One_User />
-          <Legacies />
-        </require>
+        <version>2011.1.0</version>
+        <stage>alpha1</stage>
       </Legacies_Chat>
-      <Legacies_Alliance>
-        <codePool>community</codePool>
-        <active>0</active>
-        <require>
-          <One_Core />
-          <One_User />
-          <Legacies />
-        </require>
-      </Legacies_Alliance>
     </modules>
+
+    <resource>
+      <dal>
+        <database>
+          <legacies.chat>
+            <namespace>Legacies_Chat_Dal_Database</namespace>
+            <connection>
+              <read>legacies_read</read>
+              <write>legacies_write</write>
+              <setup>legacies_setup</setup>
+            </connection>
+          </legacies.chat>
+        </database>
+      </dal>
+      <dao>
+        <legacies.chat>
+          <namespace>Legacies_Chat_Resource_Dao</namespace>
+        </legacies.chat>
+      </dao>
+    </resource>
+
+    <model>
+      <legacies.chat>
+        <namespace>Legacies_Chat_Model</namespace>
+      </legacies.chat>
+    </model>
+
+    <block>
+      <legacies.chat>
+        <namespace>Legacies_Chat_Block</namespace>
+      </legacies.chat>
+    </block>
   </default>
-  <production>
-    <modules>
-      <Legacies>
-        <active>1</active>
-      </Legacies>
-      <Legacies_Chat>
-        <active>1</active>
-      </Legacies_Chat>
-      <Legacies_Alliance>
-        <active>1</active>
-      </Legacies_Alliance>
-    </modules>
-  </production>
-  <backoffice>
-    <modules>
-      <Legacies_Admin_Core>
-        <active>1</active>
-      </Legacies_Admin_Core>
-    </modules>
-  </backoffice>
+
+  <frontoffice>
+    <general>
+      <layout>
+        <chat>chat.xml</chat>
+      </layout>
+    </general>
+  </frontoffice>
 </config>

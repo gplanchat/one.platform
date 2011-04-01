@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.1.0">
+  <chat>
+    <reference name="body">
+      <block type="legacies.chat/chat" name="chat" template="chat/layout.phtml" />
+    </reference>
+  </chat>
+</layout>
