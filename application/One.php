@@ -188,6 +188,8 @@ final class One
     {
         if (self::$_defaultResponseObject === null) {
             self::$_defaultResponseObject = new Zend_Controller_Response_Http();
+
+            self::$_defaultResponseObject->setHeader('X-Powered-By', 'One.Platform/0.2.0');
         }
         return clone self::$_defaultResponseObject;
     }

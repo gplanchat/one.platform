@@ -331,7 +331,8 @@ class One_Core_Setup_IndexController
         foreach (array('core_setup', 'core_read', 'core_write') as $connection) {
             $connections->$connection->engine = $adapter;
             $connections->$connection->dialect = $dialect;
-            $connections->$connection->params->{'table-prefix'} = $prefixConfig;
+            $tablePrefix = 'table-prefix';
+            $connections->$connection->params->$tablePrefix = $prefixConfig;
             $connections->$connection->params->host = $connectionConfig['host'];
             $connections->$connection->params->username = $connectionConfig['username'];
             if (!empty($connectionConfig['password'])) {
@@ -349,10 +350,15 @@ class One_Core_Setup_IndexController
         $path = dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR;
         $baseUrl = dirname($this->getFrontController()->getBaseUrl());
 
+        $baseUrl = str_replace('\\', '/', $baseUrl);
+        if (substr($baseUrl, -1, 1) !== '/') {
+            $baseUrl .= '/';
+        }
+
         $htaccess =<<<HTACCESS_EOF
 RewriteEngine On
 
-RewriteBase {$baseUrl}/
+RewriteBase {$baseUrl}
 
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -s [OR]
