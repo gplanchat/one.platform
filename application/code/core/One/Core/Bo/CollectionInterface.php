@@ -68,6 +68,10 @@ interface One_Core_Bo_CollectionInterface
     const FILTER_LOWER_THAN            = 'LTHAN';
     const FILTER_LOWER_THAN_OR_EQUAL   = 'LTHANEQ';
 
+    const ORDER_ASC = 'ASC';
+    const ORDER_DESC = 'DESC';
+    const ORDER_RAND = 'RAND';
+
     /**
      * Get the entity identifier
      *

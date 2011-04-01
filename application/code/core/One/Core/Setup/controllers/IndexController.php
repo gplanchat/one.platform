@@ -376,7 +376,6 @@ HTACCESS_EOF;
         $updater = $this->app()->getModel('setup/updater');
 
         try {
-            var_dump($this->_session->getData());
             $updater
                 ->setup('One_Core', $this->_session->getDatabaseDialect())
                 ->setup('One_User', $this->_session->getDatabaseDialect())
@@ -396,7 +395,6 @@ HTACCESS_EOF;
                 ->register($registrationData, 1)
             ;
         } catch (Exception $e) {
-            var_dump($e);
             echo $e->getMessage();
             return;
         }
@@ -452,8 +450,8 @@ HTACCESS_EOF;
 
             $updater->setup($module, $config['dialect']);
         } catch (Exception $e) {
-            var_dump($e);
-            die();
+            echo $e->getMessage();
+            return;
         }
 
         $baseUrl = $this->getFrontController()->getBaseUrl();
