@@ -62,7 +62,7 @@ class Legacies_Alliance_Model_Entity
     public function getMemberCollection()
     {
         return $this->app()
-            ->getModel('legacies.alliance/entity.members')
+            ->getModel('legacies.alliance/entity.member.collection')
             ->addAllianceFilter($this->getId())
         ;
     }

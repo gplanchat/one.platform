@@ -49,12 +49,12 @@
  * @package     Legacies
  * @subpackage  Legacies_Alliance
  */
-class Legacies_Allicance_Model_Entity_Member
+class Legacies_Alliance_Model_Entity_Member
     extends One_Core_Bo_EntityAbstract
 {
     protected function _construct($options)
     {
-        $this->_init('legacies.allicane/entity.member');
+        $this->_init('legacies.alliance/entity.member');
 
         return parent::_construct($options);
     }
