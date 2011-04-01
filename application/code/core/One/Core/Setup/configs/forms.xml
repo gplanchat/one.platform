@@ -85,7 +85,7 @@
             <success>
               <name>setup</name>
               <params>
-                <action>stage-three</action>
+                <action>setup-database</action>
               </params>
             </success>
             <error>
