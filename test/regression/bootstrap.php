@@ -28,6 +28,7 @@ Zend_Loader_Autoloader::getInstance()
     ->registerNamespace('One_Core')
     ->registerNamespace('Test_')
     ->registerNamespace('PHPUnit_')
+    ->registerNamespace('vfs')
 ;
 
 Test_AllTests::suite()->run();

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+<?php
 /**
  * This file is part of One.Platform
  *
@@ -19,7 +20,7 @@
  *       this list of conditions and the following disclaimer in the documentation
  *       and/or other materials provided with the distribution.
  *
- *     - Neither the name of Grégory PLANCHAT nor the names of its
+ *     - Neither the name of Zend Technologies USA, Inc. nor the names of its
  *       contributors may be used to endorse or promote products derived from this
  *       software without specific prior written permission.
  *
@@ -44,79 +45,55 @@
 <config>
   <default>
     <modules>
-      <One_Cms>
+      <One_Wiki>
         <version>0.3.0</version>
         <stage>alpha1</stage>
-      </One_Cms>
+      </One_Wiki>
     </modules>
 
     <model>
-      <cms>
-        <namespace>One_Cms_Model</namespace>
-      </cms>
+      <wiki>
+        <namespace>One_Wiki_Model</namespace>
+      </wiki>
     </model>
 
     <exception>
-      <cms>
-        <namespace>One_Cms_Exception</namespace>
-      </cms>
+      <wiki>
+        <namespace>One_Wiki_Exception</namespace>
+      </wiki>
     </exception>
 
     <block>
-      <cms>
-        <namespace>One_Cms_Block</namespace>
-      </cms>
+      <wiki>
+        <namespace>One_Wiki_Block</namespace>
+      </wiki>
     </block>
 
     <resource>
       <dao>
-        <cms>
-          <namespace>One_Cms_Resource_Dao</namespace>
-        </cms>
+        <wiki>
+          <namespace>One_Wiki_Resource_Dao</namespace>
+        </wiki>
       </dao>
+      <orm>
+        <wiki>
+          <namespace>One_Wiki_Resource_Orm</namespace>
+        </wiki>
+      </orm>
       <dal>
-        <database>
-          <cms>
-            <connection>
-              <read>cms_read</read>
-              <write>cms_write</write>
-              <setup>cms_setup</setup>
-            </connection>
-          </cms>
-        </database>
-        <entities>
-          <cms>
-            <page>
-              <table>cms_page</table>
-            </page>
-            <gadget>
-              <table>cms_gadget</table>
-            </gadget>
-          </cms>
-        </entities>
+        <filesystem>
+          <wiki>
+            <namespace>One_Wiki_Dal_Filesystem</namespace>
+          </wiki>
+        </filesystem>
       </dal>
     </resource>
-
-    <general>
-      <database>
-        <connection>
-          <cms_setup>
-            <use>core_setup</use>
-          </cms_setup>
-          <cms_read>
-            <use>core_read</use>
-          </cms_read>
-          <cms_write>
-            <use>core_write</use>
-          </cms_write>
-        </connection>
-      </database>
-    </general>
   </default>
+  
   <frontoffice>
     <general>
       <layout>
-        <cms>cms.xml</cms>
+        <wiki>wiki.xml</wiki>
       </layout>
     </general>
   </frontoffice>

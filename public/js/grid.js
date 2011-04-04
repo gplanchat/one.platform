@@ -70,10 +70,8 @@
                 redirect();
                 });
     
-            lines.click(function(e) {
-                e.preventDefault();
-
-                document.location = $('.action a.default', $(this)).attr('href');
+            $('td:gt(1)', lines).click(function(e) {
+                document.location = $('.action a.default', $(this).parent()).attr('href');
                 });
             }
         });

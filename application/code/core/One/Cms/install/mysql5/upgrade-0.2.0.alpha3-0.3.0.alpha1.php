@@ -3,7 +3,7 @@
 $this->setSetupConnection('cms_setup');
 
 $sql = <<<SQL_EOF
-CREATE TABLE IF NOT EXISTS {$this->getTableName('cms/gaget')} (
+CREATE TABLE IF NOT EXISTS {$this->getTableName('cms/gadget')} (
     `entity_id`         INT UNSIGNED        NOT NULL    AUTO_INCREMENT,
     `identifier`        VARCHAR(40)         NOT NULL,
     `title`             VARCHAR(255)        NOT NULL,
@@ -22,13 +22,13 @@ SQL_EOF;
 $this->query($sql);
 
 $this
-    ->grant('cms/gaget', 'cms_read',  array('SELECT'))
-    ->grant('cms/gaget', 'cms_write', array('SELECT', 'CREATE', 'UPDATE', 'DELETE'))
-    ->grant('cms/gaget', 'cms_setup')
+    ->grant('cms/gadget', 'cms_read',  array('SELECT'))
+    ->grant('cms/gadget', 'cms_write', array('SELECT', 'CREATE', 'UPDATE', 'DELETE'))
+    ->grant('cms/gadget', 'cms_setup')
 ;
 
 $sql = <<<SQL_EOF
-ALTER TABLE {$this->getTableName('cms/gaget')}
+ALTER TABLE {$this->getTableName('cms/gadget')}
   ADD CONSTRAINT `FK_CMS_GAGET_WEBSITE_ID__CORE_WEBSITE_ENTITY_ID`
     FOREIGN KEY (`website_id`)
     REFERENCES {$this->getTableName('core/website')}(`entity_id`)

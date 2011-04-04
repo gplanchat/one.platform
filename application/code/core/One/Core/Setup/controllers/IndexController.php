@@ -331,8 +331,7 @@ class One_Core_Setup_IndexController
         foreach (array('core_setup', 'core_read', 'core_write') as $connection) {
             $connections->$connection->engine = $adapter;
             $connections->$connection->dialect = $dialect;
-            $tablePrefix = 'table-prefix';
-            $connections->$connection->params->$tablePrefix = $prefixConfig;
+            $connections->$connection->params->{'table-prefix'} = $prefix;
             $connections->$connection->params->host = $connectionConfig['host'];
             $connections->$connection->params->username = $connectionConfig['username'];
             if (!empty($connectionConfig['password'])) {
