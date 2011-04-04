@@ -9,7 +9,7 @@ class Test_AllTests
         $suite = new PHPUnit_Framework_TestSuite('One Platform');
 
         $suite->addTestSuite('Test_OneTest');
-//        $suite->addTest(Test_One_AllTests::suite());
+        $suite->addTest(Test_One_AllTests::suite());
 
         return $suite;
     }

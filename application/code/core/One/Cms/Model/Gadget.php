@@ -49,12 +49,12 @@
  * @package     One_Cms
  * @subpackage  One_Cms
  */
-class One_Cms_Model_Gaget
+class One_Cms_Model_Gadget
     extends One_Core_Bo_EntityAbstract
 {
     protected function _construct($options)
     {
-        $this->_init('cms/gaget');
+        $this->_init('cms/gadget');
 
         return parent::_construct($options);
     }

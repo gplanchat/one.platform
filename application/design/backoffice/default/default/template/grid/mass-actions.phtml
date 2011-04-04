@@ -1,29 +1,43 @@
 <?php //TODO ?>
   <div id="customerGrid_massaction">
+    <script type="text/javascript">
+//<![CDATA[
+$(document).ready(function(){
+  var container = $('.massaction');
+
+  $('.select.all', container).click(function(e){
+    e.preventDefault();
+    var items = $('table.data td.index input:checkbox');
+    items.attr('checked', 1);
+    });
+  $('.select.none', container).click(function(e){
+    e.preventDefault();
+    var items = $('table.data td.index input:checkbox');
+    items.attr('checked', 0);
+    });
+  $('table.data td.index input:checkbox').change(function(){
+    $('.massaction-count').text($('table.data td.index input:checkbox:checked').length);
+    });
+  });
+//]]>
+    </script>
     <table cellspacing="0" cellpadding="0" class="massaction">
       <tbody>
         <tr>
           <td>
-            <a class="all" href="#">Select All</a>
+            <a class="select all" href="#">Select All</a>
             <span class="separator">|</span>
-            <a onclick="return customerGrid_massactionJsObject.unselectAll()" href="#">Unselect All</a>
+            <a class="select none" href="#">Unselect All</a>
             <span class="separator">|</span>
-            <a onclick="return customerGrid_massactionJsObject.selectVisible()" href="#">Select Visible</a>
+            <?php /*?>
+            <a class="select all-visible" href="#">Select Visible</a>
             <span class="separator">|</span>
-            <a onclick="return customerGrid_massactionJsObject.unselectVisible()" href="#">Unselect Visible</a>
+            <a class="select none-visible" href="#">Unselect Visible</a>
             <span class="separator">|</span>
-            <strong id="customerGrid_massaction-count">0</strong> items selected
+            <?php */ ?>
+            <strong class="massaction-count">0</strong> items selected
           </td>
-          <script type="text/javascript">
-$(document).ready(function(){
-  var container = $('.massaction');
-
-  $('.all', container).click(function(e){
-    e.preventDefault();
-
-    });
-  });
-          </script>
+<?php /*?>
           <td>
             <div class="right">
               <div class="entry-edit">
@@ -71,6 +85,7 @@ $(document).ready(function(){
               </div>
             </div>
           </td>
+ <?php //*/ ?>
         </tr>
       </tbody>
     </table>

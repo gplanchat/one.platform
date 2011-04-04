@@ -27,7 +27,7 @@ class One_Core_Setup_Model_Updater_ScriptQueue
 
     protected $_scripts = array();
 
-    public function __construct($path, $fromVersion, $toVersion)
+    public function __construct($path, $fromVersion = null, $toVersion = null)
     {
         try {
             $this->_analyzePath($path);
@@ -37,6 +37,10 @@ class One_Core_Setup_Model_Updater_ScriptQueue
 
         if ($fromVersion === null) {
             $fromVersion = '0.0.0';
+        }
+
+        if ($toVersion === null) {
+            $toVersion = '0.0.0';
         }
 
         preg_match(self::PCRE_VERSION_PATTERN, $fromVersion, $matches);
@@ -258,7 +262,7 @@ class One_Core_Setup_Model_Updater_ScriptQueue
             switch ($matches['action']) {
             case self::MODE_INSTALL:
                 $this->_addInstallFile(
-                    $file->getRealPath(),
+                    $file->getPathname(),
                     $matches['version1'],
                     (isset($matches['stage1']) && !empty($matches['stage1']) ? $matches['stage1'] : self::STAGE_STABLE),
                     (isset($matches['level1']) && !empty($matches['level1']) ? (int) $matches['level1'] : 0)
@@ -267,7 +271,7 @@ class One_Core_Setup_Model_Updater_ScriptQueue
 
             case self::MODE_UNINSTALL:
                 $this->_addUninstallFile(
-                    $file->getRealPath(),
+                    $file->getPathname(),
                     $matches['version1'],
                     (isset($matches['stage1']) && !empty($matches['stage1']) ? $matches['stage1'] : self::STAGE_STABLE),
                     (isset($matches['level1']) && !empty($matches['level1']) ? (int) $matches['level1'] : 0)
@@ -276,7 +280,7 @@ class One_Core_Setup_Model_Updater_ScriptQueue
 
             case self::MODE_UPGRADE:
                 $this->_addUpgradeFile(
-                    $file->getRealPath(),
+                    $file->getPathname(),
                     $matches['version1'],
                     $matches['version2'],
                     (isset($matches['stage1']) && !empty($matches['stage1']) ? $matches['stage1'] : self::STAGE_STABLE),
@@ -288,7 +292,7 @@ class One_Core_Setup_Model_Updater_ScriptQueue
 
             case self::MODE_DOWNGRADE:
                 $this->_addDowngradeFile(
-                    $file->getRealPath(),
+                    $file->getPathname(),
                     $matches['version1'],
                     $matches['version2'],
                     (isset($matches['stage1']) && !empty($matches['stage1']) ? $matches['stage1'] : self::STAGE_STABLE),

@@ -8,6 +8,7 @@ class Test_One_Core_AllTests
 
         $suite->addTestSuite('Test_One_Core_ObjectTest');
         $suite->addTest(Test_One_Core_Model_AllTests::suite());
+        $suite->addTest(Test_One_Core_Setup_AllTests::suite());
 
         return $suite;
     }

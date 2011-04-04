@@ -128,14 +128,14 @@ class Test_One_Core_Model_ApplicationTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->_environment = 'production';
-        $this->_config = new Zend_Config($this->_defaultConfg);
+        $this->_config = $this->_defaultConfg;
         $this->_websiteId = 1;
     }
 
     public function initApplication()
     {
         $this->_applicationHandler = new One_Core_Model_Application(
-            $this->_websiteId, $this->_environment, $this->_config);
+            $this->_websiteId, $this->_environment, array(), $this->_config);
     }
 
     public function testWebsiteId()

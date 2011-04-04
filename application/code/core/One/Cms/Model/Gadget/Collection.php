@@ -41,7 +41,7 @@
  */
 
 /**
- * CMS Gaget display block
+ * Page collection model
  *
  * @access      public
  * @author      gplanchat
@@ -49,48 +49,13 @@
  * @package     One_Cms
  * @subpackage  One_Cms
  */
-class One_Cms_Block_Gaget
-    extends One_Core_BlockAbstract
+class One_Cms_Model_Gadget_Collection
+    extends One_Core_Bo_CollectionAbstract
 {
-    protected $_model = null;
-
     protected function _construct($options)
     {
-        if (isset($options['identifier'])) {
-            $this->setGagetId($options['identifier']);
-            unset($options['identifier']);
-        }
-        parent::_construct($options);
+        $this->_init('cms/gadget', 'cms/gadget');
 
-        $this->_model = $this->app()
-            ->getSingleton('cms/gaget')
-        ;
-
-        return $options;
-    }
-
-    protected function _render()
-    {
-        $gagetId = $this->getGagetId();
-        try {
-            if (is_int($gagetId)) {
-                $this->_model
-                    ->load($gagetId);
-            } else {
-                $this->_model
-                    ->load(array(
-                        'identifier' => $gagetId,
-                        'website_id' => $this->app()->getWebsiteId()
-                    ));
-            }
-        } catch (One_Core_Exception $e) {
-            return 'CMS rendering error.';
-        }
-
-        return $this->app()
-            ->getSingleton('cms/template')
-            ->render($this->getLayout(), $this->_model->getContent(),
-                array_merge($this->getData(), $this->_model->getData()))
-        ;
+        return parent::_construct($options);
     }
 }
