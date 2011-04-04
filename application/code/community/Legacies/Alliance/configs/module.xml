@@ -43,13 +43,6 @@
 -->
 <config>
   <default>
-    <modules>
-      <Legacies_Alliance>
-        <version>2011.1.0</version>
-        <stage>alpha1</stage>
-      </Legacies_Alliance>
-    </modules>
-
     <resource>
       <dal>
         <database>

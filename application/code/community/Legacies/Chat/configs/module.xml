@@ -43,13 +43,6 @@
 -->
 <config>
   <default>
-    <modules>
-      <Legacies_Chat>
-        <version>2011.1.0</version>
-        <stage>alpha1</stage>
-      </Legacies_Chat>
-    </modules>
-
     <resource>
       <dal>
         <database>
