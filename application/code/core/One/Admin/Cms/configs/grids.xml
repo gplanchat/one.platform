@@ -65,7 +65,7 @@
             </params>
           </action>
         </cms-page>
-        <cms-gaget>
+        <cms-gadget>
           <index>
             <type>admin.core/grid.column.indexer</type>
             <params>
@@ -126,7 +126,7 @@
               <width>50</width>
             </params>
           </action>
-        </cms-gaget>
+        </cms-gadget>
       </grids>
     </general>
   </default>

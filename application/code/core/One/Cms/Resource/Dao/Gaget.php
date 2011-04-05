@@ -49,11 +49,11 @@
  * @package     One_Cms
  * @subpackage  One_Cms
  */
-class One_Cms_Resource_Dao_Gaget
+class One_Cms_Resource_Dao_Gadget
     extends One_Core_Dao_Database_Table
 {
     public function _construct($data)
     {
-        $this->_init('cms/gaget', 'cms/gaget');
+        $this->_init('cms/gadget', 'cms/gadget');
     }
 }

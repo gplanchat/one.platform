@@ -41,7 +41,7 @@
  */
 
 /**
- * CMS Gaget display block
+ * CMS Gadget display block
  *
  * @access      public
  * @author      gplanchat
@@ -57,7 +57,7 @@ class One_Cms_Block_Gadget
     protected function _construct($options)
     {
         if (isset($options['identifier'])) {
-            $this->setGagetId($options['identifier']);
+            $this->setGadgetId($options['identifier']);
             unset($options['identifier']);
         }
         parent::_construct($options);
@@ -73,7 +73,7 @@ class One_Cms_Block_Gadget
     {
         $gadgetId = $this->getGadgetId();
         try {
-            if (is_int($gagetId)) {
+            if (is_int($gadgetId)) {
                 $this->_model
                     ->load($gadgetId);
             } else {
