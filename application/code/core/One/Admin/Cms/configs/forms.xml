@@ -111,9 +111,9 @@
             </websites>
           </elements>
         </cms-page-general>
-        <cms-gaget-general>
+        <cms-gadget-general>
           <attribs>
-            <id>cms_gaget_general</id>
+            <id>cms_gadget_general</id>
           </attribs>
           <elements>
             <title>
@@ -177,7 +177,7 @@
               </options>
             </websites>
           </elements>
-        </cms-gaget-general>
+        </cms-gadget-general>
         <cms-content>
           <attribs>
             <id>cms_content</id>

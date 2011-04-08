@@ -14,10 +14,10 @@
               </route>
             </page>
             <gaget>
-              <label>Gaget management</label>
+              <label>Gadget management</label>
               <route>
                 <path>cms</path>
-                <controller>gaget</controller>
+                <controller>gadget</controller>
               </route>
             </gaget>
           </children>

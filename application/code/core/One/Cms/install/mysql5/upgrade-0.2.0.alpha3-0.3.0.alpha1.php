@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS {$this->getTableName('cms/gadget')} (
     `layout_active`     BOOL                NOT NULL,
     PRIMARY KEY (`entity_id`),
     UNIQUE KEY (`identifier`, `website_id`),
-    KEY `IDX_CMS_GAGET__TITLE` (`title`),
-    KEY `IDX_CMS_GAGET__IDENTIFIER` (`identifier`),
-    KEY `IDX_CMS_GAGET__WEBSITE_ID` (`website_id`)
+    KEY `IDX_CMS_GADGET__TITLE` (`title`),
+    KEY `IDX_CMS_GADGET__IDENTIFIER` (`identifier`),
+    KEY `IDX_CMS_GADGET__WEBSITE_ID` (`website_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SQL_EOF;
 
@@ -29,7 +29,7 @@ $this
 
 $sql = <<<SQL_EOF
 ALTER TABLE {$this->getTableName('cms/gadget')}
-  ADD CONSTRAINT `FK_CMS_GAGET_WEBSITE_ID__CORE_WEBSITE_ENTITY_ID`
+  ADD CONSTRAINT `FK_CMS_GADGET_WEBSITE_ID__CORE_WEBSITE_ENTITY_ID`
     FOREIGN KEY (`website_id`)
     REFERENCES {$this->getTableName('core/website')}(`entity_id`)
       ON DELETE RESTRICT

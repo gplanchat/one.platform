@@ -292,7 +292,7 @@ class One_Core_Setup_IndexController
         try {
             $info = $this->_getDatabaseInfo($engine, $connectionConfig);
             if ($info === false || !is_array($info) || !isset($info['dialect'])) {
-                $this->app()->throwException('core/database.connectio-error',
+                $this->app()->throwException('core/database.connection-error',
                     'Could not connect to the specified database.');
             }
 
@@ -317,15 +317,22 @@ class One_Core_Setup_IndexController
 
         $this->_session->setRegistrationData($this->_getParam('registration'));
 
+        $baseUrl = dirname($this->getFrontController()->getBaseUrl());
+
+        $baseUrl = str_replace('\\', '/', $baseUrl);
+        if (substr($baseUrl, -1, 1) !== '/') {
+            $baseUrl .= '/';
+        }
+
         $config = simplexml_load_file(APPLICATION_PATH . DS. 'configs' . DS . 'local.xml.sample');
 
         $config->default->system->hostname = $_SERVER['HTTP_HOST'];
-        $config->default->system->{'base-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/';
-        $config->default->system->{'style-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/design/';
-        $config->default->system->{'script-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/js/';
+        $config->default->system->{'base-url'} = $baseUrl;
+        $config->default->system->{'style-url'} = $baseUrl . 'design/';
+        $config->default->system->{'script-url'} = $baseUrl . 'js/';
 
         $config->backoffice->system->hostname = $_SERVER['HTTP_HOST'];
-        $config->backoffice->system->{'base-url'} = dirname($this->getFrontController()->getBaseUrl()) . '/admin.php/';
+        $config->backoffice->system->{'base-url'} = $baseUrl . 'admin.php/';
 
         $connections = $config->default->general->database->connection;
         foreach (array('core_setup', 'core_read', 'core_write') as $connection) {
@@ -347,12 +354,6 @@ class One_Core_Setup_IndexController
         $config->asXml(APPLICATION_PATH . DS. 'configs' . DS . 'local.xml');
 
         $path = dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR;
-        $baseUrl = dirname($this->getFrontController()->getBaseUrl());
-
-        $baseUrl = str_replace('\\', '/', $baseUrl);
-        if (substr($baseUrl, -1, 1) !== '/') {
-            $baseUrl .= '/';
-        }
 
         $htaccess =<<<HTACCESS_EOF
 RewriteEngine On

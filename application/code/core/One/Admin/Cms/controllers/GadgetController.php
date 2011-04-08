@@ -41,7 +41,7 @@
  */
 
 /**
- * CMS Gaget administration controller
+ * CMS Gadget administration controller
  *
  * @uses        One_Admin_Core_Controller_FormGridAbstract
  * @uses        Zend_Form
@@ -52,7 +52,7 @@
  * @package     One_Admin_Cms
  * @subpackage  One_Admin_Cms
  */
-class One_Admin_Cms_GagetController
+class One_Admin_Cms_GadgetController
     extends One_Admin_Core_Controller_FormGridAbstract
 {
     protected function _getFormOptionGroupMapping()
@@ -77,11 +77,11 @@ class One_Admin_Cms_GagetController
     {
         $this->loadLayout('admin.grid');
 
-        $this->_prepareGrid('cms-gaget', 'cms/gaget.collection', $this->_getParam('sort'));
+        $this->_prepareGrid('cms-gadget', 'cms/gadget.collection', $this->_getParam('sort'));
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle($this->app()->_('CMS Gagets'))
+            ->setTitle($this->app()->_('CMS Gadgets'))
         ;
 
         $this->renderLayout();
@@ -104,7 +104,7 @@ class One_Admin_Cms_GagetController
         }
 
         $entityModel = $this->app()
-            ->getModel('cms/gaget')
+            ->getModel('cms/gadget')
             ->load($this->_getParam('id'))
         ;
 
@@ -119,9 +119,9 @@ class One_Admin_Cms_GagetController
             ->getBlock('container')
             ->addButtonDuplicate()
             ->addButtonDelete()
-            ->setTitle('CMS Gaget')
-            ->setEntityLabel($this->app()->_('Edit CMS Gaget "%1$s"', $entityModel->getTitle()))
-            ->headTitle($this->app()->_('Edit CMS Gaget "%1$s"', $entityModel->getTitle()))
+            ->setTitle('CMS Gadget')
+            ->setEntityLabel($this->app()->_('Edit CMS Gadget "%1$s"', $entityModel->getTitle()))
+            ->headTitle($this->app()->_('Edit CMS Gadget "%1$s"', $entityModel->getTitle()))
         ;
 
         $this->renderLayout();
@@ -145,7 +145,7 @@ class One_Admin_Cms_GagetController
         }
 
         $entityModel = $this->app()
-            ->getModel('cms/gaget')
+            ->getModel('cms/gadget')
         ;
 
         if (($id = $this->_getParam('id')) !== null) {
@@ -156,9 +156,9 @@ class One_Admin_Cms_GagetController
 
         try {
             $entityModel->save();
-            $session->addError($this->app()->_('Gaget successfully updated.'));
+            $session->addError($this->app()->_('Gadget successfully updated.'));
         } catch (One_Core_Exception $e) {
-            $session->addError($this->app()->_('Could not save gaget updates.'));
+            $session->addError($this->app()->_('Could not save gadget updates.'));
         }
 
         $this->_helper->redirector->gotoRoute(array(
@@ -174,9 +174,9 @@ class One_Admin_Cms_GagetController
 
         $container = $this->getLayout()
             ->getBlock('container')
-            ->setTitle($this->app()->_('CMS Gaget'))
-            ->setEntityLabel($this->app()->_('Add a new CMS Gaget'))
-            ->headTitle($this->app()->_('Add a new CMS Gaget'))
+            ->setTitle($this->app()->_('CMS Gadget'))
+            ->setEntityLabel($this->app()->_('Add a new CMS Gadget'))
+            ->headTitle($this->app()->_('Add a new CMS Gadget'))
         ;
 
         $websites = $this->_form->getTab('general')
@@ -196,19 +196,19 @@ class One_Admin_Cms_GagetController
     {
         try {
             $entityModel = $this->app()
-                ->getModel('cms/gaget')
+                ->getModel('cms/gadget')
                 ->load($this->_getParam('id'))
                 ->delete()
             ;
 
             $this->app()
                 ->getModel('admin.core/session')
-                ->addInfo($this->app()->_('The gaget has been successfully deleted.'))
+                ->addInfo($this->app()->_('The gadget has been successfully deleted.'))
             ;
         } catch (One_Core_Exception $e) {
             $this->app()
                 ->getModel('admin.core/session')
-                ->addError($this->app()->_('An error occured while deleting the gaget.'))
+                ->addError($this->app()->_('An error occured while deleting the gadget.'))
             ;
         }
 
@@ -232,7 +232,7 @@ class One_Admin_Cms_GagetController
                 ));
         $this->_form->setAction($url);
 
-        $this->addTab('cms-gaget-general', 'general', 'General');
+        $this->addTab('cms-gadget-general', 'general', 'General');
         $this->addTab('cms-content', 'content', 'Content');
         $this->addTab('cms-layout', 'layout', 'Layout updates');
     }
