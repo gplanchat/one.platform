@@ -44,18 +44,6 @@
 <config>
   <default>
     <resource>
-      <dal>
-        <database>
-          <legacies.chat>
-            <namespace>Legacies_Chat_Dal_Database</namespace>
-            <connection>
-              <read>legacies_read</read>
-              <write>legacies_write</write>
-              <setup>legacies_setup</setup>
-            </connection>
-          </legacies.chat>
-        </database>
-      </dal>
       <dao>
         <legacies.chat>
           <namespace>Legacies_Chat_Resource_Dao</namespace>
