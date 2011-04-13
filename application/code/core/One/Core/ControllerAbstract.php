@@ -158,7 +158,7 @@ class One_Core_ControllerAbstract
      */
     protected function _redirectSuccess($defaultRedirect = '/')
     {
-        if (($redirect = $this->getRequest()->getParam('success')) === null) {
+        if (($redirect = $this->getRequest()->getPost('success')) === null) {
             $redirect = $defaultRedirect;
         }
         $this->_redirect($redirect);
@@ -171,7 +171,7 @@ class One_Core_ControllerAbstract
      */
     protected function _redirectError($defaultRedirect = '/')
     {
-        if (($redirect = $this->getRequest()->getParam('error')) === null) {
+        if (($redirect = $this->getRequest()->getPost('error')) === null) {
             $redirect = $defaultRedirect;
         }
         $this->_redirect($redirect);
