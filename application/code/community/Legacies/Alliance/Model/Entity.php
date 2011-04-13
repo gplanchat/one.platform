@@ -52,6 +52,8 @@
 class Legacies_Alliance_Model_Entity
     extends One_Core_Bo_EntityAbstract
 {
+    protected $_memberCollection = null;
+
     protected function _construct($options)
     {
         $this->_init('legacies.alliance/entity');
@@ -59,11 +61,26 @@ class Legacies_Alliance_Model_Entity
         return parent::_construct($options);
     }
 
+    public function loadByTag($tagId)
+    {
+        return $this->load($tagId, 'tag');
+    }
+
+    /**
+     * Get the member list
+     *
+     * @return Legacies_Alliance_Model_Entity_Member_Collection
+     */
     public function getMemberCollection()
     {
-        return $this->app()
-            ->getModel('legacies.alliance/entity.member.collection')
-            ->addAllianceFilter($this->getId())
-        ;
+        if ($this->_memberCollection === null) {
+            $this->_memberCollection = $this->app()
+                ->getModel('legacies.alliance/entity.member.collection')
+                ->addAllianceFilter($this->getId())
+                ->load()
+            ;
+        }
+
+        return $this->_memberCollection;
     }
 }

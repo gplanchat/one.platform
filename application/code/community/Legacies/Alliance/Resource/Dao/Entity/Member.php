@@ -54,7 +54,7 @@ class Legacies_Alliance_Resource_Dao_Entity_Member
 {
     public function _construct($data)
     {
-        $this->_init('legacies.alliance/entity.member', 'legacies.alliance/entity.link.user');
+        $this->_init('user/entity', 'legacies.alliance/entity.link.user');
 
         parent::_construct($data);
     }
@@ -71,7 +71,7 @@ class Legacies_Alliance_Resource_Dao_Entity_Member
             ->from(array('entity' => $this->getTableName($this->getEntityTable())), array())
             ->joinLeft(
             array('user' => $this->getTableName('user/entity')),
-            'entity.user_entty_id=user.entity_id'
+            'entity.user_entity_id=user.entity_id'
             );
     }
 }

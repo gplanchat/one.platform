@@ -46,7 +46,7 @@ $sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/entity')} (
     `entity_id`             INT UNSIGNED        NOT NULL    AUTO_INCREMENT,
     `game_id`               INT UNSIGNED        NOT NULL,
-    `manager_entity_id`     INT UNSIGNED        NOT NULL,
+    `manager_entity_id`     SMALLINT UNSIGNED   NOT NULL,
     `tag`                   VARCHAR(8)          NOT NULL,
     `full_name`             VARCHAR(80)         NOT NULL,
     `short_description`     TEXT                NOT NULL,
@@ -57,7 +57,8 @@ CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/entity')} (
     `updated_at`            DATETIME            NOT NULL,
     `created_at`            DATETIME            NOT NULL,
     PRIMARY KEY (`entity_id`),
-    UNIQUE KEY (`tag`)
+    UNIQUE KEY `UNQ_TAG` (`tag`),
+    INDEX `IDX_MANAGER_ENTITY_ID` (`manager_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SQL_EOF;
 
@@ -68,7 +69,7 @@ $this->query($sql);
  */
 $sql = <<<SQL_EOF
 ALTER TABLE {$this->getTableName('legacies.alliance/entity')}
-  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_MANAGER_ENTITY_ID___USER_ENTITY_ENTITY_ID`
+  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_ENTITY__USER_ENTITY`
     FOREIGN KEY (`manager_entity_id`)
     REFERENCES {$this->getTableName('user/entity')} (`entity_id`)
       ON DELETE CASCADE
@@ -83,26 +84,28 @@ $this
     ->grant('legacies.alliance/entity', 'legacies_setup')
 ;
 
-$sql = <<<SQL_EOF
-INSERT INTO {$this->getTableName('legacies.alliance/entity')} (
-  `entity_id`, `game_id`, `manager_entity_id`, `tag`, `full_name`,
-  `short_description`, `description`, `private_notes`, `logo`, `website_url`,
-  `updated_at`, `created_at`
-  )
-  SELECT alliance.`id`, 1, alliance.`ally_owner`, alliance.`ally_tag`,
-      alliance.`ally_name`, alliance.`ally_description`, alliance.`ally_description`,
-      alliance.`ally_description`, alliance.`ally_image`, alliance.`ally_web`,
-      NOW(), NOW()
-  FROM {$this->getTableName('legacies/alliance')} AS alliance;
-SQL_EOF;
-
-$this->query($sql);
+//$sql = <<<SQL_EOF
+//INSERT INTO {$this->getTableName('legacies.alliance/entity')} (
+//  `entity_id`, `game_id`, `manager_entity_id`, `tag`, `full_name`,
+//  `short_description`, `description`, `private_notes`, `logo`, `website_url`,
+//  `updated_at`, `created_at`
+//  )
+//  SELECT alliance.`id`, 1, alliance.`ally_owner`, alliance.`ally_tag`,
+//      alliance.`ally_name`, alliance.`ally_description`, alliance.`ally_description`,
+//      alliance.`ally_description`, alliance.`ally_image`, alliance.`ally_web`,
+//      NOW(), NOW()
+//  FROM {$this->getTableName('legacies/alliance')} AS alliance;
+//SQL_EOF;
+//
+//$this->query($sql);
 
 $sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/entity.link.user')} (
     `alliance_entity_id`    INT UNSIGNED        NOT NULL,
-    `user_entity_id`        INT UNSIGNED        NOT NULL,
-    PRIMARY KEY (`alliance_entity_id`, `user_entity_id`)
+    `user_entity_id`        SMALLINT UNSIGNED   NOT NULL,
+    PRIMARY KEY (`alliance_entity_id`, `user_entity_id`),
+    INDEX `IDX_ALLIANCE_ENTITY_ID` (`alliance_entity_id`),
+    INDEX `IDX_USER_ENTITY_ID` (`user_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SQL_EOF;
 
@@ -113,7 +116,7 @@ $this->query($sql);
  */
 $sql = <<<SQL_EOF
 ALTER TABLE {$this->getTableName('legacies.alliance/entity.link.user')}
-  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_ENTITY_LINK_USER_ALLIANCE_ENTITY_ID__LEGACIES_ALLIANCE_ENTITY_ID`
+  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_ENTITY_LINK_USER__LEGACIES_ALLIANCE`
     FOREIGN KEY (`alliance_entity_id`)
     REFERENCES {$this->getTableName('legacies.alliance/entity')} (`entity_id`)
       ON DELETE CASCADE
@@ -127,7 +130,7 @@ $this->query($sql);
  */
 $sql = <<<SQL_EOF
 ALTER TABLE {$this->getTableName('legacies.alliance/entity.link.user')}
-  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_ENTITY_LINK_USER_USER_ENTITY_ID__USER_ENTITY_ENTITY_ID`
+  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_ENTITY_LINK_USER__USER_ENTITY`
     FOREIGN KEY (`user_entity_id`)
     REFERENCES {$this->getTableName('user/entity')} (`entity_id`)
       ON DELETE CASCADE
@@ -155,8 +158,8 @@ $sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/application')} (
     `application_id`        BIGINT UNSIGNED     NOT NULL    AUTO_INCREMENT,
     `alliance_entity_id`    INT UNSIGNED        NOT NULL,
-    `user_entity_id`        INT UNSIGNED        NOT NULL,
-    `text`                  LTEXT               NOT NULL,
+    `user_entity_id`        SMALLINT UNSIGNED   NOT NULL,
+    `text`                  TEXT                NOT NULL,
     PRIMARY KEY (`application_id`),
     INDEX (`alliance_entity_id`),
     INDEX (`user_entity_id`)
@@ -170,7 +173,7 @@ $this->query($sql);
  */
 $sql = <<<SQL_EOF
 ALTER TABLE {$this->getTableName('legacies.alliance/entity.link.user')}
-  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_APPLICATION_USER_ENTITY_ID__USER_ENTITY_ENTITY_ID`
+  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_APPLICATION__USER_ENTITY`
     FOREIGN KEY (`user_entity_id`)
     REFERENCES {$this->getTableName('user/entity')} (`entity_id`)
       ON DELETE CASCADE
@@ -182,7 +185,7 @@ SQL_EOF;
  */
 $sql = <<<SQL_EOF
 ALTER TABLE {$this->getTableName('legacies.alliance/entity.link.user')}
-  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_APPLICATION_ALLIANCE_ENTITY_ID__LEGACIES_ALLIANCE_ENTITY_ID`
+  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_APPLICATION__LEGACIES_ALLIANCE_ENTITY`
     FOREIGN KEY (`alliance_entity_id`)
     REFERENCES {$this->getTableName('legacies.alliance/entity')} (`entity_id`)
       ON DELETE CASCADE

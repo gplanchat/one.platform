@@ -50,10 +50,8 @@
  * @subpackage  One_User
  */
 class Legacies_Chat_Block_Chat
-    extends One_Core_Block_Html_Form
+    extends One_Core_Block_Html
 {
-    protected $_submitLabel = 'Send';
-
     public function _construct($options)
     {
         $options = parent::_construct($options);
@@ -153,25 +151,5 @@ SCRIPT_EOF;
         ;
 
         return $options;
-    }
-
-    public function setTransferSalt($salt)
-    {
-        $this->_form
-            ->getSubform('login')
-            ->getElement('salt')
-            ->setValue($salt)
-        ;
-
-        return $this;
-    }
-
-    public function getTransferSalt()
-    {
-        return $this->_form
-            ->getSubform('login')
-            ->getElement('salt')
-            ->getValue()
-        ;
     }
 }
