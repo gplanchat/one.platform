@@ -84,25 +84,16 @@ $this
     ->grant('legacies.alliance/entity', 'legacies_setup')
 ;
 
-//$sql = <<<SQL_EOF
-//INSERT INTO {$this->getTableName('legacies.alliance/entity')} (
-//  `entity_id`, `game_id`, `manager_entity_id`, `tag`, `full_name`,
-//  `short_description`, `description`, `private_notes`, `logo`, `website_url`,
-//  `updated_at`, `created_at`
-//  )
-//  SELECT alliance.`id`, 1, alliance.`ally_owner`, alliance.`ally_tag`,
-//      alliance.`ally_name`, alliance.`ally_description`, alliance.`ally_description`,
-//      alliance.`ally_description`, alliance.`ally_image`, alliance.`ally_web`,
-//      NOW(), NOW()
-//  FROM {$this->getTableName('legacies/alliance')} AS alliance;
-//SQL_EOF;
-//
-//$this->query($sql);
+$sql = <<<SQL_EOF
+DROP TABLE {$this->getTableName('legacies/alliance')};
+SQL_EOF;
 
 $sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/entity.link.user')} (
     `alliance_entity_id`    INT UNSIGNED        NOT NULL,
     `user_entity_id`        SMALLINT UNSIGNED   NOT NULL,
+    `created_at`            DATETIME            NOT NULL,
+    `updated_at`            DATETIME            NOT NULL,
     PRIMARY KEY (`alliance_entity_id`, `user_entity_id`),
     INDEX `IDX_ALLIANCE_ENTITY_ID` (`alliance_entity_id`),
     INDEX `IDX_USER_ENTITY_ID` (`user_entity_id`)
@@ -145,14 +136,7 @@ $this
     ->grant('legacies.alliance/entity.link.user', 'legacies_setup')
 ;
 
-//$sql = <<<SQL_EOF
-//SELECT alliance.`id`, alliance.`ally_members` FROM {$this->getTableName('legacies/alliance')} AS alliance;
-//SQL_EOF;
-//
-//$statement = $this->query($sql);
-//foreach ($statement as $row) {
-//  TODO: Migration routines
-//}
+$this->query($sql);
 
 $sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/application')} (
@@ -160,6 +144,8 @@ CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/application')
     `alliance_entity_id`    INT UNSIGNED        NOT NULL,
     `user_entity_id`        SMALLINT UNSIGNED   NOT NULL,
     `text`                  TEXT                NOT NULL,
+    `created_at`            DATETIME            NOT NULL,
+    `updated_at`            DATETIME            NOT NULL,
     PRIMARY KEY (`application_id`),
     INDEX (`alliance_entity_id`),
     INDEX (`user_entity_id`)
@@ -172,7 +158,7 @@ $this->query($sql);
  * Alliance application <-> User constraint
  */
 $sql = <<<SQL_EOF
-ALTER TABLE {$this->getTableName('legacies.alliance/entity.link.user')}
+ALTER TABLE {$this->getTableName('legacies.alliance/application')}
   ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_APPLICATION__USER_ENTITY`
     FOREIGN KEY (`user_entity_id`)
     REFERENCES {$this->getTableName('user/entity')} (`entity_id`)
@@ -184,7 +170,7 @@ SQL_EOF;
  * Alliance application <-> Alliance constraint
  */
 $sql = <<<SQL_EOF
-ALTER TABLE {$this->getTableName('legacies.alliance/entity.link.user')}
+ALTER TABLE {$this->getTableName('legacies.alliance/application')}
   ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_APPLICATION__LEGACIES_ALLIANCE_ENTITY`
     FOREIGN KEY (`alliance_entity_id`)
     REFERENCES {$this->getTableName('legacies.alliance/entity')} (`entity_id`)
@@ -197,3 +183,69 @@ $this
     ->grant('legacies.alliance/application', 'legacies_write', array('SELECT', 'CREATE', 'UPDATE', 'DELETE'))
     ->grant('legacies.alliance/application', 'legacies_setup')
 ;
+
+/*
+ * Migration requests starts here
+ */
+
+// Migrationg alliance entity
+$sql = <<<SQL_EOF
+INSERT INTO {$this->getTableName('legacies.alliance/entity')} (
+  `entity_id`, `game_id`, `manager_entity_id`, `tag`, `full_name`,
+  `short_description`, `description`, `private_notes`, `logo`, `website_url`,
+  `updated_at`, `created_at`
+  )
+  SELECT alliance.`id`, 1, alliance.`ally_owner`, alliance.`ally_tag`,
+      alliance.`ally_name`, alliance.`ally_description`, alliance.`ally_description`,
+      alliance.`ally_description`, alliance.`ally_image`, alliance.`ally_web`,
+      NOW(), NOW()
+  FROM {$this->getTableName('legacies/alliance')} AS alliance;
+SQL_EOF;
+
+$this->query($sql);
+
+// Migration alliance<->user links
+$sql = <<<SQL_EOF
+INSERT INTO {$this->getTableName('legacies.alliance/entity.link.user')} (
+    `user_entity_id`, `alliance_entity_id`, `created_at`, `updated_at`
+  )
+  SELECT
+      user.`id`,
+      user.`ally_id`,
+      user.`ally_register_time`,
+      user.`ally_register_time`
+    FROM {$this->getTableName('legacies/user')} AS user
+      WHERE user.`ally_request`=0
+SQL_EOF;
+
+$this->query($sql);
+
+// Migration user applications
+$sql = <<<SQL_EOF
+INSERT INTO {$this->getTableName('legacies.alliance/application')} (
+    `user_entity_id`, `alliance_entity_id`, `text`, `created_at`, `updated_at`
+  )
+  SELECT
+      user.`id`,
+      user.`ally_id`,
+      user.`ally_request_text`,
+      user.`ally_register_time`,
+      user.`ally_register_time`
+    FROM {$this->getTableName('legacies/user')} AS user
+      WHERE user.`ally_request`=1
+SQL_EOF;
+
+$this->query($sql);
+
+// Cleaning up legacy user table
+$sql = <<<SQL_EOF
+ALTER TABLE {$this->getTableName('legacies/user')}
+  DROP COLUMN `ally_id`,
+  DROP COLUMN `ally_name`,
+  DROP COLUMN `ally_request`,
+  DROP COLUMN `ally_request_text`,
+  DROP COLUMN `ally_register_time`,
+  DROP COLUMN `ally_rank_id`
+SQL_EOF;
+
+$this->query($sql);
