@@ -744,6 +744,19 @@ $this
 ;
 
 $sql = <<<SQL_EOF
+INSERT INTO {$this->getTableName('legacies/alliance')} (
+    `id`, `ally_name`, `ally_tag`, `ally_owner`, `ally_register_time`, `ally_description`,
+    `ally_web`, `ally_text`, `ally_image`, `ally_request`, `ally_request_waiting`,
+    `ally_request_notallow`, `ally_owner_range`, `ally_ranks`, `ally_members`
+    )
+    VALUES
+    ('1', 'Admin', 'Admin', 1, NOW(), 'Administrator alliance', 'http://www.xnova-ng.org/',
+    '', '', '', '', '', '', '', '')
+SQL_EOF;
+
+$this->query($sql);
+
+$sql = <<<SQL_EOF
 INSERT INTO {$this->getTableName('legacies/users')} (
     `id`, `username`, `password`, `email`, `email_2`, `lang`, `authlevel`, `sex`,
     `avatar`, `sign`, `id_planet`, `galaxy`, `system`, `planet`, `current_planet`,
@@ -767,12 +780,14 @@ INSERT INTO {$this->getTableName('legacies/users')} (
     `bana`, `multi_validated`, `banaday`, `raids1`, `raidswin`, `raidsloose`
     )
     VALUES
-    ('1', 'Admin', '', '', '', 'fr_FR', '3', NULL, '', '', '1', '1', '1', '1',
+    ('1', 'Admin', '', '', '', 'fr', '3', NULL, '', '', '1', '1', '1', '1',
     '1', '127.0.0.1', '', '', '', '1254743313', '1269391977', '', '1', '1', '0',
     '0', '1', '5', '0', '0', '1', '1', '1', '1', '0', '0', '0', '0', '0', '', '0',
     '16', '20', '11', '11', '11', '12', '10', '14', '10', '9', '0', '0', '0', '0',
-    '0', '1', '0', '', '0', '', '0', '0', '0', 'red', '#00FF00', 'yellow', '20',
+    '0', '1', 1, 'Admin', '0', '', NOW(), '0', '0', 'red', '#00FF00', 'yellow', '20',
     '20', '10', '10', '0', '3', '3', '0', '27', '2', '2', '0', '0', '0', '0', '0',
     '98', '1', '0', '1133583738', '0', '0', '0', '0', '0', '0', '0', '0', '0',
     '0', '0', '0', '0', '0', '0', '0', '0')
 SQL_EOF;
+
+$this->query($sql);

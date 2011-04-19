@@ -85,10 +85,6 @@ $this
 ;
 
 $sql = <<<SQL_EOF
-DROP TABLE {$this->getTableName('legacies/alliance')};
-SQL_EOF;
-
-$sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/entity.link.user')} (
     `alliance_entity_id`    INT UNSIGNED        NOT NULL,
     `user_entity_id`        SMALLINT UNSIGNED   NOT NULL,
@@ -136,8 +132,6 @@ $this
     ->grant('legacies.alliance/entity.link.user', 'legacies_setup')
 ;
 
-$this->query($sql);
-
 $sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/application')} (
     `application_id`        BIGINT UNSIGNED     NOT NULL    AUTO_INCREMENT,
@@ -166,6 +160,8 @@ ALTER TABLE {$this->getTableName('legacies.alliance/application')}
       ON UPDATE CASCADE;
 SQL_EOF;
 
+//$this->query($sql);
+
 /*
  * Alliance application <-> Alliance constraint
  */
@@ -177,6 +173,8 @@ ALTER TABLE {$this->getTableName('legacies.alliance/application')}
       ON DELETE CASCADE
       ON UPDATE CASCADE;
 SQL_EOF;
+
+$this->query($sql);
 
 $this
     ->grant('legacies.alliance/application', 'legacies_read',  array('SELECT'))
@@ -214,7 +212,7 @@ INSERT INTO {$this->getTableName('legacies.alliance/entity.link.user')} (
       user.`ally_id`,
       user.`ally_register_time`,
       user.`ally_register_time`
-    FROM {$this->getTableName('legacies/user')} AS user
+    FROM {$this->getTableName('legacies/users')} AS user
       WHERE user.`ally_request`=0
 SQL_EOF;
 
@@ -231,7 +229,7 @@ INSERT INTO {$this->getTableName('legacies.alliance/application')} (
       user.`ally_request_text`,
       user.`ally_register_time`,
       user.`ally_register_time`
-    FROM {$this->getTableName('legacies/user')} AS user
+    FROM {$this->getTableName('legacies/users')} AS user
       WHERE user.`ally_request`=1
 SQL_EOF;
 
@@ -239,13 +237,19 @@ $this->query($sql);
 
 // Cleaning up legacy user table
 $sql = <<<SQL_EOF
-ALTER TABLE {$this->getTableName('legacies/user')}
+ALTER TABLE {$this->getTableName('legacies/users')}
   DROP COLUMN `ally_id`,
   DROP COLUMN `ally_name`,
   DROP COLUMN `ally_request`,
   DROP COLUMN `ally_request_text`,
   DROP COLUMN `ally_register_time`,
   DROP COLUMN `ally_rank_id`
+SQL_EOF;
+
+$this->query($sql);
+
+$sql = <<<SQL_EOF
+DROP TABLE {$this->getTableName('legacies/alliance')};
 SQL_EOF;
 
 $this->query($sql);
