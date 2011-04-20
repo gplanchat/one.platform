@@ -252,6 +252,18 @@ class One_Core_Setup_Model_Updater
     }
 
     /**
+     * Gets the last insert ID.
+     *
+     * @param $tableName The table name
+     * @param $primaryKey The primary key to use
+     * @return int The last insert ID.
+     */
+    public function lastInsertId($tableName = null, $primaryKey = null)
+    {
+        return $this->getModuleSetupConnection($this->_currentModule)->lastInsertId($tableName, $primaryKey);
+    }
+
+    /**
      * Updates table rows with specified data based on a WHERE clause.
      *
      * @param  mixed        $table The table to update.
@@ -285,7 +297,10 @@ class One_Core_Setup_Model_Updater
     public function getTableName($entityIdentifier, $quoted = true)
     {
         $connection =  $this->getSetupConnection();
-        return $connection->quoteIdentifier($connection->getTable($entityIdentifier));
+        if ($quoted) {
+            return $connection->quoteIdentifier($connection->getTable($entityIdentifier));
+        }
+        return $connection->getTable($entityIdentifier);
     }
 
     /**
