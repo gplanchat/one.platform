@@ -65,6 +65,9 @@
             <application>
               <table>legacies_alliance_application</table>
             </application>
+            <rank>
+              <table>legacies_alliance_rank</table>
+            </rank>
           </legacies.alliance>
         </entities>
       </dal>

@@ -39,6 +39,7 @@
  * documentation for further information about customizing One.Platform.
  *
  */
+try {
 
 $this->setSetupConnection('legacies_setup');
 
@@ -85,14 +86,111 @@ $this
 ;
 
 $sql = <<<SQL_EOF
+CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/application')} (
+    `application_id`        BIGINT UNSIGNED     NOT NULL    AUTO_INCREMENT,
+    `alliance_entity_id`    INT UNSIGNED        NOT NULL,
+    `user_entity_id`        SMALLINT UNSIGNED   NOT NULL,
+    `text`                  TEXT                NOT NULL,
+    `created_at`            DATETIME            NOT NULL,
+    `updated_at`            DATETIME            NOT NULL,
+    PRIMARY KEY (`application_id`),
+    INDEX (`alliance_entity_id`),
+    INDEX (`user_entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SQL_EOF;
+
+$this->query($sql);
+
+/*
+ * Alliance application <-> User constraint
+ */
+$sql = <<<SQL_EOF
+ALTER TABLE {$this->getTableName('legacies.alliance/application')}
+  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_APPLICATION__USER_ENTITY`
+    FOREIGN KEY (`user_entity_id`)
+    REFERENCES {$this->getTableName('user/entity')} (`entity_id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE;
+SQL_EOF;
+
+$this->query($sql);
+
+/*
+ * Alliance application <-> Alliance constraint
+ */
+$sql = <<<SQL_EOF
+ALTER TABLE {$this->getTableName('legacies.alliance/application')}
+  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_APPLICATION__LEGACIES_ALLIANCE_ENTITY`
+    FOREIGN KEY (`alliance_entity_id`)
+    REFERENCES {$this->getTableName('legacies.alliance/entity')} (`entity_id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE;
+SQL_EOF;
+
+$this->query($sql);
+
+$this
+    ->grant('legacies.alliance/application', 'legacies_read',  array('SELECT'))
+    ->grant('legacies.alliance/application', 'legacies_write', array('SELECT', 'CREATE', 'UPDATE', 'DELETE'))
+    ->grant('legacies.alliance/application', 'legacies_setup')
+;
+
+$sql = <<<SQL_EOF
+CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/rank')} (
+    `rank_id`                   INT UNSIGNED        NOT NULL    AUTO_INCREMENT,
+    `alliance_entity_id`        INT UNSIGNED        NOT NULL,
+    `name`                      VARCHAR(50)         NOT NULL,
+    `description`               VARCHAR(255)        NOT NULL,
+    `acl_delete`                BOOL                NOT NULL,
+    `acl_kick`                  BOOL                NOT NULL,
+    `acl_show_applications`     BOOL                NOT NULL,
+    `acl_memberlist`            BOOL                NOT NULL,
+    `acl_manage_applications`   BOOL                NOT NULL,
+    `acl_edit`                  BOOL                NOT NULL,
+    `acl_show_online`           BOOL                NOT NULL,
+    `acl_messages`              BOOL                NOT NULL,
+    `acl_right_hand`            BOOL                NOT NULL,
+    `created_at`                DATETIME            NOT NULL,
+    `updated_at`                DATETIME            NOT NULL,
+    PRIMARY KEY (`rank_id`),
+    INDEX `IDX_ALLIANCE_ENTITY_ID` (`alliance_entity_id`),
+    UNIQUE `UNQ_NAME` (`alliance_entity_id`, `name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SQL_EOF;
+
+$this->query($sql);
+
+/*
+ * Alliance rank <-> Alliance constraint
+ */
+$sql = <<<SQL_EOF
+ALTER TABLE {$this->getTableName('legacies.alliance/rank')}
+  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_RANK__LEGACIES_ALLIANCE`
+    FOREIGN KEY (`alliance_entity_id`)
+    REFERENCES {$this->getTableName('legacies.alliance/entity')} (`entity_id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE;
+SQL_EOF;
+
+$this->query($sql);
+
+$this
+    ->grant('legacies.alliance/rank', 'legacies_read',  array('SELECT'))
+    ->grant('legacies.alliance/rank', 'legacies_write', array('SELECT', 'CREATE', 'UPDATE', 'DELETE'))
+    ->grant('legacies.alliance/rank', 'legacies_setup')
+;
+
+$sql = <<<SQL_EOF
 CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/entity.link.user')} (
     `alliance_entity_id`    INT UNSIGNED        NOT NULL,
     `user_entity_id`        SMALLINT UNSIGNED   NOT NULL,
+    `rank_id`               INT UNSIGNED        NOT NULL,
     `created_at`            DATETIME            NOT NULL,
     `updated_at`            DATETIME            NOT NULL,
     PRIMARY KEY (`alliance_entity_id`, `user_entity_id`),
     INDEX `IDX_ALLIANCE_ENTITY_ID` (`alliance_entity_id`),
-    INDEX `IDX_USER_ENTITY_ID` (`user_entity_id`)
+    INDEX `IDX_USER_ENTITY_ID` (`user_entity_id`),
+    INDEX `IDX_RANK_ID` (`rank_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SQL_EOF;
 
@@ -126,109 +224,118 @@ SQL_EOF;
 
 $this->query($sql);
 
+/*
+ * Alliance link <-> Alliance rank constraint
+ */
+$sql = <<<SQL_EOF
+ALTER TABLE {$this->getTableName('legacies.alliance/entity.link.user')}
+  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_ENTITY_LINK_USER__ALLIANCE_RANK`
+    FOREIGN KEY (`rank_id`)
+    REFERENCES {$this->getTableName('legacies.alliance/rank')} (`rank_id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE;
+SQL_EOF;
+
+$this->query($sql);
+
 $this
     ->grant('legacies.alliance/entity.link.user', 'legacies_read',  array('SELECT'))
     ->grant('legacies.alliance/entity.link.user', 'legacies_write', array('SELECT', 'CREATE', 'UPDATE', 'DELETE'))
     ->grant('legacies.alliance/entity.link.user', 'legacies_setup')
 ;
 
-$sql = <<<SQL_EOF
-CREATE TABLE IF NOT EXISTS {$this->getTableName('legacies.alliance/application')} (
-    `application_id`        BIGINT UNSIGNED     NOT NULL    AUTO_INCREMENT,
-    `alliance_entity_id`    INT UNSIGNED        NOT NULL,
-    `user_entity_id`        SMALLINT UNSIGNED   NOT NULL,
-    `text`                  TEXT                NOT NULL,
-    `created_at`            DATETIME            NOT NULL,
-    `updated_at`            DATETIME            NOT NULL,
-    PRIMARY KEY (`application_id`),
-    INDEX (`alliance_entity_id`),
-    INDEX (`user_entity_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-SQL_EOF;
-
-$this->query($sql);
-
-/*
- * Alliance application <-> User constraint
- */
-$sql = <<<SQL_EOF
-ALTER TABLE {$this->getTableName('legacies.alliance/application')}
-  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_APPLICATION__USER_ENTITY`
-    FOREIGN KEY (`user_entity_id`)
-    REFERENCES {$this->getTableName('user/entity')} (`entity_id`)
-      ON DELETE CASCADE
-      ON UPDATE CASCADE;
-SQL_EOF;
-
-//$this->query($sql);
-
-/*
- * Alliance application <-> Alliance constraint
- */
-$sql = <<<SQL_EOF
-ALTER TABLE {$this->getTableName('legacies.alliance/application')}
-  ADD CONSTRAINT `FK_LEGACIES_ALLIANCE_APPLICATION__LEGACIES_ALLIANCE_ENTITY`
-    FOREIGN KEY (`alliance_entity_id`)
-    REFERENCES {$this->getTableName('legacies.alliance/entity')} (`entity_id`)
-      ON DELETE CASCADE
-      ON UPDATE CASCADE;
-SQL_EOF;
-
-$this->query($sql);
-
-$this
-    ->grant('legacies.alliance/application', 'legacies_read',  array('SELECT'))
-    ->grant('legacies.alliance/application', 'legacies_write', array('SELECT', 'CREATE', 'UPDATE', 'DELETE'))
-    ->grant('legacies.alliance/application', 'legacies_setup')
-;
-
 /*
  * Migration requests starts here
  */
-
-// Migrationg alliance entity
 $sql = <<<SQL_EOF
 INSERT INTO {$this->getTableName('legacies.alliance/entity')} (
-  `entity_id`, `game_id`, `manager_entity_id`, `tag`, `full_name`,
-  `short_description`, `description`, `private_notes`, `logo`, `website_url`,
-  `updated_at`, `created_at`
-  )
+    `entity_id`, `game_id`, `manager_entity_id`, `tag`, `full_name`,
+    `short_description`, `description`, `private_notes`, `logo`, `website_url`,
+    `updated_at`, `created_at`
+    )
   SELECT alliance.`id`, 1, alliance.`ally_owner`, alliance.`ally_tag`,
       alliance.`ally_name`, alliance.`ally_description`, alliance.`ally_description`,
       alliance.`ally_description`, alliance.`ally_image`, alliance.`ally_web`,
       NOW(), NOW()
-  FROM {$this->getTableName('legacies/alliance')} AS alliance;
+    FROM {$this->getTableName('legacies/alliance')} AS alliance;
 SQL_EOF;
 
 $this->query($sql);
 
-// Migration alliance<->user links
-$sql = <<<SQL_EOF
-INSERT INTO {$this->getTableName('legacies.alliance/entity.link.user')} (
-    `user_entity_id`, `alliance_entity_id`, `created_at`, `updated_at`
-  )
-  SELECT
-      user.`id`,
-      user.`ally_id`,
-      user.`ally_register_time`,
-      user.`ally_register_time`
-    FROM {$this->getTableName('legacies/users')} AS user
-      WHERE user.`ally_request`=0
-SQL_EOF;
+$userSelect = $this->select()
+    ->from(array(
+        'user' => $this->getTableName('legacies/users', false)
+        ), array(
+            'user_entity_id'     => 'id',
+            'rank_id'            => 'ally_rank_id',
+            'created_at'         => 'ally_register_time'
+            ))
+    ->where('ally_id=?')
+    ->where('ally_request=0');
 
-$this->query($sql);
+$allianceSelect = $this->select()
+    ->from(array(
+        'alliance' => $this->getTableName('legacies/alliance', false),
+        ), array(
+            'entity_id' => 'id',
+            'ranks'     => 'ally_ranks'
+        ));
+$allianceStatement = $allianceSelect->query();
+
+foreach ($allianceStatement->fetchAll() as $alliance) {
+    $ranks = unserialize($alliance['ranks']);
+
+    if (!is_array($ranks) || empty($ranks)) {
+        $ranks[] = array('name' => 'Member');
+    }
+
+    $index = array();
+    foreach ($ranks as $rankId => $rank) {
+        $this->insert($this->getTableName('legacies.alliance/rank', false), array(
+            'alliance_entity_id'      => $alliance['entity_id'],
+            'name'                    => $rank['name'],
+            'description'             => '',
+            'acl_delete'              => isset($rank['delete'])                ? $rank['delete']                : false,
+            'acl_kick'                => isset($rank['kick'])                  ? $rank['kick']                  : false,
+            'acl_show_applications'   => isset($rank['bewerbungen'])           ? $rank['bewerbungen']           : false,
+            'acl_memberlist'          => isset($rank['memberlist'])            ? $rank['memberlist']            : false,
+            'acl_manage_applications' => isset($rank['bewerbungenbearbeiten']) ? $rank['bewerbungenbearbeiten'] : false,
+            'acl_edit'                => isset($rank['administrieren'])        ? $rank['administrieren']        : false,
+            'acl_show_online'         => isset($rank['onlinestatus'])          ? $rank['onlinestatus']          : false,
+            'acl_messages'            => isset($rank['mails'])                 ? $rank['mails']                 : false,
+            'acl_right_hand'          => isset($rank['rechtehand'])            ? $rank['rechtehand']            : false,
+            'created_at'              => new Zend_Db_Expr('NOW()'),
+            'updated_at'              => new Zend_Db_Expr('NOW()')
+            ));
+        $index[$rankId] = $this->lastInsertId($this->getTableName('legacies.alliance/rank', false));
+    }
+
+    $select = clone $userSelect;
+    $userStatement = $select->query(Zend_Db::FETCH_ASSOC, array($alliance['entity_id']));
+
+    foreach ($userStatement->fetchAll() as $user) {
+        $this->insert($this->getTableName('legacies.alliance/entity.link.user', false), array(
+            'user_entity_id'     => $user['user_entity_id'],
+            'alliance_entity_id' => $alliance['entity_id'],
+            'rank_id'            => $index[$user['rank_id']],
+            'updated_at'         => new Zend_Db_Expr('NOW()'),
+            'created_at'         => $user['created_at']
+            ));
+    }
+    unset($index);
+}
 
 // Migration user applications
 $sql = <<<SQL_EOF
 INSERT INTO {$this->getTableName('legacies.alliance/application')} (
-    `user_entity_id`, `alliance_entity_id`, `text`, `created_at`, `updated_at`
+    `user_entity_id`, `alliance_entity_id`, `text`, `updated_at`, `created_at`
   )
   SELECT
       user.`id`,
       user.`ally_id`,
       user.`ally_request_text`,
-      user.`ally_register_time`,
-      user.`ally_register_time`
+      NOW(),
+      FROM_UNIXTIME(user.`ally_register_time`)
     FROM {$this->getTableName('legacies/users')} AS user
       WHERE user.`ally_request`=1
 SQL_EOF;
@@ -253,3 +360,7 @@ DROP TABLE {$this->getTableName('legacies/alliance')};
 SQL_EOF;
 
 $this->query($sql);
+} catch (Exception $e) {
+    echo "<pre>$e</pre";
+    die();
+}

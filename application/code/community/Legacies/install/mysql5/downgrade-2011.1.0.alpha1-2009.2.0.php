@@ -60,3 +60,9 @@ SQL_EOF;
 
 $this->query($sql);
 
+$sql = <<<SQL_EOF
+DROP TABLE {$this->getTableName('legacies.alliance/rank')};
+SQL_EOF;
+
+$this->query($sql);
+
