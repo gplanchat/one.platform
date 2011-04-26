@@ -85,7 +85,7 @@ interface One_Core_ResourceInterface
      *
      * @param $tableAlias
      */
-    public function getTableName($tableAlias);
+    //public function getTableName($tableAlias);
 
     /**
      *
