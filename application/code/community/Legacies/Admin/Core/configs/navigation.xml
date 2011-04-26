@@ -55,40 +55,40 @@
                 <controller>config</controller>
               </route>
             </config>
-            <!--units>
+            <units>
               <label>Units management</label>
               <children>
                 <ships>
                   <label>Ship Types</label>
                   <route>
-                    <path>legacies</path>
-                    <controller>ships</controller>
+                    <path>game</path>
+                    <controller>ship</controller>
                   </route>
                 </ships>
-                <buildings>
+                <!--buildings>
                   <label>Building Types</label>
                   <route>
                     <path>legacies</path>
                     <controller>buildings</controller>
                   </route>
-                </buildings>
-                <defenses>
+                </buildings-->
+                <!--defenses>
                   <label>Defense Types</label>
                   <route>
                     <path>legacies</path>
                     <controller>defenses</controller>
                   </route>
-                </defenses>
-                <research>
+                </defenses-->
+                <!--research>
                   <label>Research Types</label>
                   <route>
                     <path>legacies</path>
                     <controller>research</controller>
                   </route>
-                </research>
+                </research-->
               </children>
             </units>
-            <mission>
+            <!--mission>
               <label>Mission Types</label>
               <route>
                 <path>legacies</path>
